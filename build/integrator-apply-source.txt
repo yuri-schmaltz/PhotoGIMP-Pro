@@ -1,0 +1,8 @@
+
+============================================================
+  Integrando PhotoGIMP na árvore de código-fonte (gimp-source)
+============================================================
+[+] Criando diretório de perfil integrado: /home/yuri/Documentos/gimp/gimp-source/data/photogimp-profile
+[✓] Perfil e configurações do PhotoGIMP copiados para /home/yuri/Documentos/gimp/gimp-source/data/photogimp-profile
+[✓] Splash screens sincronizadas para /home/yuri/Documentos/gimp/gimp-source/data/splashes/photogimp
+[✓] Arquivos de referência PhotoGIMP exportados para /home/yuri/Documentos/gimp/gimp-source/etc/ (*.photogimp)

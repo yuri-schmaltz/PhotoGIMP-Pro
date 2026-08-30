@@ -1,0 +1,328 @@
+                   ------------------------------
+                   GNU Image Manipulation Program
+                         Development Branch
+                   ------------------------------
+
+This is the development branch of GIMP.
+
+Overview of Changes from GIMP 3.2.4 to GIMP 3.3.2
+=================================================
+
+Core:
+
+  * Using native file choosers in various parts of the code.
+  * Rendering MyPaint brush previews at best sizes to be non-blurry.
+  * GimpViewable preview API now passes around the scale factor to allow
+    best decision when rendering previews.
+  * Error console save dialog now has a ".log" extension filter.
+  * Improve list of "Recent Images" in the Welcome dialog, with no
+    arbirtrary limitation of 8 rows.
+  * More GtkTreeView replaced in preparation of GTK4 port.
+  * Various easy functions replaced in preparation of GTK4 port.
+  * macOS: touchpads are now less sensitive in pan gestures and behave as
+    expected.
+  * MSIX: it is now possible to open multiple images from the OS.
+  * Stop noninteractive filters on invisible layers unless the relevant
+    option is enabled in Preferences.
+  * Various layer modes are now being ported to work on non-RGBA
+    contents when it makes sense.
+  * Non-GUI filters will be applied non-destructively on group layers as
+    well as non-raster layers. For now they are still applied
+    destructively only on raster layers, until a proper design decision
+    is taken on this topic.
+  * "Layers to Image Size" action is now only sensitive on raster
+    layers.
+  * Layer Masks can now have non-destructive filters (listed separately
+    in the NDE popover).
+  * Added "Rotation" input for dynamics. This gives us support of the
+    Wacom Art Pen 2 stylus at least.
+  * We now verify if a plug-in has been updated since last start by
+    using the changed time (ctime) as fallback when the modified time
+    (mtime) is 0. This is because on some environment (such as ostree,
+    hence flatpak), all files mtimes are set to the UNIX epoch.
+  * Added support of dashboard backtraces on Windows ARM64.
+  * Krita KPL palette import support added.
+  * Work started on a new project format.
+  * Do not perform the (wrong) optimization replacing pass-through by
+    the Normal layer mode for layers with effects.
+  * Dashboard backtraces now support macOS.
+  * Clear does not affect non-raster layers, unless rasterized.
+  * New project format for GIMP (meant to replace XCF) is under
+    development.
+
+Tools:
+
+  * Gradient tool: new option "Editable gradient" to apply the gradient
+    non-destructively.
+  * Heal tool: healing behaves more as expected near edges.
+  * Text tool:
+    - Allow selecting with Shift-Click.
+    - Preview text layer content while Alt-dragging.
+    - Ignore selected layer mask of a text layer when selecting it with
+      the tool to edit the text contents. The layer mask still stays the
+      selected item in such a case.
+  * Transform tools: add a tooltip on the chain icon to better explain
+    what it does.
+  * MyPaint Brush tool: new "Spectral Blending" checkbox and "Pigment"
+    slider to blend spectrally while painting.
+  * Color Picker tool: there was an exception ignoring Sample Merged
+    option when a single layer was visible (allowing to retrieve the
+    exact palette color from indexed images). This exception has been
+    further restricted to the absence of filters. Sample Merged, even of
+    single layer images, should return the color after filters are
+    applied.
+
+Graphical User Interface:
+
+  * Small reorganization in GimpStrokeEditor.
+  * Welcome dialog: icons and links realigned on Welcome tab; widgets
+    realigned in Contribute tab.
+  * New "branding" colors added in AppStream metadata.
+  * macOS: title bar follows scheme. This is true for native file
+    dialogs on macOS as well.
+  * Levels tool now listens to the icon size setting.
+  * Roadmap menu item removed from Help > GIMP Online menu.
+  * We do not rotate the checkerboard anymore when rotating the canvas,
+    but also scrolling or zooming. This significantly improves performance
+    when interacting with a rotated canvas.
+  * GimpColorScale moved from hardcoded (bad!) to proper theme-based CSS
+    styling.
+  * Append "(read only)" to system resource (brushes, gradients,
+    palettes…) titles when trying to edit them in their respective
+    Editor dockables.
+  * Action Search dialog:
+    - The shortcuts hints are moved to the right side, similar to the
+      rest of the application (e.g. shortcuts hints in menus).
+    - A ".search-results" class was added for the results row, and theme
+      was updated to highlight the hovered action row.
+  * Icon picker widget: the file filter name is now titled "Image
+    files".
+  * Multiple selected layers are now added to a new group.
+  * Navigation dockable: grab back focus on the view, after using the
+    zoom slider.
+  * Patterns which are smaller than the preview area (in 1 or 2
+    dimensions) will now fill the full area by repeating themselves,
+    since they are meant to be tileable anyway. It makes for nicer
+    pattern previews.
+  * Size entry in Scale and Print Size dialogs receive the focus by
+    default as a UX enhancement.
+  * Spin of Arbitrary Zoom dialog receives the default focus.
+  * Next tip is the default focus for the Tips dialog.
+  * Space and Enter activate/deactivate modules.
+
+Plug-Ins:
+
+  * Vulnerabilities fixed: ZDI-CAN-29403, ZDI-CAN-29399, ZDI-CAN-29405,
+    ZDI-CAN-29406, ZDI-CAN-29398 (TIFF), ZDI-CAN-29395 (PSD), ZDI-CAN-29396 (SGI),
+    ZDI-CAN-29400, ZDI-CAN-29401 (PNG), PSP, PAA, PVR, ILBM,
+    ZDI-CAN-29404.
+  * PSD:
+    - Better apply embedded profile on pixel data for import and export.
+    - New "file-psd-export-metadata" procedure to export PSD image resources or
+      layer/mask data into a temporary file for use by other formats.
+    - Added support for importing 8 types of adjustment layers as GEGL
+      filters attached to layer groups with pass-through layer mode:
+      Posterize, Invert, Threshold, Channel/Mono Mixer, Color Balance,
+      Levels, Hue-Saturation/Colorize, and legacy Brightness/Contrast.
+    - Compatibility warnings for adjustment layers should now only show
+      when layers we don't yet support are included in the PSD. The
+      wording for the warning has been updated to show we now have
+      partial support.
+    - We now load and parse PSD descriptors, which brought us:
+      + Layer effects loading: includes so far support of Drop Shadow,
+        Solid Fill, Inner Shadow, Inner Glow (versions 0, 1 and 2),
+        Outer Glow, Partial Stroke layer effects.
+      + Placed and linked layer resources: support of external link
+        layers (embedded files are not supported at this time).
+      + TXT2 layer resources
+      + Compositor layer resources
+    - Added 32-bit precision support for export.
+    - Import solid color ("SoCo") fill layers as pass-through group
+      layers with effects.
+    - Initial text layer import support! The warning that text layer
+      will be rasterized on import has been removed too.
+    - Be more robust by ignoring an empty layer comps list.
+    - Load vector layer paths ('vmsk' and 'vsms' blocks, used for vector
+      masks and vector shapes).
+  * New import support for MacPaint images.
+  * GBR: fix exporting grayscale GBRs with alpha channels.
+  * file-raw-data: various code improvements.
+  * SVG:
+    - New option to export Inkscape SVG.
+    - Guides are exported in Inkscape SVG.
+  * Cineon/DPX: initial import support.
+  * PSP: we now have import support for the following adjustment layers
+    as passthrough groups with filters applied:
+    - Levels
+    - Curves
+    - Brightness-Contrast
+    - Color Balance
+    - HSL
+    - Channel Mixer
+    - Invert
+    - Threshold
+    - Posterize
+  * Web-Page plug-in removed (after 1-year soft-removal through
+    deprecation in the 3.0 series and no complains so far).
+  * Metadata Editor: replace metadata import/export dropdown with
+    buttons.
+  * New import support for DrHalo CUT format.
+  * Web Browser plug-in removed. It has been replaced by an internal PDB
+    procedure "plug-in-web-browser", which is itself made deprecated
+    (yet needed for backward-compatibility of scripts). Instead people
+    should use the GLib function g_app_info_launch_default_for_uri(), or
+    in Script-Fu, the new procedure (gimp-show-uri).
+  * Help plug-in: the "help-proc" argument is now ignored and deprecated
+    (all calls will just use the default browser on your machine).
+  * Help Browser plug-in removed (after 1-year soft-removal through
+    deprecation in the 3.0 series and no complaints).
+  * TIFF:
+    - New "format" choice argument to the export procedure, allowing to
+      toggle between multi-page TIFF export and Photoshop-compatible
+      export. This allows to export Photoshop-compatible TIFF with PSD
+      metadata and layers.
+    - New "keep-composite-image" boolean argument to the export
+      procedure to Keep the composite image of Sketchbook or Photoshop
+      TIFF files as additional layer.
+    - Support "Inverse Alpha Mask" layer mode from Sketchbook on loading
+      (equivalent to our Erase blend mode).
+    - Differentiate correctly pass-through group layers.
+    - Metadata are explicitly not exported for BigTIFF (Exiv2 does not
+      have support).
+  * PDF: on export of multi-page documents, the image size is now made
+    so that all pages/layers are contained within the image.
+  * JPEG:
+    - initial MPO loading support. MPO, Multiple Picture Object
+      image format, is an extension of the JPEG standard. It can store
+      multiple views of a scene, often used for 3D or stereo images.
+    - With recent enough libjpeg-turbo (3.1.90+), all 8-bit JPEG will
+      now be loaded as 16bpc directly through the 12-bit pipeline. This
+      improves the recoverable dynamic range in cases where encoded
+      input was not limited to 8-bit input, as well as accuracy during
+      color conversion and resampling.
+  * APNG: add frame delay to layer names, just like in GIF and WebP
+    support.
+  * Mail: Windows support added through MAPI.
+  * NL Filter: alpha restriction added, allowing the plug-in to work on
+    all RGB and grayscale images, with or without alpha.
+  * MNG: initial import support (we only had export support until now).
+  * file-csource: new GUI option "Escape trigraphs" to escape tri-graphs
+    which have been removed in C23 (but compilers are still checking for
+    this syntax and will warn you when they find trigraphs in code).
+  * BMP: when exporting grayscale or indexed image with alpha, do not
+    popup an extra warning dialog anymore. This was transformed to a
+    simple warning integrated in the main BMP export dialog.
+  * FLC:
+    - New "Delay between frames when unspecified" option to specify
+      delay in FLC export. The int argument is available
+      non-interactively too as "default-delay" argument.
+    - Store aspect ratio in file.
+  * ICO/CUR: use Win32 scoring for ICO/CUR/ANI thumbnail selection.
+    Replace the ad-hoc "largest frame not exceeding the requested size"
+    heuristic in ico_load_thumbnail_image() with the same weighted scoring
+    used by LookupIconIdFromDirectoryEx: size delta penalized x2 when the
+    entry is smaller than requested, bpp mismatch weighted x2. On a tie,
+    prefer the higher color depth. This fixes thumbnails for multi-size
+    ICO/CUR files where the old heuristic could pick the wrong frame (e.g.
+    a small frame instead of the closest match to the requested size).
+  * PNG: better heuristic for a transparency index.
+  * PS: we default to A4 for unknown images. Though arbitrary, since
+    Postscript traditionally represents printed pages, it is more likely
+    than other form factors.
+  * Various plug-ins are made transient to the calling core GIMP window.
+
+API:
+
+  * libgimpwidgets:
+    - GimpColorDisplayStack now implements GListModel.
+    - GimpDialog now has a "help-file" property as a competing help
+      system to "help-id" and "help-func".
+    - GimpIntRadioFrame now organize radio buttons internally as a flow
+      box and implements the GtkOrientable interface.
+    - New functions:
+      + gimp_hint_box_set_hint
+    - Plug-ins' title bar will now follow dark mode on macOS.
+  * libgimpbase:
+    - New functions:
+      + gimp_choice_add_deprecated
+      + gimp_choice_is_deprecated
+    - Deprecated:
+      + GP_EXTENSION_ACK in favor of GP_PERSISTENT_ACK
+      + gp_extension_ack_write in favor of gp_persistent_ack_write
+  * libgimp:
+    - New functions:
+      + gimp_procedure_set_help_uri
+      + gimp_procedure_get_help_file
+      + gimp_text_layer_is_dynamic
+      + gimp_text_layer_get_layout_offsets
+      + gimp_image_has_transparency
+      + gimp_font_get_by_postscript_name
+      + gimp_context_get_image
+      + gimp_context_set_image
+      + gimp_export_procedure_get_export_metadata
+      + gimp_export_procedure_set_export_metadata
+  * libgimpui:
+    - GimpProcedureDialog will now use the icon set on the associated
+      GimpProcedure (likely only visible on platforms showing window
+      icons).
+    - GimpExportProcedure will now display a warning for transparency
+      loss when trying to export an image with transparent pixels while
+      capabilities were given and GIMP_EXPORT_CAN_HANDLE_ALPHA was not
+      one of them.
+      In particular, this means that JPEG export dialog will display
+      such a warning when trying to export images with transparency!
+    - New functions:
+      + gimp_procedure_dialog_set_warning
+    - Cross-process transiency is now emulated on macOS (which doesn't
+      have the exact API match) for the gimp_window_set_transient*()
+      functions.
+  * Script-Fu:
+    - (gimp-online-*) Script-Fu procedures are now moved to deprecated
+      internal PDB procedures. Actions are created too (except for
+      "gimp-online-roadmap") in order to keep these available in the
+      main menu.
+    - New procedure (gimp-show-uri) to load any URI in your default
+      software set for this type of file. This should be used instead of
+      the now deprecated (plug-in-web-browser).
+    - New (script-fu-guides-from-rule) plug-in procedure to create
+      guides by common composition rules, such as "Rule of thirds" or
+      "Golden sections". It is available in menus as `Image > Guides >
+      New Guides from Rule`.
+   * PDB: failing PDB calls only alert through gimp_message() when run
+     interactively. Non-interactive (including from last run) calls
+     don't print (or pop-up) errors anymore and the caller is expected
+     to check return values and process or display errors themselves if
+     relevant.
+
+Utilities:
+
+  * gimptool can now compile and link GEGL operations with
+    --clags-geglop and --libs-geglop CLI options.
+  * gimptool sets relocated PKG_CONFIG_PATH on Windows, macOS and
+    AppImage relocatable bundles.
+
+Build:
+
+  * Our baseline for dependencies is now Debian Trixie.
+  * New analysis job running Tartan, a static analysis tool developed
+    specifically for GLib-based projects
+  * macOS:
+    - notarization now works from our Gitlab CI!
+    - go back to macOS Tahoe on Homebrew builds
+  * Minimum Windows version for MSIX is now 10.0.20348.0 to comply with
+    a requirement from MS about fileSystemWriteVirtualization.
+  * More file loading tests added relevant to recent security issues.
+  * New analysis job "abidiff" to verify that our libgimp* libraries
+    don't break their API or ABI.
+  * New check-commit-log CI job on MR events to validate commit
+    messages.
+  * meson-health, branches-check, file-plug-in-tests and abidiff CI jobs
+    are skipped for commits pushed by the GNOME Translation Robot.
+  * Expose duration of each image plug-in test on junit report to make
+    easier to debug these, especially when one gets stuck.
+  * Add some GIR file checks, especially for the (skip) annotation.
+  * Add LLDB support to '-Ddebug-self-in-build' build option and display
+    a proper discovery message when in-build GIMP crashes to encourage
+    bug reporters to make stacktraces of that happening.
+  * Damned Lies (translation) commits now follow our "<module>:" prefix
+    rule in the commit message.

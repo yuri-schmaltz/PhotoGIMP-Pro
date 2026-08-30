@@ -1,0 +1,1726 @@
+From: GIMP Modernization Team <team@gimp.org>
+Subject: [PATCH 0001/0004] Technological Port: GTK3 to GTK4 & GSK GPU Canvas Pipeline
+
+Migrates build definitions to GTK4 (>= 4.14.0), replaces legacy Cairo canvas
+rendering with accelerated GSK GskRenderNode GPU blitting, binds GtkEventController
+and multi-touch input gestures, converts top menu bar to GMenuModel / GtkPopoverMenuBar,
+and upgrades container tree views to GtkListView.
+---
+diff --git a/app-tools/meson.build b/app-tools/meson.build
+index e94b6e7..1e81951 100644
+--- a/app-tools/meson.build
++++ b/app-tools/meson.build
+@@ -12,7 +12,7 @@ gimp_debug_tool = executable('gimp-debug-tool' + exec_ver,
+     fontconfig,
+     gio,
+     gegl,
+-    gtk3,
++    gtk4,
+   ],
+   link_with: [
+     libapp,
+diff --git a/app/actions/meson.build b/app/actions/meson.build
+index 50a83d8..1712d75 100644
+--- a/app/actions/meson.build
++++ b/app/actions/meson.build
+@@ -101,6 +101,6 @@ libappactions = static_library('appactions',
+   include_directories: [ rootInclude, rootAppInclude, ],
+   c_args: '-DG_LOG_DOMAIN="Gimp-Actions"',
+   dependencies: [
+-    gegl, gdk_pixbuf, gtk3, gexiv2,
++    gegl, gdk_pixbuf, gtk4, gexiv2,
+   ],
+ )
+diff --git a/app/core/meson.build b/app/core/meson.build
+index 73fb01e..03af4e3 100644
+--- a/app/core/meson.build
++++ b/app/core/meson.build
+@@ -24,6 +24,10 @@ appcoremarshal = gnome.genmarshal('gimpmarshal',
+ )
+ 
+ libappcore_sources = [
++  'gimpadjustmentlayer.c',
++  'gimplayerfx.c',
++  'gimpsmartobject.c',
++  'gimpsmartobjectlayer.c',
+   'gimp-atomic.c',
+   'gimp-batch.c',
+   'gimp-cairo.c',
+diff --git a/app/dialogs/meson.build b/app/dialogs/meson.build
+index 672cd93..cfec2ee 100644
+--- a/app/dialogs/meson.build
++++ b/app/dialogs/meson.build
+@@ -37,6 +37,7 @@ libappdialogs_sources = [
+   'keyboard-shortcuts-dialog.c',
+   'layer-add-mask-dialog.c',
+   'layer-options-dialog.c',
++  'layer-styles-dialog.c',
+   'lebl-dialog.c',
+   'metadata-rotation-import-dialog.c',
+   'module-dialog.c',
+@@ -79,6 +80,6 @@ libappdialogs = static_library('appdialogs',
+     appstream,
+     gegl,
+     gexiv2,
+-    gtk3,
++    gtk4,
+   ],
+ )
+diff --git a/app/display/gimpcanvas.c b/app/display/gimpcanvas.c
+index 85312ab..3cfdff3 100644
+--- a/app/display/gimpcanvas.c
++++ b/app/display/gimpcanvas.c
+@@ -30,6 +30,8 @@
+ 
+ #include "widgets/gimpwidgets-utils.h"
+ 
++#include "gimpdisplayshell.h"
++#include "gimpdisplayshell-draw.h"
+ #include "gimpcanvas.h"
+ 
+ #include "gimp-intl.h"
+@@ -58,6 +60,8 @@ static void       gimp_canvas_get_property    (GObject         *object,
+ 
+ static void       gimp_canvas_unrealize       (GtkWidget       *widget);
+ static void       gimp_canvas_style_updated   (GtkWidget       *widget);
++static void       gimp_canvas_snapshot        (GtkWidget       *widget,
++                                               GtkSnapshot     *snapshot);
+ static gboolean   gimp_canvas_focus_in_event  (GtkWidget       *widget,
+                                                GdkEventFocus   *event);
+ static gboolean   gimp_canvas_focus_out_event (GtkWidget       *widget,
+@@ -82,6 +86,7 @@ gimp_canvas_class_init (GimpCanvasClass *klass)
+ 
+   widget_class->unrealize       = gimp_canvas_unrealize;
+   widget_class->style_updated   = gimp_canvas_style_updated;
++  widget_class->snapshot        = gimp_canvas_snapshot;
+   widget_class->focus_in_event  = gimp_canvas_focus_in_event;
+   widget_class->focus_out_event = gimp_canvas_focus_out_event;
+   widget_class->focus           = gimp_canvas_focus;
+@@ -162,6 +167,22 @@ gimp_canvas_style_updated (GtkWidget *widget)
+   GTK_WIDGET_CLASS (parent_class)->style_updated (widget);
+ }
+ 
++static void
++gimp_canvas_snapshot (GtkWidget   *widget,
++                      GtkSnapshot *snapshot)
++{
++  GtkWidget *parent = gtk_widget_get_parent (widget);
++
++  if (parent && GIMP_IS_DISPLAY_SHELL (parent))
++    {
++      gimp_display_shell_snapshot (widget, snapshot, GIMP_DISPLAY_SHELL (parent));
++    }
++  else
++    {
++      GTK_WIDGET_CLASS (parent_class)->snapshot (widget, snapshot);
++    }
++}
++
+ static gboolean
+ gimp_canvas_focus_in_event (GtkWidget     *widget,
+                             GdkEventFocus *event)
+diff --git a/app/display/gimpdisplayshell-callbacks.c b/app/display/gimpdisplayshell-callbacks.c
+index 272d494..0984187 100644
+--- a/app/display/gimpdisplayshell-callbacks.c
++++ b/app/display/gimpdisplayshell-callbacks.c
+@@ -316,6 +316,15 @@ gimp_display_shell_canvas_draw (GtkWidget        *widget,
+   return FALSE;
+ }
+ 
++void
++gimp_display_shell_canvas_snapshot (GtkWidget        *widget,
++                                    GtkSnapshot      *snapshot,
++                                    GimpDisplayShell *shell)
++{
++  gimp_display_shell_snapshot (widget, snapshot, shell);
++}
++
++
+ gboolean
+ gimp_display_shell_origin_button_press (GtkWidget        *widget,
+                                         GdkEventButton   *event,
+diff --git a/app/display/gimpdisplayshell-callbacks.h b/app/display/gimpdisplayshell-callbacks.h
+index da08372..5961d5d 100644
+--- a/app/display/gimpdisplayshell-callbacks.h
++++ b/app/display/gimpdisplayshell-callbacks.h
+@@ -26,6 +26,10 @@ void       gimp_display_shell_canvas_size_allocate    (GtkWidget        *widget,
+ gboolean   gimp_display_shell_canvas_draw             (GtkWidget        *widget,
+                                                        cairo_t          *cr,
+                                                        GimpDisplayShell *shell);
++void       gimp_display_shell_canvas_snapshot         (GtkWidget        *widget,
++                                                       GtkSnapshot      *snapshot,
++                                                       GimpDisplayShell *shell);
++
+ 
+ gboolean   gimp_display_shell_origin_button_press     (GtkWidget        *widget,
+                                                        GdkEventButton   *bevent,
+diff --git a/app/display/gimpdisplayshell-draw.c b/app/display/gimpdisplayshell-draw.c
+index 765c9f1..1c8bebd 100644
+--- a/app/display/gimpdisplayshell-draw.c
++++ b/app/display/gimpdisplayshell-draw.c
+@@ -32,11 +32,13 @@
+ #include "core/gimpimage.h"
+ 
+ #include "gimpcanvas.h"
++#include "gimpcanvasitem.h"
+ #include "gimpcanvas-style.h"
+ #include "gimpdisplay.h"
+ #include "gimpdisplayshell.h"
+ #include "gimpdisplayshell-draw.h"
+ #include "gimpdisplayshell-render.h"
++#include "gimpdisplayshell-selection.h"
+ 
+ #include "widgets/gimprender.h"
+ 
+@@ -253,3 +255,117 @@ gimp_display_shell_draw_image (GimpDisplayShell *shell,
+         }
+     }
+ }
++
++void
++gimp_display_shell_snapshot (GtkWidget        *widget,
++                             GtkSnapshot      *snapshot,
++                             GimpDisplayShell *shell)
++{
++  GimpImage       *image;
++  gint             width, height;
++  graphene_rect_t  bounds;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++  g_return_if_fail (snapshot != NULL);
++
++  if (! shell->display || ! gimp_display_get_shell (shell->display))
++    return;
++
++  width  = gtk_widget_get_width (widget);
++  height = gtk_widget_get_height (widget);
++
++  if (width <= 0 || height <= 0)
++    return;
++
++  graphene_rect_init (&bounds, 0.0f, 0.0f, (float) width, (float) height);
++
++  image = gimp_display_get_image (shell->display);
++
++  /* Render background with GskColorNode / GskRenderNode */
++  {
++    GdkRGBA bg_color = { 0.12f, 0.12f, 0.12f, 1.0f };
++    gtk_snapshot_append_color (snapshot, &bg_color, &bounds);
++  }
++
++  if (! image || gimp_image_get_converting (image))
++    {
++      cairo_t *cr = gtk_snapshot_append_cairo (snapshot, &bounds);
++      if (cr)
++        {
++          gimp_display_shell_draw_background (shell, cr);
++          cairo_destroy (cr);
++        }
++      return;
++    }
++
++  /* GPU-accelerated canvas viewport transformation pipeline */
++  {
++    graphene_matrix_t matrix;
++    graphene_point3d_t p_scale;
++
++    graphene_matrix_init_identity (&matrix);
++    graphene_point3d_init (&p_scale, (float) shell->scale_x, (float) shell->scale_y, 1.0f);
++    graphene_matrix_scale (&matrix, p_scale.x, p_scale.y, p_scale.z);
++
++    if (shell->rotate_angle != 0.0)
++      {
++        graphene_matrix_rotate_z (&matrix, (float) shell->rotate_angle);
++      }
++
++    gtk_snapshot_push_transform (snapshot, gsk_transform_matrix (gsk_transform_new (), &matrix));
++
++    /* If render_cache is present and valid, stream as GdkTexture / GskTextureNode */
++    if (shell->render_cache &&
++        cairo_surface_get_type (shell->render_cache) == CAIRO_SURFACE_TYPE_IMAGE)
++      {
++        GdkTexture      *texture;
++        GBytes          *bytes;
++        gint             surf_w = cairo_image_surface_get_width (shell->render_cache);
++        gint             surf_h = cairo_image_surface_get_height (shell->render_cache);
++        gint             stride = cairo_image_surface_get_stride (shell->render_cache);
++        const guchar    *data   = cairo_image_surface_get_data (shell->render_cache);
++        graphene_rect_t  tex_bounds;
++
++        if (data && surf_w > 0 && surf_h > 0)
++          {
++            bytes = g_bytes_new_static (data, (gsize) stride * surf_h);
++            texture = gdk_memory_texture_new (surf_w, surf_h,
++                                              GDK_MEMORY_B8G8R8A8_PREMULTIPLIED,
++                                              bytes, stride);
++            graphene_rect_init (&tex_bounds, 0.0f, 0.0f, (float) surf_w, (float) surf_h);
++            gtk_snapshot_append_texture (snapshot, texture, &tex_bounds);
++            g_object_unref (texture);
++            g_bytes_unref (bytes);
++          }
++      }
++    else
++      {
++        /* Cairo blit fallback */
++        cairo_t *cr = gtk_snapshot_append_cairo (snapshot, &bounds);
++        if (cr)
++          {
++            gimp_display_shell_draw_checkerboard (shell, cr);
++            gimp_display_shell_draw_image (shell, cr, 0, 0, width, height);
++            cairo_destroy (cr);
++          }
++      }
++
++    gtk_snapshot_pop (snapshot);
++  }
++
++  /* Overlay elements: handles, vector guides, selection marching ants */
++  {
++    cairo_t *cr = gtk_snapshot_append_cairo (snapshot, &bounds);
++    if (cr)
++      {
++        if (shell->canvas_item)
++          gimp_canvas_item_draw (shell->canvas_item, cr);
++        if (shell->unrotated_item)
++          gimp_canvas_item_draw (shell->unrotated_item, cr);
++        if (shell->selection)
++          gimp_display_shell_selection_draw (shell, cr);
++        cairo_destroy (cr);
++      }
++  }
++}
++
+diff --git a/app/display/gimpdisplayshell-draw.h b/app/display/gimpdisplayshell-draw.h
+index a3d4680..20ef2ff 100644
+--- a/app/display/gimpdisplayshell-draw.h
++++ b/app/display/gimpdisplayshell-draw.h
+@@ -37,3 +37,7 @@ void   gimp_display_shell_draw_image         (GimpDisplayShell   *shell,
+                                               gint                y,
+                                               gint                w,
+                                               gint                h);
++void   gimp_display_shell_snapshot           (GtkWidget          *widget,
++                                              GtkSnapshot        *snapshot,
++                                              GimpDisplayShell   *shell);
++
+diff --git a/app/display/gimpdisplayshell-render.c b/app/display/gimpdisplayshell-render.c
+index 9c5e18a..0fd5c9a 100644
+--- a/app/display/gimpdisplayshell-render.c
++++ b/app/display/gimpdisplayshell-render.c
+@@ -531,3 +531,41 @@ gimp_display_shell_render (GimpDisplayShell *shell,
+ 
+   cairo_destroy (my_cr);
+ }
++
++GdkTexture *
++gimp_display_shell_render_get_texture (GimpDisplayShell *shell,
++                                       gint              x,
++                                       gint              y,
++                                       gint              width,
++                                       gint              height)
++{
++  GdkTexture *texture = NULL;
++
++  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
++
++  if (shell->render_cache && width > 0 && height > 0)
++    {
++      guchar *data;
++      gint    stride;
++      gint    c_w;
++      gint    c_h;
++
++      cairo_surface_flush (shell->render_cache);
++      data   = cairo_image_surface_get_data (shell->render_cache);
++      stride = cairo_image_surface_get_stride (shell->render_cache);
++      c_w    = cairo_image_surface_get_width (shell->render_cache);
++      c_h    = cairo_image_surface_get_height (shell->render_cache);
++
++      if (data && c_w > 0 && c_h > 0)
++        {
++          GBytes *bytes = g_bytes_new_static (data, stride * c_h);
++          texture = gdk_memory_texture_new (c_w, c_h,
++                                            GDK_MEMORY_B8G8R8A8_PREMULTIPLIED,
++                                            bytes,
++                                            stride);
++          g_bytes_unref (bytes);
++        }
++    }
++
++  return texture;
++}
+diff --git a/app/display/gimpdisplayshell-render.h b/app/display/gimpdisplayshell-render.h
+index 32aacca..8efe0a1 100644
+--- a/app/display/gimpdisplayshell-render.h
++++ b/app/display/gimpdisplayshell-render.h
+@@ -47,3 +47,9 @@ void     gimp_display_shell_render                 (GimpDisplayShell *shell,
+                                                     gint              width,
+                                                     gint              height,
+                                                     gdouble           scale);
++
++GdkTexture * gimp_display_shell_render_get_texture (GimpDisplayShell *shell,
++                                                    gint              x,
++                                                    gint              y,
++                                                    gint              width,
++                                                    gint              height);
+diff --git a/app/display/gimpdisplayshell-tool-events.c b/app/display/gimpdisplayshell-tool-events.c
+index 0fcdd46..5692dce 100644
+--- a/app/display/gimpdisplayshell-tool-events.c
++++ b/app/display/gimpdisplayshell-tool-events.c
+@@ -1410,6 +1410,7 @@ gimp_display_shell_zoom_gesture_update (GtkGestureZoom   *gesture,
+ {
+   gdouble current_scale;
+   gdouble delta;
++  gdouble center_x, center_y;
+ 
+   if (shell->rotate_gesture_active)
+     return;
+@@ -1427,6 +1428,17 @@ gimp_display_shell_zoom_gesture_update (GtkGestureZoom   *gesture,
+   delta = (current_scale - shell->last_zoom_scale) / shell->last_zoom_scale;
+   shell->last_zoom_scale = current_scale;
+ 
++  /* Anchor zoom exactly on the pinch gesture bounding box midpoint */
++  if (gtk_gesture_get_bounding_box_center (GTK_GESTURE (gesture), &center_x, &center_y))
++    {
++      if (shell->zoom_focus_point)
++        g_slice_free (GdkPoint, shell->zoom_focus_point);
++
++      shell->zoom_focus_point = g_slice_new (GdkPoint);
++      shell->zoom_focus_point->x = RINT (center_x);
++      shell->zoom_focus_point->y = RINT (center_y);
++    }
++
+   gimp_display_shell_scale (shell,
+                             GIMP_ZOOM_PINCH,
+                             delta,
+@@ -1482,7 +1494,30 @@ gimp_display_shell_rotate_gesture_update (GtkGestureRotate *gesture,
+ 
+   constrain = (shell->last_gesture_rotate_state & GDK_CONTROL_MASK) ? TRUE : FALSE;
+ 
+-  gimp_display_shell_rotate_to (shell, constrain ? RINT (angle / 15.0) * 15.0 : angle);
++  if (constrain)
++    {
++      /* 15-degree increment stepping when Ctrl is held */
++      angle = RINT (angle / 15.0) * 15.0;
++    }
++  else
++    {
++      /* Magnetic snapping to cardinal angles (0°, 90°, 180°, 270°) within 3° tolerance */
++      #define CARDINAL_SNAP_TOLERANCE 3.0
++      gdouble norm = fmod (angle, 360.0);
++      if (norm < 0.0)
++        norm += 360.0;
++
++      if (norm < CARDINAL_SNAP_TOLERANCE || norm > (360.0 - CARDINAL_SNAP_TOLERANCE))
++        angle = angle - (norm < 180.0 ? norm : (norm - 360.0));
++      else if (fabs (norm - 90.0) <= CARDINAL_SNAP_TOLERANCE)
++        angle = angle + (90.0 - norm);
++      else if (fabs (norm - 180.0) <= CARDINAL_SNAP_TOLERANCE)
++        angle = angle + (180.0 - norm);
++      else if (fabs (norm - 270.0) <= CARDINAL_SNAP_TOLERANCE)
++        angle = angle + (270.0 - norm);
++    }
++
++  gimp_display_shell_rotate_to (shell, angle);
+ }
+ 
+ void
+@@ -1493,6 +1528,121 @@ gimp_display_shell_rotate_gesture_end (GtkGestureRotate *gesture,
+   shell->rotate_gesture_active = FALSE;
+ }
+ 
++static gboolean
++gimp_display_shell_kinetic_pan_tick (GtkWidget     *widget,
++                                     GdkFrameClock *frame_clock,
++                                     gpointer       user_data)
++{
++  GimpDisplayShell *shell = GIMP_DISPLAY_SHELL (user_data);
++  gint64            now = g_get_monotonic_time ();
++  gdouble           dt = (now - shell->kinetic_pan_last_time_us) / 1000000.0;
++  gdouble           dx, dy;
++
++  if (dt <= 0.0 || dt > 0.1)
++    dt = 1.0 / 60.0;
++
++  shell->kinetic_pan_last_time_us = now;
++
++  dx = shell->kinetic_pan_vel_x * dt;
++  dy = shell->kinetic_pan_vel_y * dt;
++
++  gimp_display_shell_scroll (shell, -RINT (dx), -RINT (dy));
++
++  /* Apply exponential decay friction */
++  shell->kinetic_pan_vel_x *= exp (-shell->kinetic_pan_friction * dt * 1000.0);
++  shell->kinetic_pan_vel_y *= exp (-shell->kinetic_pan_friction * dt * 1000.0);
++
++  if (hypot (shell->kinetic_pan_vel_x, shell->kinetic_pan_vel_y) < 5.0)
++    {
++      shell->kinetic_pan_tick_id = 0;
++      return G_SOURCE_REMOVE;
++    }
++
++  return G_SOURCE_CONTINUE;
++}
++
++gboolean
++gimp_display_shell_scroll_controller_scroll (GtkEventControllerScroll *controller,
++                                             gdouble                   dx,
++                                             gdouble                   dy,
++                                             GimpDisplayShell         *shell)
++{
++  GdkModifierType state = 0;
++  GdkEvent       *current_event;
++
++  current_event = gtk_get_current_event ();
++  if (current_event)
++    {
++      gdk_event_get_state (current_event, &state);
++      gdk_event_free (current_event);
++    }
++
++  if (state & gimp_get_toggle_behavior_mask ())
++    {
++      /* Ctrl + Scroll -> Smooth Zoom centered on pointer / midpoint */
++      gimp_display_shell_scale (shell,
++                                GIMP_ZOOM_SMOOTH,
++                                dy,
++                                GIMP_ZOOM_FOCUS_POINTER);
++    }
++  else
++    {
++      /* Smooth inertial pan along both axes */
++      gdouble h_val = gtk_adjustment_get_value (shell->hsbdata);
++      gdouble v_val = gtk_adjustment_get_value (shell->vsbdata);
++      gdouble h_step = gtk_adjustment_get_step_increment (shell->hsbdata);
++      gdouble v_step = gtk_adjustment_get_step_increment (shell->vsbdata);
++
++      gtk_adjustment_set_value (shell->hsbdata, h_val + dx * h_step);
++      gtk_adjustment_set_value (shell->vsbdata, v_val + dy * v_step);
++    }
++
++  return TRUE;
++}
++
++void
++gimp_display_shell_scroll_controller_scroll_begin (GtkEventControllerScroll *controller,
++                                                   GimpDisplayShell         *shell)
++{
++  if (shell->kinetic_pan_tick_id)
++    {
++      gtk_widget_remove_tick_callback (GTK_WIDGET (shell), shell->kinetic_pan_tick_id);
++      shell->kinetic_pan_tick_id = 0;
++    }
++}
++
++void
++gimp_display_shell_scroll_controller_scroll_end (GtkEventControllerScroll *controller,
++                                                 GimpDisplayShell         *shell)
++{
++  /* Gesture completed */
++}
++
++void
++gimp_display_shell_scroll_controller_decelerate (GtkEventControllerScroll *controller,
++                                                 gdouble                   initial_vel_x,
++                                                 gdouble                   initial_vel_y,
++                                                 GimpDisplayShell         *shell)
++{
++  if (shell->kinetic_pan_tick_id)
++    {
++      gtk_widget_remove_tick_callback (GTK_WIDGET (shell), shell->kinetic_pan_tick_id);
++      shell->kinetic_pan_tick_id = 0;
++    }
++
++  if (hypot (initial_vel_x, initial_vel_y) > 10.0)
++    {
++      shell->kinetic_pan_vel_x = initial_vel_x;
++      shell->kinetic_pan_vel_y = initial_vel_y;
++      shell->kinetic_pan_friction = 0.005;
++      shell->kinetic_pan_last_time_us = g_get_monotonic_time ();
++      shell->kinetic_pan_tick_id = gtk_widget_add_tick_callback (GTK_WIDGET (shell),
++                                                                 (GtkTickCallback) gimp_display_shell_kinetic_pan_tick,
++                                                                 shell,
++                                                                 NULL);
++    }
++}
++
+ void
+ gimp_display_shell_buffer_stroke (GimpMotionBuffer *buffer,
+                                   const GimpCoords *coords,
+@@ -2624,3 +2774,357 @@ gimp_display_triggers_context_menu (const GdkEvent   *event,
+ 
+   return FALSE;
+ }
++
++void
++gimp_display_shell_tool_events_init (GimpDisplayShell *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++  g_return_if_fail (shell->canvas != NULL);
++
++  /* GtkGestureClick */
++  shell->click_gesture = gtk_gesture_click_new ();
++  gtk_event_controller_set_propagation_phase (GTK_EVENT_CONTROLLER (shell->click_gesture),
++                                              GTK_PHASE_BUBBLE);
++  g_signal_connect (shell->click_gesture, "pressed",
++                    G_CALLBACK (gimp_display_shell_click_gesture_pressed),
++                    shell);
++  g_signal_connect (shell->click_gesture, "released",
++                    G_CALLBACK (gimp_display_shell_click_gesture_released),
++                    shell);
++  g_signal_connect (shell->click_gesture, "stopped",
++                    G_CALLBACK (gimp_display_shell_click_gesture_stopped),
++                    shell);
++  gtk_widget_add_controller (GTK_WIDGET (shell->canvas),
++                             GTK_EVENT_CONTROLLER (shell->click_gesture));
++
++  /* GtkGestureDrag */
++  shell->drag_gesture = gtk_gesture_drag_new ();
++  gtk_event_controller_set_propagation_phase (GTK_EVENT_CONTROLLER (shell->drag_gesture),
++                                              GTK_PHASE_BUBBLE);
++  g_signal_connect (shell->drag_gesture, "drag-begin",
++                    G_CALLBACK (gimp_display_shell_drag_gesture_begin),
++                    shell);
++  g_signal_connect (shell->drag_gesture, "drag-update",
++                    G_CALLBACK (gimp_display_shell_drag_gesture_update),
++                    shell);
++  g_signal_connect (shell->drag_gesture, "drag-end",
++                    G_CALLBACK (gimp_display_shell_drag_gesture_end),
++                    shell);
++  gtk_widget_add_controller (GTK_WIDGET (shell->canvas),
++                             GTK_EVENT_CONTROLLER (shell->drag_gesture));
++
++  /* GtkGestureStylus */
++  shell->stylus_gesture = gtk_gesture_stylus_new ();
++  gtk_event_controller_set_propagation_phase (GTK_EVENT_CONTROLLER (shell->stylus_gesture),
++                                              GTK_PHASE_BUBBLE);
++  g_signal_connect (shell->stylus_gesture, "down",
++                    G_CALLBACK (gimp_display_shell_stylus_gesture_down),
++                    shell);
++  g_signal_connect (shell->stylus_gesture, "motion",
++                    G_CALLBACK (gimp_display_shell_stylus_gesture_motion),
++                    shell);
++  g_signal_connect (shell->stylus_gesture, "up",
++                    G_CALLBACK (gimp_display_shell_stylus_gesture_up),
++                    shell);
++  g_signal_connect (shell->stylus_gesture, "proximity",
++                    G_CALLBACK (gimp_display_shell_stylus_gesture_proximity),
++                    shell);
++  gtk_widget_add_controller (GTK_WIDGET (shell->canvas),
++                             GTK_EVENT_CONTROLLER (shell->stylus_gesture));
++
++  /* GtkEventControllerMotion */
++  shell->motion_controller = gtk_event_controller_motion_new ();
++  gtk_event_controller_set_propagation_phase (shell->motion_controller,
++                                              GTK_PHASE_BUBBLE);
++  g_signal_connect (shell->motion_controller, "enter",
++                    G_CALLBACK (gimp_display_shell_motion_controller_enter),
++                    shell);
++  g_signal_connect (shell->motion_controller, "leave",
++                    G_CALLBACK (gimp_display_shell_motion_controller_leave),
++                    shell);
++  g_signal_connect (shell->motion_controller, "motion",
++                    G_CALLBACK (gimp_display_shell_motion_controller_motion),
++                    shell);
++  gtk_widget_add_controller (GTK_WIDGET (shell->canvas),
++                             shell->motion_controller);
++
++  /* GtkEventControllerKey */
++  shell->key_controller = gtk_event_controller_key_new ();
++  gtk_event_controller_set_propagation_phase (shell->key_controller,
++                                              GTK_PHASE_CAPTURE);
++  g_signal_connect (shell->key_controller, "key-pressed",
++                    G_CALLBACK (gimp_display_shell_key_controller_key_pressed),
++                    shell);
++  g_signal_connect (shell->key_controller, "key-released",
++                    G_CALLBACK (gimp_display_shell_key_controller_key_released),
++                    shell);
++  g_signal_connect (shell->key_controller, "modifiers",
++                    G_CALLBACK (gimp_display_shell_key_controller_modifiers),
++                    shell);
++  gtk_widget_add_controller (GTK_WIDGET (shell->canvas),
++                             shell->key_controller);
++}
++
++void
++gimp_display_shell_click_gesture_pressed (GtkGestureClick  *gesture,
++                                          gint              n_press,
++                                          gdouble           x,
++                                          gdouble           y,
++                                          GimpDisplayShell *shell)
++{
++  guint button;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  button = gtk_gesture_single_get_current_button (GTK_GESTURE_SINGLE (gesture));
++
++  if (button == GDK_BUTTON_PRIMARY)
++    {
++      GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++      GimpCoords image_coords;
++      GdkModifierType state = 0;
++
++      display_coords.x = x;
++      display_coords.y = y;
++      gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++      gimp_display_shell_initialize_tool (shell, &image_coords, state);
++    }
++  else if (button == GDK_BUTTON_SECONDARY)
++    {
++      /* Context menu */
++      GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++      GimpCoords image_coords;
++
++      display_coords.x = x;
++      display_coords.y = y;
++      gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++      gimp_display_triggers_context_menu (gtk_gesture_get_last_event (GTK_GESTURE (gesture),
++                                                                      gtk_gesture_single_get_current_sequence (GTK_GESTURE_SINGLE (gesture))),
++                                          shell, gimp_display_get_gimp (shell->display),
++                                          &image_coords, TRUE);
++    }
++}
++
++void
++gimp_display_shell_click_gesture_released (GtkGestureClick  *gesture,
++                                           gint              n_press,
++                                           gdouble           x,
++                                           gdouble           y,
++                                           GimpDisplayShell *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++}
++
++void
++gimp_display_shell_click_gesture_stopped (GtkGestureClick  *gesture,
++                                          GimpDisplayShell *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++}
++
++void
++gimp_display_shell_drag_gesture_begin (GtkGestureDrag   *gesture,
++                                       gdouble           start_x,
++                                       gdouble           start_y,
++                                       GimpDisplayShell *shell)
++{
++  GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++  GimpCoords image_coords;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  display_coords.x = start_x;
++  display_coords.y = start_y;
++  gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++  gimp_display_shell_initialize_tool (shell, &image_coords, 0);
++}
++
++void
++gimp_display_shell_drag_gesture_update (GtkGestureDrag   *gesture,
++                                        gdouble           offset_x,
++                                        gdouble           offset_y,
++                                        GimpDisplayShell *shell)
++{
++  gdouble start_x, start_y;
++  GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++  GimpCoords image_coords;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  if (gtk_gesture_drag_get_start_point (gesture, &start_x, &start_y))
++    {
++      display_coords.x = start_x + offset_x;
++      display_coords.y = start_y + offset_y;
++      gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++      gimp_display_shell_buffer_stroke (shell->motion_buffer, &image_coords,
++                                        g_get_monotonic_time () / 1000, 0, shell);
++    }
++}
++
++void
++gimp_display_shell_drag_gesture_end (GtkGestureDrag   *gesture,
++                                     gdouble           offset_x,
++                                     gdouble           offset_y,
++                                     GimpDisplayShell *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++}
++
++void
++gimp_display_shell_stylus_gesture_down (GtkGestureStylus *gesture,
++                                        gdouble           x,
++                                        gdouble           y,
++                                        GimpDisplayShell *shell)
++{
++  gdouble pressure = 1.0;
++  gdouble tilt_x = 0.0;
++  gdouble tilt_y = 0.0;
++  GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++  GimpCoords image_coords;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  gtk_gesture_stylus_get_axis (gesture, GDK_AXIS_PRESSURE, &pressure);
++  gtk_gesture_stylus_get_axis (gesture, GDK_AXIS_XTILT, &tilt_x);
++  gtk_gesture_stylus_get_axis (gesture, GDK_AXIS_YTILT, &tilt_y);
++
++  display_coords.x = x;
++  display_coords.y = y;
++  display_coords.pressure = CLAMP (pressure, 0.0, 1.0);
++  display_coords.xtilt = tilt_x;
++  display_coords.ytilt = tilt_y;
++
++  gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++  gimp_display_shell_initialize_tool (shell, &image_coords, 0);
++}
++
++void
++gimp_display_shell_stylus_gesture_motion (GtkGestureStylus *gesture,
++                                          gdouble           x,
++                                          gdouble           y,
++                                          GimpDisplayShell *shell)
++{
++  gdouble pressure = 1.0;
++  gdouble tilt_x = 0.0;
++  gdouble tilt_y = 0.0;
++  GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++  GimpCoords image_coords;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  gtk_gesture_stylus_get_axis (gesture, GDK_AXIS_PRESSURE, &pressure);
++  gtk_gesture_stylus_get_axis (gesture, GDK_AXIS_XTILT, &tilt_x);
++  gtk_gesture_stylus_get_axis (gesture, GDK_AXIS_YTILT, &tilt_y);
++
++  display_coords.x = x;
++  display_coords.y = y;
++  display_coords.pressure = CLAMP (pressure, 0.0, 1.0);
++  display_coords.xtilt = tilt_x;
++  display_coords.ytilt = tilt_y;
++
++  gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++  gimp_display_shell_buffer_stroke (shell->motion_buffer, &image_coords,
++                                    g_get_monotonic_time () / 1000, 0, shell);
++}
++
++void
++gimp_display_shell_stylus_gesture_up (GtkGestureStylus *gesture,
++                                      gdouble           x,
++                                      gdouble           y,
++                                      GimpDisplayShell *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++}
++
++void
++gimp_display_shell_stylus_gesture_proximity (GtkGestureStylus *gesture,
++                                             gdouble           x,
++                                             gdouble           y,
++                                             GimpDisplayShell *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++}
++
++void
++gimp_display_shell_motion_controller_enter (GtkEventControllerMotion *controller,
++                                            gdouble                   x,
++                                            gdouble                   y,
++                                            GimpDisplayShell         *shell)
++{
++  GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++  GimpCoords image_coords;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  display_coords.x = x;
++  display_coords.y = y;
++  gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++  gimp_display_shell_buffer_hover (shell->motion_buffer, &image_coords, 0, TRUE, shell);
++}
++
++void
++gimp_display_shell_motion_controller_leave (GtkEventControllerMotion *controller,
++                                            GimpDisplayShell         *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++}
++
++void
++gimp_display_shell_motion_controller_motion (GtkEventControllerMotion *controller,
++                                             gdouble                   x,
++                                             gdouble                   y,
++                                             GimpDisplayShell         *shell)
++{
++  GimpCoords display_coords = GIMP_COORDS_DEFAULT_VALUES;
++  GimpCoords image_coords;
++
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  display_coords.x = x;
++  display_coords.y = y;
++  gimp_display_shell_untransform_coords (shell, &display_coords, &image_coords);
++  gimp_display_shell_buffer_hover (shell->motion_buffer, &image_coords, 0, TRUE, shell);
++}
++
++gboolean
++gimp_display_shell_key_controller_key_pressed (GtkEventControllerKey *controller,
++                                               guint                  keyval,
++                                               guint                  keycode,
++                                               GdkModifierType        state,
++                                               GimpDisplayShell      *shell)
++{
++  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
++
++  if (keyval == GDK_KEY_space && ! shell->space_release_pending)
++    {
++      gimp_display_shell_space_pressed (shell, NULL);
++      return TRUE;
++    }
++
++  return FALSE;
++}
++
++void
++gimp_display_shell_key_controller_key_released (GtkEventControllerKey *controller,
++                                                guint                  keyval,
++                                                guint                  keycode,
++                                                GdkModifierType        state,
++                                                GimpDisplayShell      *shell)
++{
++  g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
++
++  if (keyval == GDK_KEY_space)
++    {
++      gimp_display_shell_space_released (shell, NULL);
++    }
++}
++
++gboolean
++gimp_display_shell_key_controller_modifiers (GtkEventControllerKey *controller,
++                                             GdkModifierType        state,
++                                             GimpDisplayShell      *shell)
++{
++  g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), FALSE);
++  return FALSE;
++}
++
+diff --git a/app/display/gimpdisplayshell-tool-events.h b/app/display/gimpdisplayshell-tool-events.h
+index 259bef9..2eaa8b6 100644
+--- a/app/display/gimpdisplayshell-tool-events.h
++++ b/app/display/gimpdisplayshell-tool-events.h
+@@ -66,3 +66,88 @@ gboolean   gimp_display_shell_hruler_button_press     (GtkWidget        *widget,
+ gboolean   gimp_display_shell_vruler_button_press     (GtkWidget        *widget,
+                                                        GdkEventButton   *bevent,
+                                                        GimpDisplayShell *shell);
++
++gboolean   gimp_display_shell_scroll_controller_scroll       (GtkEventControllerScroll *controller,
++                                                              gdouble                   dx,
++                                                              gdouble                   dy,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_scroll_controller_scroll_begin (GtkEventControllerScroll *controller,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_scroll_controller_scroll_end   (GtkEventControllerScroll *controller,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_scroll_controller_decelerate   (GtkEventControllerScroll *controller,
++                                                              gdouble                   initial_vel_x,
++                                                              gdouble                   initial_vel_y,
++                                                              GimpDisplayShell         *shell);
++
++void       gimp_display_shell_tool_events_init               (GimpDisplayShell         *shell);
++
++void       gimp_display_shell_click_gesture_pressed          (GtkGestureClick          *gesture,
++                                                              gint                      n_press,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_click_gesture_released         (GtkGestureClick          *gesture,
++                                                              gint                      n_press,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_click_gesture_stopped          (GtkGestureClick          *gesture,
++                                                              GimpDisplayShell         *shell);
++
++void       gimp_display_shell_drag_gesture_begin             (GtkGestureDrag           *gesture,
++                                                              gdouble                   start_x,
++                                                              gdouble                   start_y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_drag_gesture_update            (GtkGestureDrag           *gesture,
++                                                              gdouble                   offset_x,
++                                                              gdouble                   offset_y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_drag_gesture_end               (GtkGestureDrag           *gesture,
++                                                              gdouble                   offset_x,
++                                                              gdouble                   offset_y,
++                                                              GimpDisplayShell         *shell);
++
++void       gimp_display_shell_stylus_gesture_down            (GtkGestureStylus         *gesture,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_stylus_gesture_motion          (GtkGestureStylus         *gesture,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_stylus_gesture_up              (GtkGestureStylus         *gesture,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_stylus_gesture_proximity       (GtkGestureStylus         *gesture,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++
++void       gimp_display_shell_motion_controller_enter        (GtkEventControllerMotion *controller,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_motion_controller_leave        (GtkEventControllerMotion *controller,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_motion_controller_motion       (GtkEventControllerMotion *controller,
++                                                              gdouble                   x,
++                                                              gdouble                   y,
++                                                              GimpDisplayShell         *shell);
++
++gboolean   gimp_display_shell_key_controller_key_pressed     (GtkEventControllerKey    *controller,
++                                                              guint                     keyval,
++                                                              guint                     keycode,
++                                                              GdkModifierType           state,
++                                                              GimpDisplayShell         *shell);
++void       gimp_display_shell_key_controller_key_released    (GtkEventControllerKey    *controller,
++                                                              guint                     keyval,
++                                                              guint                     keycode,
++                                                              GdkModifierType           state,
++                                                              GimpDisplayShell         *shell);
++gboolean   gimp_display_shell_key_controller_modifiers       (GtkEventControllerKey    *controller,
++                                                              GdkModifierType           state,
++                                                              GimpDisplayShell         *shell);
++
++
+diff --git a/app/display/gimpdisplayshell.c b/app/display/gimpdisplayshell.c
+index 51f28da..a44bd2f 100644
+--- a/app/display/gimpdisplayshell.c
++++ b/app/display/gimpdisplayshell.c
+@@ -579,6 +579,20 @@ gimp_display_shell_constructed (GObject *object)
+                                               GTK_PHASE_CAPTURE);
+   shell->rotate_gesture_active = FALSE;
+ 
++  gtk_gesture_group (GTK_GESTURE (shell->zoom_gesture),
++                     GTK_GESTURE (shell->rotate_gesture));
++
++  shell->scroll_controller = gtk_event_controller_scroll_new (GTK_WIDGET (shell->canvas),
++                                                              GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES |
++                                                              GTK_EVENT_CONTROLLER_SCROLL_SMOOTH    |
++                                                              GTK_EVENT_CONTROLLER_SCROLL_KINETIC);
++  gtk_event_controller_set_propagation_phase (shell->scroll_controller,
++                                              GTK_PHASE_CAPTURE);
++  shell->kinetic_pan_tick_id = 0;
++
++  gimp_display_shell_tool_events_init (shell);
++
++
+   /*  the horizontal ruler  */
+   shell->hrule = gimp_ruler_new (GTK_ORIENTATION_HORIZONTAL);
+   gtk_widget_set_events (GTK_WIDGET (shell->hrule),
+@@ -698,6 +712,18 @@ gimp_display_shell_constructed (GObject *object)
+   g_signal_connect (shell->rotate_gesture, "end",
+                     G_CALLBACK (gimp_display_shell_rotate_gesture_end),
+                     shell);
++  g_signal_connect (shell->scroll_controller, "scroll",
++                    G_CALLBACK (gimp_display_shell_scroll_controller_scroll),
++                    shell);
++  g_signal_connect (shell->scroll_controller, "scroll-begin",
++                    G_CALLBACK (gimp_display_shell_scroll_controller_scroll_begin),
++                    shell);
++  g_signal_connect (shell->scroll_controller, "scroll-end",
++                    G_CALLBACK (gimp_display_shell_scroll_controller_scroll_end),
++                    shell);
++  g_signal_connect (shell->scroll_controller, "decelerate",
++                    G_CALLBACK (gimp_display_shell_scroll_controller_decelerate),
++                    shell);
+ 
+   /*  the zoom button  */
+   shell->zoom_button = g_object_new (GTK_TYPE_CHECK_BUTTON,
+@@ -852,9 +878,22 @@ gimp_display_shell_dispose (GObject *object)
+       shell->filter_idle_id = 0;
+     }
+ 
++  if (shell->kinetic_pan_tick_id)
++    {
++      gtk_widget_remove_tick_callback (GTK_WIDGET (shell), shell->kinetic_pan_tick_id);
++      shell->kinetic_pan_tick_id = 0;
++    }
++
++  g_clear_object (&shell->click_gesture);
++  g_clear_object (&shell->drag_gesture);
++  g_clear_object (&shell->stylus_gesture);
++  g_clear_object (&shell->motion_controller);
++  g_clear_object (&shell->key_controller);
++  g_clear_object (&shell->scroll_controller);
+   g_clear_object (&shell->zoom_gesture);
+   g_clear_object (&shell->rotate_gesture);
+ 
++
+   g_clear_pointer (&shell->render_cache,       cairo_surface_destroy);
+   g_clear_pointer (&shell->render_cache_valid, cairo_region_destroy);
+ 
+diff --git a/app/display/gimpdisplayshell.h b/app/display/gimpdisplayshell.h
+index 6d36c69..1783f11 100644
+--- a/app/display/gimpdisplayshell.h
++++ b/app/display/gimpdisplayshell.h
+@@ -99,8 +99,14 @@ struct _GimpDisplayShell
+   GList             *children;
+ 
+   GtkWidget         *canvas;           /*  GimpCanvas widget                  */
++  GtkGesture        *click_gesture;    /*  Click gesture handler for tools    */
++  GtkGesture        *drag_gesture;     /*  Drag gesture handler for coords    */
++  GtkGesture        *stylus_gesture;   /*  Stylus pen/tablet gesture handler  */
+   GtkGesture        *zoom_gesture;     /*  Zoom gesture handler for the canvas*/
+   GtkGesture        *rotate_gesture;   /*  Rotation gesture handler           */
++  GtkEventController *motion_controller; /* Pointer motion/hover controller  */
++  GtkEventController *scroll_controller; /* Smooth & kinetic scroll controller */
++  GtkEventController *key_controller;  /* Key and modifier event controller   */
+ 
+   GtkAdjustment     *hsbdata;          /*  adjustments                        */
+   GtkAdjustment     *vsbdata;
+@@ -205,6 +211,13 @@ struct _GimpDisplayShell
+   gdouble            initial_gesture_rotate_angle;
+   gboolean           rotate_gesture_active;
+ 
++  /*  the state of kinetic pan deceleration  */
++  guint              kinetic_pan_tick_id;
++  gdouble            kinetic_pan_vel_x;
++  gdouble            kinetic_pan_vel_y;
++  gint64             kinetic_pan_last_time_us;
++  gdouble            kinetic_pan_friction;
++
+   /* Two states are possible when the shell is grabbed: it can be
+    * grabbed with space (or space+button1 which is the same state),
+    * then if space is released but button1 was still pressed, we wait
+diff --git a/app/display/meson.build b/app/display/meson.build
+index c8450bf..6a3a6b6 100644
+--- a/app/display/meson.build
++++ b/app/display/meson.build
+@@ -122,6 +122,6 @@ libappdisplay = static_library('appdisplay',
+   include_directories: [ rootInclude, rootAppInclude, ],
+   c_args: '-DG_LOG_DOMAIN="Gimp-Display"',
+   dependencies: [
+-    gegl, gtk3, cairo, gexiv2
++    gegl, gtk4, cairo, gexiv2
+   ],
+ )
+diff --git a/app/gimp-version.c b/app/gimp-version.c
+index 3e76f02..319c9db 100644
+--- a/app/gimp-version.c
++++ b/app/gimp-version.c
+@@ -241,7 +241,7 @@ gimp_library_versions (gboolean localized)
+   lib_versions = temp;
+ 
+ #ifndef GIMP_CONSOLE_COMPILATION
+-  lib_version = gimp_library_version ("GTK+",
++  lib_version = gimp_library_version ("GTK4",
+                                       GTK_MAJOR_VERSION,
+                                       GTK_MINOR_VERSION,
+                                       GTK_MICRO_VERSION,
+diff --git a/app/gui/meson.build b/app/gui/meson.build
+index dc87159..e508193 100644
+--- a/app/gui/meson.build
++++ b/app/gui/meson.build
+@@ -31,7 +31,7 @@ libappgui = static_library('appgui',
+   include_directories: [ rootInclude, rootAppInclude, ],
+   c_args: '-DG_LOG_DOMAIN="Gimp-GUI"',
+   dependencies: [
+-    cairo, gegl, gdk_pixbuf, gexiv2, gio_specific, gtk3
++    cairo, gegl, gdk_pixbuf, gexiv2, gio_specific, gtk4
+   ],
+   install: false,
+ )
+diff --git a/app/menus/menus.c b/app/menus/menus.c
+index 37a3c7a..86f34f7 100644
+--- a/app/menus/menus.c
++++ b/app/menus/menus.c
+@@ -73,9 +73,6 @@ menus_init (Gimp *gimp)
+ 
+   g_return_if_fail (GIMP_IS_GIMP (gimp));
+ 
+-  /* We need to make sure the property is installed before using it */
+-  g_type_class_ref (GTK_TYPE_MENU);
+-
+   global_menu_factory = menus_get_global_menu_factory (gimp);
+ 
+   gimp_menu_factory_manager_register (global_menu_factory, "<Image>",
+diff --git a/app/menus/meson.build b/app/menus/meson.build
+index 8f728e4..1e9dfa6 100644
+--- a/app/menus/meson.build
++++ b/app/menus/meson.build
+@@ -16,6 +16,6 @@ libappmenus = static_library('appmenus',
+   include_directories: [ rootInclude, rootAppInclude, ],
+   c_args: '-DG_LOG_DOMAIN="Gimp-Menus"',
+   dependencies: [
+-    gegl, gtk3, gexiv2
++    gegl, gtk4, gexiv2
+   ],
+ )
+diff --git a/app/meson.build b/app/meson.build
+index 758ca45..e9cd329 100644
+--- a/app/meson.build
++++ b/app/meson.build
+@@ -73,7 +73,7 @@ libapp = static_library('app',
+   libapp_sources,
+   include_directories: [ rootInclude, rootAppInclude, configInclude, ],
+   c_args: libapp_c_args,
+-  dependencies: [ gdk_pixbuf, gegl, gexiv2, gtk3, ],
++  dependencies: [ gdk_pixbuf, gegl, gexiv2, gtk4, ],
+ )
+ 
+ gimpconsole_deps = [
+@@ -112,7 +112,7 @@ console_libapps = [
+ libapp_dep = declare_dependency(
+   dependencies: [
+     gimpconsole_deps,
+-    gtk3,
++    gtk4,
+   ],
+   link_with: [
+     libapp,
+diff --git a/app/propgui/meson.build b/app/propgui/meson.build
+index 432e865..3801f71 100644
+--- a/app/propgui/meson.build
++++ b/app/propgui/meson.build
+@@ -28,6 +28,6 @@ libapppropgui = static_library('apppropgui',
+   include_directories: [ rootInclude, rootAppInclude, ],
+   c_args: '-DG_LOG_DOMAIN="Gimp-PropGUI"',
+   dependencies: [
+-    gegl, gtk3, gexiv2
++    gegl, gtk4, gexiv2
+   ],
+ )
+diff --git a/app/tools/meson.build b/app/tools/meson.build
+index 91e976c..ea79ee4 100644
+--- a/app/tools/meson.build
++++ b/app/tools/meson.build
+@@ -143,6 +143,6 @@ libapptools = static_library('apptools',
+   include_directories: [ rootInclude, rootAppInclude, ],
+   c_args: '-DG_LOG_DOMAIN="Gimp-Tools"',
+   dependencies: [
+-    gegl, gtk3, gexiv2,
++    gegl, gtk4, gexiv2,
+   ],
+ )
+diff --git a/app/widgets/gimpcontainertreeview.c b/app/widgets/gimpcontainertreeview.c
+index df5891c..cfc5f39 100644
+--- a/app/widgets/gimpcontainertreeview.c
++++ b/app/widgets/gimpcontainertreeview.c
+@@ -342,6 +342,8 @@ gimp_container_tree_view_finalize (GObject *object)
+   GimpContainerTreeView *tree_view = GIMP_CONTAINER_TREE_VIEW (object);
+ 
+   g_clear_object (&tree_view->model);
++  g_clear_object (&tree_view->tree_list_model);
++  g_clear_object (&tree_view->selection_model);
+ 
+   if (tree_view->priv->toggle_cells)
+     {
+@@ -614,6 +616,19 @@ gimp_container_tree_view_name_edited (GtkCellRendererText   *cell,
+ 
+ /*  GimpContainerView methods  */
+ 
++static GListModel *
++gimp_container_tree_model_create_func (GObject  *item,
++                                       gpointer  user_data)
++{
++  if (GIMP_IS_VIEWABLE (item))
++    {
++      GimpContainer *children = gimp_viewable_get_children (GIMP_VIEWABLE (item));
++      if (children && G_IS_LIST_MODEL (children))
++        return g_object_ref (G_LIST_MODEL (children));
++    }
++  return NULL;
++}
++
+ static void
+ gimp_container_tree_view_set_container (GimpContainerView *view,
+                                         GimpContainer     *container)
+@@ -621,6 +636,28 @@ gimp_container_tree_view_set_container (GimpContainerView *view,
+   GimpContainerTreeView *tree_view = GIMP_CONTAINER_TREE_VIEW (view);
+   GimpContainer         *old_container;
+ 
++  if (container && G_IS_LIST_MODEL (container))
++    {
++      g_clear_object (&tree_view->tree_list_model);
++      tree_view->tree_list_model = gtk_tree_list_model_new (
++                                     G_LIST_MODEL (container),
++                                     FALSE,
++                                     TRUE,
++                                     gimp_container_tree_model_create_func,
++                                     tree_view,
++                                     NULL);
++      if (! tree_view->selection_model && tree_view->tree_list_model)
++        {
++          tree_view->selection_model = GTK_SELECTION_MODEL (
++            gtk_multi_selection_new (G_LIST_MODEL (tree_view->tree_list_model)));
++        }
++    }
++  else if (! container)
++    {
++      g_clear_object (&tree_view->tree_list_model);
++      g_clear_object (&tree_view->selection_model);
++    }
++
+   old_container = gimp_container_view_get_container (view);
+ 
+   if (old_container)
+@@ -1937,3 +1974,20 @@ gimp_container_tree_view_monitor_changed (GimpContainerTreeView *view)
+                           gimp_container_tree_view_monitor_changed_foreach,
+                           NULL);
+ }
++
++GtkWidget *
++gimp_container_tree_view_get_list_view (GimpContainerTreeView *tree_view)
++{
++  g_return_val_if_fail (GIMP_IS_CONTAINER_TREE_VIEW (tree_view), NULL);
++
++  return GTK_WIDGET (tree_view->list_view);
++}
++
++GtkTreeListModel *
++gimp_container_tree_view_get_tree_list_model (GimpContainerTreeView *tree_view)
++{
++  g_return_val_if_fail (GIMP_IS_CONTAINER_TREE_VIEW (tree_view), NULL);
++
++  return tree_view->tree_list_model;
++}
++
+diff --git a/app/widgets/gimpcontainertreeview.h b/app/widgets/gimpcontainertreeview.h
+index c6454be..2e5e9dc 100644
+--- a/app/widgets/gimpcontainertreeview.h
++++ b/app/widgets/gimpcontainertreeview.h
+@@ -43,6 +43,10 @@ struct _GimpContainerTreeView
+   GType                         model_columns[16];
+ 
+   GtkTreeView                  *view;
++  GtkListView                  *list_view;
++  GtkTreeListModel             *tree_list_model;
++  GtkColumnView                *column_view;
++  GtkSelectionModel            *selection_model;
+ 
+   GtkTreeViewColumn            *main_column;
+   GtkCellRenderer              *renderer_cell;
+@@ -138,3 +142,7 @@ gboolean    gimp_container_tree_view_name_edited
+                                                const gchar           *path_str,
+                                                const gchar           *new_name,
+                                                GimpContainerTreeView *tree_view);
++
++GtkWidget        * gimp_container_tree_view_get_list_view        (GimpContainerTreeView *tree_view);
++GtkTreeListModel * gimp_container_tree_view_get_tree_list_model (GimpContainerTreeView *tree_view);
++
+diff --git a/app/widgets/gimpmenubar.c b/app/widgets/gimpmenubar.c
+index ba5244e..e72d27e 100644
+--- a/app/widgets/gimpmenubar.c
++++ b/app/widgets/gimpmenubar.c
+@@ -240,3 +240,20 @@ gimp_menu_bar_new (GimpMenuModel *model,
+                        "manager", manager,
+                        NULL);
+ }
++
++GtkWidget *
++gimp_menu_bar_new_from_model (GimpMenuModel *model)
++{
++  g_return_val_if_fail (G_IS_MENU_MODEL (model), NULL);
++
++  return gtk_popover_menu_bar_new_from_model (G_MENU_MODEL (model));
++}
++
++GtkWidget *
++gimp_popover_menu_bar_new (GimpMenuModel *model)
++{
++  g_return_val_if_fail (G_IS_MENU_MODEL (model), NULL);
++
++  return gtk_popover_menu_bar_new_from_model (G_MENU_MODEL (model));
++}
++
+diff --git a/app/widgets/gimpmenubar.h b/app/widgets/gimpmenubar.h
+index 4d08656..152ddf2 100644
+--- a/app/widgets/gimpmenubar.h
++++ b/app/widgets/gimpmenubar.h
+@@ -45,7 +45,9 @@ struct _GimpMenuBarClass
+ };
+ 
+ 
+-GType       gimp_menu_bar_get_type (void);
++GType       gimp_menu_bar_get_type            (void);
+ 
+-GtkWidget * gimp_menu_bar_new      (GimpMenuModel *model,
+-                                    GimpUIManager *manager);
++GtkWidget * gimp_menu_bar_new                 (GimpMenuModel *model,
++                                               GimpUIManager *manager);
++GtkWidget * gimp_menu_bar_new_from_model      (GimpMenuModel *model);
++GtkWidget * gimp_popover_menu_bar_new         (GimpMenuModel *model);
+diff --git a/app/widgets/gimpuimanager.c b/app/widgets/gimpuimanager.c
+index 9a5e3b4..129efc4 100644
+--- a/app/widgets/gimpuimanager.c
++++ b/app/widgets/gimpuimanager.c
+@@ -1242,3 +1242,33 @@ gimp_ui_manager_image_accels_changed (GimpAction     *action,
+                                          accels ? accels : (const gchar *[]) { NULL });
+   g_free (detailed_action_name);
+ }
++
++GtkWidget *
++gimp_ui_manager_get_popover_menu (GimpUIManager *manager,
++                                  const gchar   *ui_path)
++{
++  GimpMenuModel *model;
++  GtkWidget     *popover = NULL;
++
++  g_return_val_if_fail (GIMP_IS_UI_MANAGER (manager), NULL);
++  g_return_val_if_fail (ui_path != NULL, NULL);
++
++  model = gimp_ui_manager_get_model (manager, ui_path);
++  if (model)
++    {
++      popover = gtk_popover_menu_new_from_model (G_MENU_MODEL (model));
++      g_object_unref (model);
++    }
++
++  return popover;
++}
++
++GtkWidget *
++gimp_ui_manager_create_popover_menu_from_model (GimpUIManager *manager,
++                                                GimpMenuModel *model)
++{
++  g_return_val_if_fail (GIMP_IS_UI_MANAGER (manager), NULL);
++  g_return_val_if_fail (G_IS_MENU_MODEL (model), NULL);
++
++  return gtk_popover_menu_new_from_model (G_MENU_MODEL (model));
++}
+diff --git a/app/widgets/gimpuimanager.h b/app/widgets/gimpuimanager.h
+index 5c8bf07..d8b5312 100644
+--- a/app/widgets/gimpuimanager.h
++++ b/app/widgets/gimpuimanager.h
+@@ -170,3 +170,10 @@ void            gimp_ui_manager_ui_popup_at_rect
+                                              const GdkEvent          *trigger_event,
+                                              GDestroyNotify           popdown_func,
+                                              gpointer                 popdown_data);
++
++GtkWidget     * gimp_ui_manager_get_popover_menu
++                                            (GimpUIManager           *manager,
++                                             const gchar             *ui_path);
++GtkWidget     * gimp_ui_manager_create_popover_menu_from_model
++                                            (GimpUIManager           *manager,
++                                             GimpMenuModel           *model);
+diff --git a/app/widgets/meson.build b/app/widgets/meson.build
+index fb9d335..a5eaeca 100644
+--- a/app/widgets/meson.build
++++ b/app/widgets/meson.build
+@@ -288,6 +288,6 @@ libappwidgets = static_library('appwidgets',
+   include_directories: [ rootInclude, rootAppInclude, ],
+   c_args: '-DG_LOG_DOMAIN="Gimp-Widgets"',
+   dependencies: [
+-    gegl, gtk3, gexiv2,
++    gegl, gtk4, gexiv2,
+   ],
+ )
+diff --git a/libgimp/meson.build b/libgimp/meson.build
+index 6007681..bc2eb0d 100644
+--- a/libgimp/meson.build
++++ b/libgimp/meson.build
+@@ -405,7 +405,7 @@ libgimp_deps_table = [
+     { 'gir': 'GLib-2.0',          'vapi': 'glib-2.0',        },
+     { 'gir': glib_specific_gir,   'vapi': 'glib-2.0',        },
+     { 'gir': 'GObject-2.0',       'vapi': 'gobject-2.0',     },
+-    { 'gir': 'Pango-1.0',         'vapi': 'gtk+-3.0',        },
++    { 'gir': 'Pango-1.0',         'vapi': 'gtk4',            },
+   ]
+ 
+ #Needed otherwise defcheck.py fails
+@@ -476,7 +476,7 @@ libgimpui = library('gimpui-'+ gimp_api_version,
+   libgimpui_sources,
+   dependencies: [
+     libgimp_dep,
+-    gtk3,
++    gtk4,
+   ],
+   sources: [
+     pdbgen
+@@ -495,7 +495,7 @@ libgimpui = library('gimpui-'+ gimp_api_version,
+ libgimpui_dep = declare_dependency(
+   dependencies: [
+     libgimp_dep,
+-    gtk3,
++    gtk4,
+   ],
+   link_with: [
+     libgimpui,
+@@ -665,7 +665,7 @@ else
+       symbol_prefix: [ 'gimp_ui', 'gimp' ],
+       export_packages: 'gimp-ui-' + gimp_api_version,
+       header: 'libgimp/gimpui.h',
+-      includes: [ libgimp_gir_includes, 'Gtk-3.0', libgimp_gir[0] ],
++      includes: [ libgimp_gir_includes, 'Gtk-4.0', libgimp_gir[0] ],
+       extra_args: gir_args,
+       include_directories: rootInclude,
+       install: true,
+@@ -683,7 +683,7 @@ else
+       symbol_prefix: [ 'gimp_ui', 'gimp' ],
+       export_packages: 'gimp-ui-' + gimp_api_version,
+       header: 'libgimp/gimpui.h',
+-      includes: [ libgimp_gir_includes, 'Gtk-3.0', libgimp_gir[0] ],
++      includes: [ libgimp_gir_includes, 'Gtk-4.0', libgimp_gir[0] ],
+       extra_args: gir_args,
+       include_directories: rootInclude,
+       install: true,
+diff --git a/libgimpwidgets/meson.build b/libgimpwidgets/meson.build
+index fab3554..b6d9d09 100644
+--- a/libgimpwidgets/meson.build
++++ b/libgimpwidgets/meson.build
+@@ -214,7 +214,7 @@ libgimpwidgets = library('gimpwidgets-'+ gimp_api_version,
+   libgimpwidgets_sources,
+   include_directories: rootInclude,
+   dependencies: [
+-    gegl, gexiv2, gtk3, lcms, math, mscms, screencapturekit
++    gegl, gexiv2, gtk4, lcms, math, mscms, screencapturekit
+   ],
+   c_args: [ '-DG_LOG_DOMAIN="LibGimpWidgets"', '-DGIMP_WIDGETS_COMPILATION', ],
+   link_with: [
+@@ -240,7 +240,7 @@ test_preview_area = executable('test-preview-area',
+   'test-preview-area.c',
+   include_directories: rootInclude,
+   dependencies: [
+-    gtk3,
++    gtk4,
+   ],
+   c_args: '-DG_LOG_DOMAIN="LibGimpWidgets"',
+   link_with: [ libgimpwidgets, ],
+@@ -252,7 +252,7 @@ test_eevl = executable('test-eevl',
+   'test-eevl.c',
+   include_directories: rootInclude,
+   dependencies: [
+-    glib, gtk3, math,
++    glib, gtk4, math,
+   ],
+   c_args: '-DG_LOG_DOMAIN="LibGimpWidgets"',
+   link_with: [ libgimpwidgets, ],
+diff --git a/menus/image-menu.ui.in.in b/menus/image-menu.ui.in.in
+index b05217d..aecce73 100644
+--- a/menus/image-menu.ui.in.in
++++ b/menus/image-menu.ui.in.in
+@@ -867,6 +867,11 @@
+     <submenu>
+       <attribute name="label" translatable="yes" context="windows-action">_Windows</attribute>
+       <section>
++        <submenu>
++          <attribute name="label" translatable="yes" context="windows-action">_Workspaces</attribute>
++          <item><attribute name="action">app.windows-workspace-default</attribute></item>
++          <item><attribute name="action">app.windows-workspace-photogimp</attribute></item>
++        </submenu>
+         <submenu>
+           <attribute name="label" translatable="yes" context="windows-action">_Recently Closed Docks</attribute>
+           <!-- Recently closed docks will be filled here automatically -->
+diff --git a/meson.build b/meson.build
+index 38ee5f0..d7ca7ea 100644
+--- a/meson.build
++++ b/meson.build
+@@ -439,7 +439,7 @@ mscms             = platform_windows ? cc.find_library('mscms') : no_dep
+ screencapturekit  = platform_osx ? dependency('appleframeworks', modules: 'ScreenCaptureKit', required: false) : no_dep
+ 
+ atk_minver        = '2.4.0'
+-atk               = dependency('atk',                version: '>='+atk_minver)
++atk               = no_dep
+ babl_minver       = '0.1.118'
+ babl              = dependency('babl-0.1',           version: '>='+babl_minver)
+ # TODO: we want to bump to Cairo 1.17.2 when possible in order to use
+@@ -455,6 +455,9 @@ fontconfig        = dependency(fontconfig_name,      version: '>='+fontconfig_mi
+ freetype2_minver  = '2.1.7'
+ freetype2         = dependency('freetype2',          version: '>='+freetype2_minver)
+ 
++gudev             = gudev_option ? dependency('gudev-1.0', version: '>=167') : no_dep
++conf.set('HAVE_UDEV', gudev.found())
++
+ gdk_pixbuf_minver = '2.32.0'
+ gdk_pixbuf        = dependency('gdk-pixbuf-2.0',     version: '>='+gdk_pixbuf_minver)
+ gdk_pixbuf_version_split = gdk_pixbuf_minver.split('.')
+@@ -476,30 +479,27 @@ gio               = dependency('gio-2.0')
+ gio_specific_name = platform_windows ? 'gio-windows-2.0' : 'gio-unix-2.0'
+ gio_specific      = dependency(gio_specific_name)
+ 
+-glib_minver       = '2.70.0'
++glib_minver       = '2.80.0'
+ glib              = dependency('glib-2.0',           version: '>='+glib_minver)
+ glib_version_split = glib_minver.split('.')
+ glib_major = glib_version_split[0].to_int()
+ glib_minor = glib_version_split[1].to_int()
+ glib_min_macro = 'GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor)
+ add_project_arguments('-DGLIB_VERSION_MIN_REQUIRED=' + glib_min_macro, language: 'c')
+-# XXX: ideally the MIN_REQUIRED and MAX_ALLOWED should be the same
+-# version but we have a bunch of GLIB_CHECK_VERSION() conditional code
+-# (higher being 2.76.0). So we use this max version to avoid useless
+-# warnings. We should clean up all conditional code once we bump the
+-# minimum requirement.
+-add_project_arguments('-DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_2_76', language: 'c')
++add_project_arguments('-DGLIB_VERSION_MAX_ALLOWED=' + glib_min_macro, language: 'c')
+ 
+ gi                = dependency('gobject-introspection-1.0')
+ 
+ gobject           = dependency('gobject-2.0',        version: '>='+glib_minver)
+ gmodule           = dependency('gmodule-no-export-2.0')
+ 
+-gtk3_minver       = '3.24.0'
+-gtk3              = dependency('gtk+-3.0',           version: '>='+gtk3_minver)
++gtk4_minver       = '4.14.0'
++gtk4              = dependency('gtk4',               version: '>='+gtk4_minver)
++gtk3_minver       = gtk4_minver
++gtk3              = gtk4 # backward-compatibility alias
+ gdk_specific_name = platform_osx ? 'gdk-quartz-3.0' : 'gdk-3.0'
+-gdk_specific      = dependency(gdk_specific_name)
+-gtk_version_split = gtk3_minver.split('.')
++gdk_specific      = gtk4
++gtk_version_split = gtk4_minver.split('.')
+ gtk_major = gtk_version_split[0].to_int()
+ gtk_minor = gtk_version_split[1].to_int()
+ gtk_min_macro = 'GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor)
+@@ -802,7 +802,7 @@ conf.set('HAVE_EXCHNDL', drmingw.found())
+ ################################################################################
+ # Check for x11 support
+ 
+-x11_target = gtk3.get_variable(pkgconfig: 'targets').contains('x11')
++x11_target = gtk4.get_variable(pkgconfig: 'targets', default_value: 'x11 wayland').contains('x11')
+ 
+ x11   = x11_target ? dependency('x11')    : no_dep
+ xmu   = x11_target ? dependency('xmu')    : no_dep
+@@ -1810,7 +1810,7 @@ install_conf.set('EXIV2_REQUIRED_VERSION',        exiv2_minver)
+ install_conf.set('GEXIV2_REQUIRED_VERSION',       gexiv2_minver)
+ install_conf.set('GEXIV2_MAX_VERSION',            gexiv2_maxver)
+ install_conf.set('GLIB_REQUIRED_VERSION',         glib_minver)
+-install_conf.set('GTK_REQUIRED_VERSION',          gtk3_minver)
++install_conf.set('GTK_REQUIRED_VERSION',          gtk4_minver)
+ install_conf.set('HARFBUZZ_REQUIRED_VERSION',     harfbuzz_minver)
+ install_conf.set('JSON_GLIB_REQUIRED_VERSION',    json_glib_minver)
+ install_conf.set('LCMS_REQUIRED_VERSION',         lcms_minver)
+@@ -2174,7 +2174,7 @@ pkgconfig.generate(libgimpui,
+   version: gimp_version,
+   requires: [
+     libgimp,
+-    gtk3,
++    gtk4,
+   ],
+   libraries: [
+     libgimpwidgets,
+diff --git a/meson_options.txt b/meson_options.txt
+index 807d24b..3593319 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -69,3 +69,8 @@ option('javascript',        type: 'feature', value: 'auto', description: 'Instal
+ option('lua',               type: 'boolean', value: false,  description: 'Install Lua plug-ins (experimental)')
+ 
+ option('debug-self-in-build', type: 'boolean', value: false, description: 'Run in-build GIMP within gdb/lldb for debugging purpose')
++
++# GTK4 & GSK Rendering Pipeline Options
++option('canvas-gsk-renderer',   type: 'combo',   value: 'auto', description: 'Default GSK rendering backend for canvas (vulkan, opengl, cairo, auto)', choices: [ 'auto', 'vulkan', 'opengl', 'cairo' ])
++option('canvas-gpu-acceleration', type: 'boolean', value: true, description: 'Enable GSK GPU canvas hardware acceleration')
++
+diff --git a/modules/meson.build b/modules/meson.build
+index 7fb84cb..6cf62d3 100644
+--- a/modules/meson.build
++++ b/modules/meson.build
+@@ -1,6 +1,6 @@
+ 
+ modules_deps = [
+-  gtk3, babl, gegl, gexiv2, math,
++  gtk4, babl, gegl, gexiv2, math,
+ ]
+ 
+ color_selector_libs = [
+@@ -43,6 +43,9 @@ modules = [
+   }, {
+     'name': 'display-filter-aces-rrt',
+     'link': display_filter_libs,
++  }, {
++    'name': 'display-filter-opencolorio',
++    'link': display_filter_libs,
+   }, {
+     'name': 'display-filter-gamma',
+     'link': display_filter_libs,
+diff --git a/plug-ins/file-psd/meson.build b/plug-ins/file-psd/meson.build
+index 1037e05..a232f8a 100644
+--- a/plug-ins/file-psd/meson.build
++++ b/plug-ins/file-psd/meson.build
+@@ -3,6 +3,7 @@ plugin_name = 'file-psd'
+ plugin_sourcecode = [
+   'psd-image-res-load.c',
+   'psd-layer-res-load.c',
++  'psd-layer-res-export.c',
+   'psd-load.c',
+   'psd-export.c',
+   'psd-thumb-load.c',
+diff --git a/plug-ins/metadata/meson.build b/plug-ins/metadata/meson.build
+index d0fc350..ff3f836 100644
+--- a/plug-ins/metadata/meson.build
++++ b/plug-ins/metadata/meson.build
+@@ -80,7 +80,7 @@ plugin_exe = executable(plugin_name,
+                         plugin_sources,
+                         include_directories: [ rootInclude, ],
+                         dependencies: [
+-                          gtk3, gegl, gexiv2,
++                          gtk4, gegl, gexiv2,
+                         ],
+                         link_with: [
+                           libgimp,
+diff --git a/plug-ins/python/meson.build b/plug-ins/python/meson.build
+index 535931a..f86086f 100644
+--- a/plug-ins/python/meson.build
++++ b/plug-ins/python/meson.build
+@@ -20,6 +20,9 @@ endif
+ 
+ subdir('python-console')
+ subdir('tests')
++subdir('sam2-magic-selection')
++subdir('rmbg-background-removal')
++subdir('generative-inpainting')
+ 
+ foreach plugin : python_plugins
+   name = plugin.get('name')
+diff --git a/plug-ins/twain/meson.build b/plug-ins/twain/meson.build
+index db41547..4042f9a 100644
+--- a/plug-ins/twain/meson.build
++++ b/plug-ins/twain/meson.build
+@@ -28,7 +28,7 @@ twain = executable(plugin_name,
+                    dependencies: [
+                      libgimp_dep,
+                      glib,
+-                     gtk3,
++                     gtk4,
+                    ],
+                    win_subsystem: 'windows',
+                    install: true,
+diff --git a/themes/meson.build b/themes/meson.build
+index 7bb13ad..92b5d0f 100644
+--- a/themes/meson.build
++++ b/themes/meson.build
+@@ -1,4 +1,5 @@
+ subdir('Default')
++subdir('OLED')
+ subdir('System')
+ 
+ themes = [
+diff --git a/tools/meson.build b/tools/meson.build
+index 25a2ab9..e10623d 100644
+--- a/tools/meson.build
++++ b/tools/meson.build
+@@ -12,7 +12,7 @@ gimptool = executable('gimptool' + exec_ver,
+   'gimptool.c',
+   include_directories: rootInclude,
+   dependencies: [
+-    gegl, gtk3, gexiv2
++    gegl, gtk4, gexiv2
+   ],
+   link_with: [
+     libgimpbase,
+@@ -27,7 +27,7 @@ gimp_test_clipboard = executable('gimp-test-clipboard' + exec_ver,
+   'gimp-test-clipboard.c',
+   include_directories: rootInclude,
+   dependencies: [
+-    gegl, gtk3, gexiv2
++    gegl, gtk4, gexiv2
+   ],
+   install: true,
+ )

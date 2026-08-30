@@ -1,0 +1,89 @@
+# ===== Photogimp-Pro base rules =====
+.var/app/org.gimp.GIMP/.ld.so
+.var/app/org.gimp.GIMP/data
+.var/app/org.gimp.GIMP/current
+.vscode/*
+.devcontainer
+__pycache__/
+*.pyc
+*.pyo
+*.exe
+*.dll
+*.so
+*.so.*
+*.dylib
+*.bin
+*.msi
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.AppImage
+*.app
+*.jar
+*.class
+*.wasm
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tbz2
+*.tar.xz
+*.txz
+dist/
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# ===== PhotoGIMP-Pro-unified additions =====
+
+# Partial / failed meson builds (we keep _build/ out of the repo)
+gimp-source/_build/
+gimp-source/build/
+gimp-source/.git/
+
+# Submodule traces (gimp-data is inlined as a folder)
+gimp-source/.gitmodules
+gimp-source/gimp-data/.git/
+
+# Local test/cache artifacts
+tests/__pycache__/
+tests/e2e/__pycache__/
+tests/e2e/harness/__pycache__/
+tests/e2e/tier*/__pycache__/
+tests/stress/__pycache__/
+tests/.pytest_cache/
+tests/**/__pycache__/
+
+# Build reports are useful — keep them in tree but exclude local-only artifacts
+build/*.log.tmp
+build/_*.tmp
+
+# Local integration backup (created by integrate_photogimp.py)
+.var/app/org.gimp.GIMP/config/GIMP/GIMP-backup-*/
+
+# Python bytecode (in case any slips through)
+__pycache__/
+*.py[cod]
+
+# Editor swap files
+*.swp
+*.swo
+*~

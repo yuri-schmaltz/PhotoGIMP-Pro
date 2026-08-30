@@ -1,0 +1,49 @@
+/* Dark Pro / OLED High-Contrast Theme for GIMP 3.0 */
+
+/* Basic foreground, background and border colors */
+@define-color fg-color               #f9fafb;
+@define-color bg-color               #141416;
+@define-color border-color           #2e2e3a;
+
+/********* Variants for foreground colors *********/
+
+/* In places where we want not as strongly contrasted text */
+@define-color dimmed-fg-color        #9ca3af;
+/* Disabled items, such as disabled actions in menus */
+@define-color disabled-fg-color      #6b7280;
+/* Disabled buttons */
+@define-color disabled-button-color  #4b5563;
+
+/********* Variants for background colors *********/
+
+/* Background color for hovered items */
+@define-color hover-color            #2c2c36;
+/* Background color for widgets in docks/panels */
+@define-color widget-bg-color        #18181c;
+/* Color for selected items */
+@define-color selected-color         #202026;
+
+/* Deep black OLED background for canvas / cards */
+@define-color extreme-bg-color       #000000;
+/* Highlighted selected item */
+@define-color extreme-selected-color #282832;
+
+/********* Variants for border colors *********/
+
+@define-color strong-border-color    #363644;
+@define-color stronger-border-color  #424252;
+@define-color edge-border-color      #2e2e3a;
+
+/********* Accent Colors *********/
+
+@define-color accent-color           #3b82f6;
+@define-color accent-hover-color     #60a5fa;
+@define-color accent-active-color    #2563eb;
+
+/********* Colors for special cases *********/
+
+@define-color scrollbar-slider-color rgba(255, 255, 255, 0.18);
+@define-color scrollbar-trough-color transparent;
+@define-color ruler-color            rgba(20, 20, 22, 0.6);
+
+@import url("common-dark.css");

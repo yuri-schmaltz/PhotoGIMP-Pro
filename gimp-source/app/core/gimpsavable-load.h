@@ -1,0 +1,207 @@
+/* GIMP - The GNU Image Manipulation Program
+ * Copyright (C) 1995-1997 Spencer Kimball and Peter Mattis
+ *
+ * gimpsavable.h
+ * Copyright (C) 2026 Jehan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#pragma once
+
+
+#define GIMP_WLBR_ERROR (gimp_wlbr_error_quark ())
+
+typedef enum
+{
+  GIMP_WLBR_ERROR_OPEN,     /*  Opening file failed   */
+  GIMP_WLBR_ERROR_READ,     /*  Reading file failed   */
+  GIMP_WLBR_ERROR_WRITE,    /*  Writing file failed   */
+  GIMP_WLBR_ERROR_DELETE,   /*  Deleting file failed  */
+  GIMP_WLBR_ERROR_FORMAT,   /*  Invalid format        */
+  GIMP_WLBR_ERROR_DATA,     /*  Invalid data          */
+  GIMP_WLBR_ERROR_INTERNAL, /*  Internal code error   */
+} GimpWlbrError;
+
+
+/* Macro to set @error.
+ * If @error is already set, just ignore further errors in the same call.
+ * When error is NULL, we are in a case where we control the input data
+ * in a way that we are not supposed to ever reach this point. So we
+ * trigger a CRITICAL and return FALSE because it's a bug.
+ */
+#define GIMP_SAVABLE_LOAD_ERROR(error, error_code, cleanup, message, ...) \
+  G_STMT_START {                                                          \
+      if (error)                                                          \
+        {                                                                 \
+          if (*((GError**) error) == NULL)                                \
+            g_set_error (error, GIMP_WLBR_ERROR, error_code,              \
+                         message, __VA_ARGS__);                           \
+        }                                                                 \
+      else                                                                \
+        {                                                                 \
+          g_critical ("%s (%s - line %d): internal error.\n",             \
+                      G_STRFUNC, __FILE__, __LINE__);                     \
+          cleanup;                                                        \
+          return FALSE;                                                   \
+        }                                                                 \
+  } G_STMT_END
+
+
+void         gimp_savable_load                   (GType                    savable_type,
+                                                  GimpLoadState           *state);
+void         gimp_savable_config_load            (GType                    config_type,
+                                                  const gchar             *element_name,
+                                                  GimpLoadState           *state,
+                                                  GimpExitElementhandler   secondary_exit_handler,
+                                                  ...) G_GNUC_NULL_TERMINATED;
+void         gimp_savable_parasite_load          (GimpLoadState           *state,
+                                                  GObject                 *image_or_item);
+
+
+/* Functions to be used from inside GimpSavable's load() implementation */
+
+void         gimp_savable_load_push_active_object (GimpLoadState            *state,
+                                                   GObject                  *object);
+GObject    * gimp_savable_load_pop_active_object  (GimpLoadState            *state);
+GObject    * gimp_savable_load_peek_active_object (GimpLoadState            *state);
+
+void         gimp_savable_load_store_from_string (GimpLoadState            *state,
+                                                  GError                  **error,
+                                                   ...) G_GNUC_NULL_TERMINATED;
+void         gimp_savable_load_store_value        (GimpLoadState            *state,
+                                                   const gchar              *key,
+                                                   gpointer                  data,
+                                                   GDestroyNotify            free_data);
+
+gboolean     gimp_savable_load_get_values         (GimpLoadState            *state,
+                                                   ...) G_GNUC_NULL_TERMINATED;
+GValue     * gimp_savable_load_get_gvalue         (GimpLoadState            *state,
+                                                   const gchar              *value_name);
+gboolean     gimp_savable_load_get_parent_values  (GimpLoadState            *state,
+                                                   ...) G_GNUC_NULL_TERMINATED;
+void         gimp_savable_load_bubble_up          (GimpLoadState            *state,
+                                                   const gchar              *key);
+
+void         gimp_savable_load_add_handlers       (GimpLoadState            *state,
+                                                   const gchar              *element_name,
+                                                   GimpEnterElementHandler   enter_callback,
+                                                   GimpExitElementhandler    exit_callback,
+                                                   gpointer                  user_data,
+                                                   GDestroyNotify            free_data);
+
+void         gimp_savable_load_add_simple_handler (GimpLoadState            *state,
+                                                   const gchar              *element_name,
+                                                   GType                     text_value_type,
+                                                   GimpExitElementhandler    secondary_exit_handler,
+                                                   gpointer                  user_data,
+                                                   GDestroyNotify            free_data,
+                                                   gboolean                  all_attributes_needed,
+                                                   gboolean                  fatal_on_missing,
+                                                   ...) G_GNUC_NULL_TERMINATED;
+
+
+/* Generic element handlers as args to gimp_savable_load_add_handlers(). */
+
+gboolean     gimp_savable_enter_unit             (GimpLoadState            *state,
+                                                  const gchar             **attribute_names,
+                                                  const gchar             **attribute_values,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_exit_unit              (GimpLoadState            *state,
+                                                  const gchar              *text,
+                                                  gsize                     len,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_enter_color            (GimpLoadState            *state,
+                                                  const gchar             **attribute_names,
+                                                  const gchar             **attribute_values,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_exit_color             (GimpLoadState            *state,
+                                                  const gchar              *text,
+                                                  gsize                     len,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_enter_format           (GimpLoadState            *state,
+                                                  const gchar             **attribute_names,
+                                                  const gchar             **attribute_values,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_exit_format            (GimpLoadState            *state,
+                                                  const gchar              *text,
+                                                  gsize                     len,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_enter_space            (GimpLoadState            *state,
+                                                  const gchar             **attribute_names,
+                                                  const gchar             **attribute_values,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_exit_space             (GimpLoadState            *state,
+                                                  const gchar              *text,
+                                                  gsize                     len,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_enter_value_array      (GimpLoadState            *state,
+                                                  const gchar             **attribute_names,
+                                                  const gchar             **attribute_values,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_exit_value_array       (GimpLoadState            *state,
+                                                  const gchar              *text,
+                                                  gsize                     len,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_enter_matrix           (GimpLoadState            *state,
+                                                  const gchar             **attribute_names,
+                                                  const gchar             **attribute_values,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+gboolean     gimp_savable_exit_matrix            (GimpLoadState            *state,
+                                                  const gchar              *text,
+                                                  gsize                     len,
+                                                  gpointer                  user_data,
+                                                  GError                  **error);
+
+
+/* Friend functions used only in gimpimage-savable.c */
+
+gboolean      gimp_savable_load_parse            (GimpLoadState            *state,
+                                                  Gimp                     *gimp,
+                                                  GFile                    *backup_dir,
+                                                  gint                      ID,
+                                                  GError                  **error);
+void          gimp_savable_load_free_state       (GimpLoadState            *state);
+void          gimp_savable_load_append_text      (GimpLoadState            *state,
+                                                  const gchar              *text,
+                                                  gsize                     text_len);
+const gchar * gimp_savable_load_get_text         (GimpLoadState            *state,
+                                                  gsize                    *text_len);
+
+gboolean      gimp_savable_enter_element         (GimpLoadState            *state,
+                                                  const gchar              *element_name,
+                                                  const gchar             **attribute_names,
+                                                  const gchar             **attribute_values,
+                                                  GError                  **error);
+gboolean      gimp_savable_exit_element          (GimpLoadState            *state,
+                                                  const gchar              *element_name,
+                                                  const gchar              *text,
+                                                  gsize                     text_len,
+                                                  GError                  **error);
+
+
+/*  The error domain associated with format loading. */
+
+GQuark       gimp_wlbr_error_quark               (void) G_GNUC_CONST;

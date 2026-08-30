@@ -1,0 +1,76 @@
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 73.180s
+
+OK
+
+--- [Audit 1] Memory Leak & RSS Multi-Iteration Audit ---
+  Base Initial Process RSS: 22.93 MB
+  Iteration 1/4: 244 tests in 11.50s | RSS: 47.73 MB
+  Iteration 2/4: 244 tests in 11.87s | RSS: 88.88 MB
+  Iteration 3/4: 244 tests in 11.85s | RSS: 89.56 MB
+  Iteration 4/4: 244 tests in 11.85s | RSS: 89.89 MB
+  Warmup RSS (Iter 2): 88.88 MB -> Final RSS (Iter 4): 89.89 MB
+  Steady-State RSS Delta: +1.01 MB
+
+--- [Audit 1.2] GObject / GEGL Buffer Allocation Stress ---
+  Alloc Stress Heap Growth: -0.01 MB | RSS Growth: -40.28 MB
+
+--- [Audit 2] FPS & Canvas Viewport Benchmarking ---
+
+  Scenario: 1. Smooth Inertial Pan (4K Viewport)
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.66 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.78 ms | p99 = 16.82 ms
+    Jitter (StdDev): 0.013 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 2. Pinch-to-Zoom (0.1x to 32.0x)
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.66 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.77 ms | p99 = 16.81 ms
+    Jitter (StdDev): 0.012 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 3. Multi-Touch Canvas Rotation (0-360 deg)
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.66 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.78 ms | p99 = 16.83 ms
+    Jitter (StdDev): 0.013 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 4. Multi-Layer Composite Blit & Live GEGL Curves
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.68 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.77 ms | p99 = 16.79 ms
+    Jitter (StdDev): 0.010 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 5. Unified Free Transform Gizmo Interactive Drag
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.67 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.77 ms | p99 = 16.78 ms
+    Jitter (StdDev): 0.009 ms | Dropped (>16.6ms): 100.00%
+
+--- [Audit 3] Shortcut Integrity & Conflict Validation ---
+  Total Active Shortcut Bindings: 49
+  Total Inactive / Default Declarations: 108
+  [✓] Ctrl+T strictly mapped to tools-unified-transform (Unified Free Transform)
+  [✓] Ctrl+J strictly mapped to layers-duplicate
+  [✓] Ctrl+D strictly mapped to select-none
+  [✓] 'v' strictly mapped to tools-move
+  [✓] 'b' strictly mapped to tools-paintbrush
+  [✓] Ctrl+K & Ctrl+P strictly mapped to dialogs-action-search & dialogs-command-palette in core action descriptors
+  [✓] Zero conflicting shortcut collisions detected across all active actions!
+
+--- [Audit 4] Integration Script Synchronization Audit ---
+  [✓] integrate_photogimp.py --status executed successfully with code 0
+  [✓] integrate_photogimp.py --apply-source executed successfully with code 0
+  [✓] SHA-256 Verified (gimp.css): 8856e752a075...
+  [✓] SHA-256 Verified (gimprc): 45cf8fd2f5fc...
+  [✓] SHA-256 Verified (sessionrc): 1c0536df2337...
+  [✓] SHA-256 Verified (toolrc): 572a3d4ba9e3...
+  [✓] SHA-256 Verified (shortcutsrc): b1489403d803...
+  [✓] SHA-256 Verified (contextrc): 33d8dc169df8...
+  [✓] Bidirectional source & reference sync verified with 100% byte fidelity!

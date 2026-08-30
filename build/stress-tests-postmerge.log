@@ -1,0 +1,109 @@
+............................................................................
+----------------------------------------------------------------------
+Ran 76 tests in 88.948s
+
+OK
+
+=== Testing Feature 16: Local SAM 2 ===
+[PASS] F16_01_sam2_negative_prompt_points: Successfully handled negative prompt points
+[PASS] F16_02_sam2_corner_prompts: Corner values: (255, 255, 255, 255)
+[PASS] F16_03_sam2_1x1_image: Mask length: 1
+[PASS] F16_04_sam2_empty_points: Empty points resulted in 2500 zero-bytes
+[PASS] F16_05_sam2_bbox_oob: Clipped mask length 10000
+
+=== Testing Feature 17: RMBG-1.4 ===
+[PASS] F17_01_rmbg_1x1_image: Matte value: 255
+[PASS] F17_02_rmbg_0x0_image: Handled 0x0 safely
+[PASS] F17_03_rmbg_extreme_aspect_ratio: 10000x1 and 1x10000 handled without crash
+[PASS] F17_04_rmbg_defringe_consistency: Defringe returned consistent buffer size
+
+=== Testing Feature 18: Local Generative Inpainting ===
+[PASS] F18_01_roi_bounds_extreme_tall: ROI bounds: (4936, 0, 192, 9984)
+[PASS] F18_02_roi_bounds_full_canvas: Full canvas ROI: (0, 0, 512, 512)
+[PASS] F18_03_feather_mask_small_and_zero_radius: Zero radius safe: True, 4x4 length: 16
+[PASS] F18_04_inpaint_roi_buffer_dims: Output buffer length: 49152 bytes
+
+=== Testing Feature 15: Smart Objects ===
+[PASS] F15_01_smart_object_repeated_scaling: Accumulated scale after 900 steps: 1.0000000000
+[PASS] F15_02_corrupted_asset_payloads_recovery: All corrupted asset payloads correctly intercepted by error guards
+[PASS] F15_03_smart_object_c_interface_contracts: All GimpSmartObject C prototypes verified
+
+=== Testing Feature 19: Smart PSD & Color Management ===
+[PASS] F19_01_psd_layer_res_export_blocks: lfx2 (FX), curv (Adj), SoLd (Smart Object) resource blocks verified
+[PASS] F19_02_ocio_aces_curve_numerics: Black: -0.00038, 18% Gray: 0.10559, White: 0.61912, HDR 1000: 1.01612
+[PASS] F19_03_littlecms_softproof_gamut_detection: Delta E 2000 out-of-gamut separation: 5.486
+
+============================================================
+Summary: Total Probes: 19 | Passed: 19 | Failed: 0
+============================================================
+
+--- [Audit 1] Memory Leak & RSS Multi-Iteration Audit ---
+  Base Initial Process RSS: 32.88 MB
+  Iteration 1/4: 244 tests in 11.71s | RSS: 50.22 MB
+  Iteration 2/4: 244 tests in 11.66s | RSS: 92.20 MB
+  Iteration 3/4: 244 tests in 11.62s | RSS: 93.11 MB
+  Iteration 4/4: 244 tests in 11.69s | RSS: 93.30 MB
+  Warmup RSS (Iter 2): 92.20 MB -> Final RSS (Iter 4): 93.30 MB
+  Steady-State RSS Delta: +1.11 MB
+
+--- [Audit 1.2] GObject / GEGL Buffer Allocation Stress ---
+  Alloc Stress Heap Growth: -0.01 MB | RSS Growth: -23.63 MB
+
+--- [Audit 2] FPS & Canvas Viewport Benchmarking ---
+
+  Scenario: 1. Smooth Inertial Pan (4K Viewport)
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.66 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.78 ms | p99 = 16.84 ms
+    Jitter (StdDev): 0.015 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 2. Pinch-to-Zoom (0.1x to 32.0x)
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.67 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.78 ms | p99 = 16.81 ms
+    Jitter (StdDev): 0.012 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 3. Multi-Touch Canvas Rotation (0-360 deg)
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.66 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.78 ms | p99 = 16.82 ms
+    Jitter (StdDev): 0.013 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 4. Multi-Layer Composite Blit & Live GEGL Curves
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.67 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.76 ms | Median 16.76 ms
+    Percentiles : p95 = 16.77 ms | p99 = 16.79 ms
+    Jitter (StdDev): 0.009 ms | Dropped (>16.6ms): 100.00%
+
+  Scenario: 5. Unified Free Transform Gizmo Interactive Drag
+    Frames: 300 | Duration: 5.03s
+    Average FPS : 59.69 FPS (Target: >= 60.0 FPS)
+    Frame Time  : Mean 16.75 ms | Median 16.75 ms
+    Percentiles : p95 = 16.77 ms | p99 = 16.79 ms
+    Jitter (StdDev): 0.010 ms | Dropped (>16.6ms): 100.00%
+
+--- [Audit 3] Shortcut Integrity & Conflict Validation ---
+  Total Active Shortcut Bindings: 49
+  Total Inactive / Default Declarations: 108
+  [✓] Ctrl+T strictly mapped to tools-unified-transform (Unified Free Transform)
+  [✓] Ctrl+J strictly mapped to layers-duplicate
+  [✓] Ctrl+D strictly mapped to select-none
+  [✓] 'v' strictly mapped to tools-move
+  [✓] 'b' strictly mapped to tools-paintbrush
+  [✓] Ctrl+K & Ctrl+P strictly mapped to dialogs-action-search & dialogs-command-palette in core action descriptors
+  [✓] Zero conflicting shortcut collisions detected across all active actions!
+
+--- [Audit 4] Integration Script Synchronization Audit ---
+  [✓] integrate_photogimp.py --status executed successfully with code 0
+  [✓] integrate_photogimp.py --apply-source executed successfully with code 0
+  [✓] SHA-256 Verified (gimp.css): 8856e752a075...
+  [✓] SHA-256 Verified (gimprc): 45cf8fd2f5fc...
+  [✓] SHA-256 Verified (sessionrc): 1c0536df2337...
+  [✓] SHA-256 Verified (toolrc): 572a3d4ba9e3...
+  [✓] SHA-256 Verified (shortcutsrc): b1489403d803...
+  [✓] SHA-256 Verified (contextrc): 33d8dc169df8...
+  [✓] Bidirectional source & reference sync verified with 100% byte fidelity!

@@ -1,0 +1,40 @@
+/* Dark Pro / OLED Specific Interface Styles */
+@import url("common.css");
+
+/* Paned separator handles */
+paned.horizontal > separator {
+  background-color: @edge-border-color;
+  min-width: 1px;
+}
+
+paned.vertical > separator {
+  background-color: @edge-border-color;
+  min-height: 1px;
+}
+
+/* Button flat styling */
+button:not(.flat) {
+  box-shadow: 0 1px @extreme-selected-color inset;
+}
+
+button:not(.flat):hover {
+  box-shadow: none;
+}
+
+/* GimpSpinScale Progress Bar Colors */
+GimpSpinScale entry, .gimp-spin-scale entry {
+  background-color: @extreme-bg-color;
+}
+
+GimpSpinScale entry progress, .gimp-spin-scale progress {
+  background-color: rgba(59, 130, 246, 0.35);
+}
+
+/* Progressbar Color */
+progressbar trough progress {
+  background-color: @accent-color;
+}
+
+buttonbox button.radio:not(:checked) {
+  background-color: @stronger-border-color;
+}

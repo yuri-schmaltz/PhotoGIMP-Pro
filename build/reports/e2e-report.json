@@ -1,0 +1,2232 @@
+{
+  "timestamp": "2026-08-29T12:34:43Z",
+  "summary": {
+    "total": 244,
+    "passed": 244,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "pass_rate": 100.0,
+    "total_duration_sec": 10.376
+  },
+  "memory_leak_audit": {
+    "rss_start_mb": 23.96,
+    "rss_end_mb": 54.7,
+    "rss_growth_mb": 30.74,
+    "growth_percentage": 128.31,
+    "is_leaking": true
+  },
+  "fps_profiler_audit": {
+    "total_frames": 60,
+    "total_duration_sec": 0.9647,
+    "avg_fps": 62.19,
+    "min_fps": 62.15,
+    "max_fps": 62.25,
+    "avg_frame_time_ms": 16.08,
+    "median_frame_time_ms": 16.08,
+    "p95_frame_time_ms": 16.09,
+    "p99_frame_time_ms": 16.09,
+    "jitter_ms": 0.006,
+    "dropped_frames": 0,
+    "dropped_percentage": 0.0,
+    "target_budget_ms": 16.67
+  },
+  "tests": [
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessAssertions.test_delta_e_color_assertion",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0005912909982725978,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessAssertions.test_gegl_graph_assertion",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.00015313999028876424,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessAssertions.test_gtk4_widget_tree_assertion",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.00012368598254397511,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessAssertions.test_non_destructive_stack_assertion",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0001493800082243979,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessAssertions.test_shortcut_mapping_assertion",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0007956379558891058,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessFPSProfiler.test_fps_profiler_basic",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0010896490421146154,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessFPSProfiler.test_viewport_pan_simulation",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.05160014395369217,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMemoryLeakChecker.test_memory_snapshot_and_delta",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0013658339739777148,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMemoryLeakChecker.test_process_memory_info",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0006382139981724322,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMemoryLeakChecker.test_valgrind_analyzer",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.003027637954801321,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMockAssets.test_psd_cmyk_generation",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0020519099780358374,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMockAssets.test_psd_generation",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0016848419909365475,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMockAssets.test_raw_generation",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0008069060277193785,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMockAssets.test_svg_generation",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0009932059911079705,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMockAssets.test_tiff_generation",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.02946197899291292,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessMockAssets.test_xcf_generation",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0006441739969886839,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessXDGEnvironment.test_gimp_env_context_default",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.0028983429656364024,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestHarnessXDGEnvironment.test_gimp_env_context_photogimp",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.005079963011667132,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.harness.test_harness_smoke.TestOpaqueBoxBaseTestCase.test_subproc_and_asset_helpers",
+      "tier": "Harness",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.02888493100181222,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF01Gtk4MesonBuild.test_f01_01_meson_build_gtk4_dependency",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.007279372017364949,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF01Gtk4MesonBuild.test_f01_02_glib_gobject_version_requirement",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.007467460003681481,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF01Gtk4MesonBuild.test_f01_03_meson_options_and_gsk_backends",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.006615408987272531,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF01Gtk4MesonBuild.test_f01_04_isolated_build_env_meson_setup_dryrun",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.024978876987006515,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF01Gtk4MesonBuild.test_f01_05_cflags_removal_of_deprecated_gtk3_symbols",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.006731530011165887,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF02GskGpuCanvasRendering.test_f02_01_gsk_snapshot_render_node_generation",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005982061964459717,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF02GskGpuCanvasRendering.test_f02_02_gsk_transform_node_matrix_pipeline",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005958612018730491,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF02GskGpuCanvasRendering.test_f02_03_gsk_backend_fallback_configuration",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.006144902028609067,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF02GskGpuCanvasRendering.test_f02_04_viewport_fps_and_frame_budget_gsk",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.1588382949703373,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF02GskGpuCanvasRendering.test_f02_05_canvas_memory_stability_under_pan_zoom",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.009365104953758419,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF03GtkEventControllerGestures.test_f03_01_gesture_controller_registration",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005437283020000905,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF03GtkEventControllerGestures.test_f03_02_gesture_drag_coordinate_propagation",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005455837002955377,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF03GtkEventControllerGestures.test_f03_03_gesture_stylus_pressure_and_tilt",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005435515020508319,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF03GtkEventControllerGestures.test_f03_04_gesture_click_multi_button_mapping",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005449143995065242,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF03GtkEventControllerGestures.test_f03_05_event_controller_key_and_modifiers",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005443478003144264,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF04GMenuModelPopoverMenuBar.test_f04_01_gmenu_model_hierarchy_structure",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005533549003303051,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF04GMenuModelPopoverMenuBar.test_f04_02_gtk_popover_menubar_widget_tree",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005571226007305086,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF04GMenuModelPopoverMenuBar.test_f04_03_menu_accelerator_synchronization",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005692915990948677,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF04GMenuModelPopoverMenuBar.test_f04_04_popover_menu_state_toggle_actions",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005518944002687931,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF04GMenuModelPopoverMenuBar.test_f04_05_workspace_menu_entries_present",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.0057074110372923315,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF05GtkListViewLayerTree.test_f05_01_gtk_list_view_widget_hierarchy",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005580867000389844,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF05GtkListViewLayerTree.test_f05_02_hierarchical_layer_group_expansion",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005628493963740766,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF05GtkListViewLayerTree.test_f05_03_multi_layer_selection_model",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005566756997723132,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF05GtkListViewLayerTree.test_f05_04_layer_reordering_drag_and_drop",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.0055421830038540065,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f01_to_f05_core_gtk4.TestF05GtkListViewLayerTree.test_f05_05_layer_visibility_and_lock_toggles",
+      "tier": "Tier 1",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005549257970415056,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF06DarkProOledDesignSystem.test_f06_01_dark_pro_css_color_palette_variables",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005761826003435999,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF06DarkProOledDesignSystem.test_f06_02_gimprc_theme_activation",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005784414999652654,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF06DarkProOledDesignSystem.test_f06_03_high_contrast_contrast_ratio_validation",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005849658045917749,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF06DarkProOledDesignSystem.test_f06_04_symbolic_icon_theme_configuration",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005632821994367987,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF06DarkProOledDesignSystem.test_f06_05_css_syntax_and_selector_integrity",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005592370987869799,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF07ModernizedControls.test_f07_01_pill_slider_css_and_widget_structure",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0056308869970962405,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF07ModernizedControls.test_f07_02_minimalist_tab_focus_indicators",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.00560884497826919,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF07ModernizedControls.test_f07_03_single_column_tool_palette_layout",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.00571499002398923,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF07ModernizedControls.test_f07_04_ultra_discrete_scrollbars",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005609793006442487,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF07ModernizedControls.test_f07_05_spinscale_numeric_input_and_scrubbing",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0055308070150204,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF08MultiTouchCanvasNavigation.test_f08_01_pinch_to_zoom_gesture_scale",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005563715007156134,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF08MultiTouchCanvasNavigation.test_f08_02_two_finger_canvas_rotation",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005524946958757937,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF08MultiTouchCanvasNavigation.test_f08_03_inertial_pan_decay_simulation",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005599842988885939,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF08MultiTouchCanvasNavigation.test_f08_04_simultaneous_pinch_rotate_pan",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005527427012566477,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF08MultiTouchCanvasNavigation.test_f08_05_gesture_boundary_limits_and_reset",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0056153800105676055,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF09SmartSnappingGuides.test_f09_01_snap_to_bounding_box_edges_and_center",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005577692994847894,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF09SmartSnappingGuides.test_f09_02_equidistance_smart_guides",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005526344000827521,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF09SmartSnappingGuides.test_f09_03_dynamic_distance_pixel_labels",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005668103985954076,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF09SmartSnappingGuides.test_f09_04_snap_to_canvas_edges_and_center_axes",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005566723004449159,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f06_to_f09_ui_ux.TestF09SmartSnappingGuides.test_f09_05_smart_guides_toggle_preferences",
+      "tier": "Tier 1",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005618655995931476,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF10DynamicWorkspaceSwitcher.test_f10_01_workspace_switcher_profile_structure",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.0060196780250407755,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF10DynamicWorkspaceSwitcher.test_f10_02_hot_swap_workspace_switch_action",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.012242775992490351,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF10DynamicWorkspaceSwitcher.test_f10_03_photoshop_shortcut_parity_validation",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005862869962584227,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF10DynamicWorkspaceSwitcher.test_f10_04_single_window_dock_layout_restoration",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005642361997161061,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF10DynamicWorkspaceSwitcher.test_f10_05_bidirectional_integration_tool",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.05799440701957792,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF11UnifiedFreeTransformGizmo.test_f11_01_free_transform_gizmo_bounding_box_init",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005583028018008918,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF11UnifiedFreeTransformGizmo.test_f11_02_proportional_scale_aspect_lock",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005636554036755115,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF11UnifiedFreeTransformGizmo.test_f11_03_rotational_transformation_around_pivot",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005544365965761244,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF11UnifiedFreeTransformGizmo.test_f11_04_perspective_corner_pinning_and_skew",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.00552267802413553,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF11UnifiedFreeTransformGizmo.test_f11_05_modal_warp_mesh_deformation_commit",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005696941982023418,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF12GlobalCommandPalette.test_f12_01_command_palette_modal_popup_structure",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005582800949923694,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF12GlobalCommandPalette.test_f12_02_fuzzy_search_action_filtering",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005603947036433965,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF12GlobalCommandPalette.test_f12_03_keyboard_navigation_and_activation",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005641458032187074,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF12GlobalCommandPalette.test_f12_04_multi_category_search_layers_and_filters",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005557596974540502,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f10_to_f12_workspace_tools.TestF12GlobalCommandPalette.test_f12_05_shortcut_activation_ctrl_k_ctrl_p",
+      "tier": "Tier 1",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005912144959438592,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF13NonDestructiveAdjustmentLayers.test_f13_01_adjustment_layer_gegl_graph_topology",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.006244248012080789,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF13NonDestructiveAdjustmentLayers.test_f13_02_non_destructive_base_buffer_immutability",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 3.633731775043998,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF13NonDestructiveAdjustmentLayers.test_f13_03_adjustment_layer_mask_clipping",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0059193840133957565,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF13NonDestructiveAdjustmentLayers.test_f13_04_live_parameter_update_and_cache_invalidation",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005578960001002997,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF13NonDestructiveAdjustmentLayers.test_f13_05_adjustment_layer_serialization_xcf",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005904598976485431,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF14RealTimeLayerStylesFX.test_f14_01_drop_shadow_fx_gegl_node_pipeline",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005627782025840133,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF14RealTimeLayerStylesFX.test_f14_02_stroke_fx_inside_outside_center",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0055220159702003,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF14RealTimeLayerStylesFX.test_f14_03_outer_glow_and_bevel_emboss_fx",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0055191959836520255,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF14RealTimeLayerStylesFX.test_f14_04_multi_fx_stack_layering_order",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0055322389816865325,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF14RealTimeLayerStylesFX.test_f14_05_fx_visibility_toggle_and_base_preservation",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005555366049520671,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF15SmartObjectsLinkedAssets.test_f15_01_svg_smart_object_rasterization_at_zoom",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.006021482986398041,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF15SmartObjectsLinkedAssets.test_f15_02_raw_sensor_smart_object_container",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.006029707961715758,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF15SmartObjectsLinkedAssets.test_f15_03_nested_psd_smart_object_hierarchy",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.009121062990743667,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF15SmartObjectsLinkedAssets.test_f15_04_external_linked_asset_update_notification",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.016181876009795815,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f13_to_f15_layers_smart_objects.TestF15SmartObjectsLinkedAssets.test_f15_05_smart_filters_stack_on_smart_object",
+      "tier": "Tier 1",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005649219965562224,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF16LocalSam2MagicSelection.test_f16_01_sam2_plugin_descriptor_and_onnx_environment",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005621456948574632,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF16LocalSam2MagicSelection.test_f16_02_point_prompt_segmentation_mask_generation",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.019075486983638257,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF16LocalSam2MagicSelection.test_f16_03_multi_point_refinement_positive_negative",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.03139904997078702,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF16LocalSam2MagicSelection.test_f16_04_bounding_box_prompt_segmentation",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.010610201978124678,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF16LocalSam2MagicSelection.test_f16_05_selection_channel_commit_and_feathering",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005546100961510092,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF17OneClickLocalRmbgRemoval.test_f17_01_rmbg_plugin_descriptor_and_offline_runtime",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005531588976737112,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF17OneClickLocalRmbgRemoval.test_f17_02_rgba_alpha_matte_generation",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.017366082000080496,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF17OneClickLocalRmbgRemoval.test_f17_03_background_separation_into_layer_mask",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005545070976950228,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF17OneClickLocalRmbgRemoval.test_f17_04_batch_image_background_removal",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.00551972899120301,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF17OneClickLocalRmbgRemoval.test_f17_05_fallback_and_memory_stability_during_inference",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.007034490001387894,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF18LocalGenerativeInpainting.test_f18_01_sdxl_inpaint_plugin_registration_offline",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005484837980475277,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF18LocalGenerativeInpainting.test_f18_02_inpaint_pipeline_input_tensor_preparation",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005526277993340045,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF18LocalGenerativeInpainting.test_f18_03_seed_reproducibility_and_denoise_strength",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005560899036936462,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF18LocalGenerativeInpainting.test_f18_04_seamless_boundary_poisson_blending",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005524064006749541,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f16_to_f18_local_ai.TestF18LocalGenerativeInpainting.test_f18_05_inference_cancellation_and_cleanup",
+      "tier": "Tier 1",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005512900010216981,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f19_psd_color.TestF19SmartPsdEngineColorManagement.test_f19_01_psd_multi_layer_roundtrip_fidelity",
+      "tier": "Tier 1",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.006842717994004488,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f19_psd_color.TestF19SmartPsdEngineColorManagement.test_f19_02_cmyk_psd_channel_separation_littlecms",
+      "tier": "Tier 1",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.006852344959042966,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f19_psd_color.TestF19SmartPsdEngineColorManagement.test_f19_03_opencolorio_v2_aces_display_filter",
+      "tier": "Tier 1",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.005644663004204631,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f19_psd_color.TestF19SmartPsdEngineColorManagement.test_f19_04_psd_adjustment_layer_and_fx_import",
+      "tier": "Tier 1",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.00547950598411262,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier1_features.test_f19_psd_color.TestF19SmartPsdEngineColorManagement.test_f19_05_cmyk_soft_proof_gamut_warning",
+      "tier": "Tier 1",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.005678677000105381,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF01Gtk4BuildBoundaries.test_f01_boundary_01_zero_byte_meson",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.041790018032770604,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF01Gtk4BuildBoundaries.test_f01_boundary_02_missing_dependencies",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.038110274996142834,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF01Gtk4BuildBoundaries.test_f01_boundary_03_invalid_gtk_version_string",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.006099375954363495,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF01Gtk4BuildBoundaries.test_f01_boundary_04_corrupted_meson_file",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.03938269504578784,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF01Gtk4BuildBoundaries.test_f01_boundary_05_circular_dependencies",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.007813352975063026,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF02GskRenderBoundaries.test_f02_boundary_01_zero_viewport",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.008121707011014223,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF02GskRenderBoundaries.test_f02_boundary_02_extreme_6400_percent_zoom",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.007775336969643831,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF02GskRenderBoundaries.test_f02_boundary_03_invalid_gl_context",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.007538246980402619,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF02GskRenderBoundaries.test_f02_boundary_04_texture_size_limit_exceeded",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.006838367960881442,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF02GskRenderBoundaries.test_f02_boundary_05_cairo_fallback_trigger",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.025806025019846857,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF03GesturesBoundaries.test_f03_boundary_01_nan_gesture_coordinates",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.0062281310092657804,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF03GesturesBoundaries.test_f03_boundary_02_rapid_1000_click_burst",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.012446601002011448,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF03GesturesBoundaries.test_f03_boundary_03_multi_finger_10_touch_gesture",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.006251241022255272,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF03GesturesBoundaries.test_f03_boundary_04_stylus_pressure_boundary",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.006149246008135378,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF03GesturesBoundaries.test_f03_boundary_05_eraser_toggle_in_drag",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005906453006900847,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF04MenusBoundaries.test_f04_boundary_01_missing_gmenumodel_xml",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005861685029231012,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF04MenusBoundaries.test_f04_boundary_02_empty_action_namespace",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.0055993429850786924,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF04MenusBoundaries.test_f04_boundary_03_deeply_nested_20_level_submenu",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005573027010541409,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF04MenusBoundaries.test_f04_boundary_04_unmapped_hotkey_lookup",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005816411052364856,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF04MenusBoundaries.test_f04_boundary_05_duplicate_action_id",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005548335029743612,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF05LayerTreeBoundaries.test_f05_boundary_01_10000_layer_tree_model",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.027626160997897387,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF05LayerTreeBoundaries.test_f05_boundary_02_deeply_nested_50_level_group_layers",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005562987003941089,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF05LayerTreeBoundaries.test_f05_boundary_03_zero_layer_document",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005447164992801845,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF05LayerTreeBoundaries.test_f05_boundary_04_layer_deletion_during_iteration",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005507966037839651,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f01_to_f05_boundaries.TestF05LayerTreeBoundaries.test_f05_boundary_05_special_chars_in_layer_names",
+      "tier": "Tier 2",
+      "feature": "F01",
+      "status": "PASS",
+      "duration_sec": 0.005495985969901085,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF06DarkThemeBoundaries.test_f06_boundary_01_css_parse_error_tolerance",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0061769799795001745,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF06DarkThemeBoundaries.test_f06_boundary_02_missing_oled_dark_theme_files",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0055706489947624505,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF06DarkThemeBoundaries.test_f06_boundary_03_ultra_high_dpi_400_scaling",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005446986993774772,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF06DarkThemeBoundaries.test_f06_boundary_04_high_contrast_accessibility_mode",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005507597990799695,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF06DarkThemeBoundaries.test_f06_boundary_05_theme_hot_reload_stress",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.006105220003519207,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF07ErgonomicControlsBoundaries.test_f07_boundary_01_pill_slider_float_overflow",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005587475025095046,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF07ErgonomicControlsBoundaries.test_f07_boundary_02_zero_width_tool_palette",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005454307014588267,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF07ErgonomicControlsBoundaries.test_f07_boundary_03_100_char_tab_title_truncation",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005464463960379362,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF07ErgonomicControlsBoundaries.test_f07_boundary_04_discrete_scrollbar_jump_zero_canvas",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005441932997200638,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF07ErgonomicControlsBoundaries.test_f07_boundary_05_negative_spin_scale_step",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0055045910412445664,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF08MultiTouchBoundaries.test_f08_boundary_01_360_degree_rotation_wraparound",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0054707410163246095,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF08MultiTouchBoundaries.test_f08_boundary_02_negative_pinch_zoom_delta",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005485427973326296,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF08MultiTouchBoundaries.test_f08_boundary_03_zero_velocity_inertial_pan",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005746998998802155,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF08MultiTouchBoundaries.test_f08_boundary_04_concurrent_rotate_pinch_pan_gesture",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005456302023958415,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF08MultiTouchBoundaries.test_f08_boundary_05_gesture_cancellation_on_window_blur",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.0054193210089579225,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF09SnappingBoundaries.test_f09_boundary_01_magnetic_snapping_zero_threshold",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005459890991915017,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF09SnappingBoundaries.test_f09_boundary_02_1000_guide_canvas_stress",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.006399388948921114,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF09SnappingBoundaries.test_f09_boundary_03_snapping_off_canvas_bbox",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005457076011225581,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF09SnappingBoundaries.test_f09_boundary_04_fractional_subpixel_guide_coords",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005479351035319269,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f06_to_f09_boundaries.TestF09SnappingBoundaries.test_f09_boundary_05_dynamic_distance_label_collision_overlap",
+      "tier": "Tier 2",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005480243999045342,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF10WorkspaceBoundaries.test_f10_boundary_01_corrupted_shortcutsrc_syntax",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005490319977980107,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF10WorkspaceBoundaries.test_f10_boundary_02_missing_photogimp_theme_directory",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005563441023696214,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF10WorkspaceBoundaries.test_f10_boundary_03_rapid_workspace_toggle_stress",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005519075959455222,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF10WorkspaceBoundaries.test_f10_boundary_04_conflicting_custom_shortcuts_preservation",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005443656002171338,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF10WorkspaceBoundaries.test_f10_boundary_05_readonly_config_directory",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.0059732949594035745,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF11FreeTransformBoundaries.test_f11_boundary_01_degenerate_zero_area_bbox_transform",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005505020031705499,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF11FreeTransformBoundaries.test_f11_boundary_02_180_degree_flip_inversion",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005497473990544677,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF11FreeTransformBoundaries.test_f11_boundary_03_warp_mesh_100x100_control_points",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.039624736993573606,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF11FreeTransformBoundaries.test_f11_boundary_04_non_invertible_perspective_matrix",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005427096970379353,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF11FreeTransformBoundaries.test_f11_boundary_05_transform_cancel_escape_rollback",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005443884991109371,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF12CommandPaletteBoundaries.test_f12_boundary_01_10000_registered_actions",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.0597197319730185,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF12CommandPaletteBoundaries.test_f12_boundary_02_empty_search_query",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005511494004167616,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF12CommandPaletteBoundaries.test_f12_boundary_03_non_matching_regex_query",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005464505986310542,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF12CommandPaletteBoundaries.test_f12_boundary_04_unicode_emoji_action_query",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005491435993462801,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f10_to_f12_boundaries.TestF12CommandPaletteBoundaries.test_f12_boundary_05_rapid_open_close_toggle_stress",
+      "tier": "Tier 2",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005442777997814119,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF13AdjustmentLayersBoundaries.test_f13_boundary_01_50_chained_adjustment_layers",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005938912974670529,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF13AdjustmentLayersBoundaries.test_f13_boundary_02_adjustment_layer_on_empty_canvas",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005473833007272333,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF13AdjustmentLayersBoundaries.test_f13_boundary_03_clipping_mask_missing_base_layer",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005487318965606391,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF13AdjustmentLayersBoundaries.test_f13_boundary_04_extreme_curve_control_points",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0072493269690312445,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF13AdjustmentLayersBoundaries.test_f13_boundary_05_adjustment_layer_opacity_boundary",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005839781020767987,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF14LayerStylesBoundaries.test_f14_boundary_01_layer_styles_on_1x1_layer",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0054922259878367186,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF14LayerStylesBoundaries.test_f14_boundary_02_500px_blur_radius_drop_shadow",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005448146024718881,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF14LayerStylesBoundaries.test_f14_boundary_03_zero_pixel_stroke_width",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0055011509684845805,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF14LayerStylesBoundaries.test_f14_boundary_04_all_four_fx_simultaneous",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005522770981770009,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF14LayerStylesBoundaries.test_f14_boundary_05_fx_on_invisible_layer",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005509387992788106,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF15SmartObjectsBoundaries.test_f15_boundary_01_500mb_linked_raw_image_container",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0055091530084609985,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF15SmartObjectsBoundaries.test_f15_boundary_02_circular_linked_smart_object_refs",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005481272004544735,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF15SmartObjectsBoundaries.test_f15_boundary_03_corrupted_svg_xml_in_container",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005760893982369453,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF15SmartObjectsBoundaries.test_f15_boundary_04_missing_linked_external_file_fallback",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.0057734010042622685,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f13_to_f15_boundaries.TestF15SmartObjectsBoundaries.test_f15_boundary_05_embedded_vector_scaling_10000x10000",
+      "tier": "Tier 2",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.005531363014597446,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF16Sam2AiBoundaries.test_f16_boundary_01_sam2_inference_1x1_image",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005527137021999806,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF16Sam2AiBoundaries.test_f16_boundary_02_sam2_click_outside_image_bounds",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.0055011099902912974,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF16Sam2AiBoundaries.test_f16_boundary_03_positive_negative_100_point_array",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.0057634940021671355,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF16Sam2AiBoundaries.test_f16_boundary_04_missing_onnx_model_file",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.0055558939930051565,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF16Sam2AiBoundaries.test_f16_boundary_05_gpu_vram_exhaustion_fallback",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005459464038722217,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF17RmbgAiBoundaries.test_f17_boundary_01_rmbg_on_pure_transparent_image",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.010900635970756412,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF17RmbgAiBoundaries.test_f17_boundary_02_rmbg_on_pure_white_background",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.00545773800695315,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF17RmbgAiBoundaries.test_f17_boundary_03_8k_ultra_resolution_matting",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005525128042791039,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF17RmbgAiBoundaries.test_f17_boundary_04_alpha_channel_boundary_clipping",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005467467999551445,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF17RmbgAiBoundaries.test_f17_boundary_05_concurrent_bg_removal_requests",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.057328903989400715,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF18InpaintAiBoundaries.test_f18_boundary_01_inpaint_full_image_100_percent_mask",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.018643421004526317,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF18InpaintAiBoundaries.test_f18_boundary_02_inpaint_zero_percent_mask_noop",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.017034688033163548,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF18InpaintAiBoundaries.test_f18_boundary_03_prompt_with_1000_tokens",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.00643069896614179,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF18InpaintAiBoundaries.test_f18_boundary_04_corrupted_diffusion_weights",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.00613964902004227,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f16_to_f18_boundaries.TestF18InpaintAiBoundaries.test_f18_boundary_05_out_of_bounds_inpaint_bbox",
+      "tier": "Tier 2",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005498301004990935,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f19_boundaries.TestF19PsdColorBoundaries.test_f19_boundary_01_30000x30000_psd_canvas",
+      "tier": "Tier 2",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.005511100986041129,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f19_boundaries.TestF19PsdColorBoundaries.test_f19_boundary_02_psd_100_adjustment_effect_layers",
+      "tier": "Tier 2",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.08477367099840194,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f19_boundaries.TestF19PsdColorBoundaries.test_f19_boundary_03_uncalibrated_cmyk_icc_profile_fallback",
+      "tier": "Tier 2",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.00576078804442659,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f19_boundaries.TestF19PsdColorBoundaries.test_f19_boundary_04_malformed_ocio_config_xml_recovery",
+      "tier": "Tier 2",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.005601472046691924,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier2_boundaries.test_f19_boundaries.TestF19PsdColorBoundaries.test_f19_boundary_05_16bit_to_32bit_float_color_conversion",
+      "tier": "Tier 2",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.005540075013414025,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_01_free_transform_smart_objects_F11_F15",
+      "tier": "Tier 3",
+      "feature": "F11",
+      "status": "PASS",
+      "duration_sec": 0.0061748960288241506,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_02_adjustment_layers_layer_styles_fx_F13_F14",
+      "tier": "Tier 3",
+      "feature": "F13",
+      "status": "PASS",
+      "duration_sec": 0.006724738981574774,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_03_sam2_magic_selection_rmbg_removal_F16_F17",
+      "tier": "Tier 3",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.7553363300394267,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_04_rmbg_matting_generative_inpainting_F17_F18",
+      "tier": "Tier 3",
+      "feature": "F17",
+      "status": "PASS",
+      "duration_sec": 0.05848365597194061,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_05_photogimp_workspace_photoshop_shortcuts_F10_F11",
+      "tier": "Tier 3",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005875656032003462,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_06_command_palette_gtklistview_layer_tree_F12_F05",
+      "tier": "Tier 3",
+      "feature": "F12",
+      "status": "PASS",
+      "duration_sec": 0.0055232750019058585,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_07_oled_theme_pill_sliders_tabs_F06_F07",
+      "tier": "Tier 3",
+      "feature": "F06",
+      "status": "PASS",
+      "duration_sec": 0.005716448009479791,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_08_smart_snapping_unified_free_transform_F09_F11",
+      "tier": "Tier 3",
+      "feature": "F09",
+      "status": "PASS",
+      "duration_sec": 0.005550462985411286,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_09_multitouch_gestures_gsk_canvas_rendering_F08_F02",
+      "tier": "Tier 3",
+      "feature": "F08",
+      "status": "PASS",
+      "duration_sec": 0.0066560410195961595,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_10_psd_import_cmyk_soft_proofing_F19_F19",
+      "tier": "Tier 3",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.006961631996091455,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_11_opencolorio_aces_adjustment_layers_F19_F13",
+      "tier": "Tier 3",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.0055825659655965865,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_12_gmenumodel_popover_workspace_dispatch_F04_F10",
+      "tier": "Tier 3",
+      "feature": "F04",
+      "status": "PASS",
+      "duration_sec": 0.0055214460007846355,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_13_gtkeventcontroller_stylus_layer_styles_F03_F14",
+      "tier": "Tier 3",
+      "feature": "F03",
+      "status": "PASS",
+      "duration_sec": 0.005584514990914613,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_14_smart_objects_psd_roundtrip_F15_F19",
+      "tier": "Tier 3",
+      "feature": "F15",
+      "status": "PASS",
+      "duration_sec": 0.010524681012611836,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_15_generative_inpainting_smart_snapping_bounds_F18_F09",
+      "tier": "Tier 3",
+      "feature": "F18",
+      "status": "PASS",
+      "duration_sec": 0.005551733949687332,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_16_sam2_prompts_adjustment_layer_mask_F16_F13",
+      "tier": "Tier 3",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 0.005964846990536898,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_17_gtklistview_dnd_layer_fx_stack_F05_F14",
+      "tier": "Tier 3",
+      "feature": "F05",
+      "status": "PASS",
+      "duration_sec": 0.005552729009650648,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_18_pill_sliders_color_balance_gegl_update_F07_F13",
+      "tier": "Tier 3",
+      "feature": "F07",
+      "status": "PASS",
+      "duration_sec": 0.005541148013435304,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_19_photogimp_single_column_free_transform_F10_F11",
+      "tier": "Tier 3",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.005612475972156972,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_20_command_palette_workspace_hotswap_F12_F10",
+      "tier": "Tier 3",
+      "feature": "F12",
+      "status": "PASS",
+      "duration_sec": 0.005535719974432141,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_21_multitouch_rotation_snapping_angle_F08_F09",
+      "tier": "Tier 3",
+      "feature": "F08",
+      "status": "PASS",
+      "duration_sec": 0.005504176951944828,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_22_littlecms2_cmyk_oled_viewport_F19_F06",
+      "tier": "Tier 3",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.005730790027882904,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_23_smart_object_rasterization_layer_styles_F15_F14",
+      "tier": "Tier 3",
+      "feature": "F15",
+      "status": "PASS",
+      "duration_sec": 0.005651498970109969,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_24_inpainting_inplace_xcf_roundtrip_F18_F13",
+      "tier": "Tier 3",
+      "feature": "F18",
+      "status": "PASS",
+      "duration_sec": 0.005900791031308472,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier3_pairwise.test_pairwise_interactions.TestPairwiseFeatureInteractions.test_pairwise_25_free_transform_perspective_warp_layer_mask_F11_F13",
+      "tier": "Tier 3",
+      "feature": "F11",
+      "status": "PASS",
+      "duration_sec": 0.005542387021705508,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_01_photo_retouch.TestScenario01PhotoRetouch.test_scenario_01_photo_retouch_pipeline_F16_F17_F13_F14",
+      "tier": "Tier 4",
+      "feature": "F16",
+      "status": "PASS",
+      "duration_sec": 2.884459495951887,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_02_complex_psd_cmyk.TestScenario02ComplexPsdCmyk.test_scenario_02_complex_psd_cmyk_pipeline_F19_F05_F13_F14",
+      "tier": "Tier 4",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.24098816700279713,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_03_concept_art_sdxl.TestScenario03ConceptArtSdxl.test_scenario_03_concept_art_sdxl_pipeline_F18_F11_F15_F06",
+      "tier": "Tier 4",
+      "feature": "F18",
+      "status": "PASS",
+      "duration_sec": 0.008451502013485879,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_04_print_production_ocio.TestScenario04PrintProductionOcio.test_scenario_04_print_production_ocio_pipeline_F19_F09",
+      "tier": "Tier 4",
+      "feature": "F19",
+      "status": "PASS",
+      "duration_sec": 0.2167838669847697,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_05_photogimp_workflow.TestScenario05PhotoGimpWorkflow.test_scenario_05_photogimp_workflow_F10_F11_F12_F06",
+      "tier": "Tier 4",
+      "feature": "F10",
+      "status": "PASS",
+      "duration_sec": 0.006907348986715078,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_06_smart_object_vector_raster.TestScenario06SmartObjectVectorRaster.test_scenario_06_smart_object_vector_raster_pipeline_F15_F11",
+      "tier": "Tier 4",
+      "feature": "F15",
+      "status": "PASS",
+      "duration_sec": 0.05990453698905185,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_07_batch_ai_matting_effects.TestScenario07BatchAiMattingEffects.test_scenario_07_batch_ai_matting_effects_pipeline_F17_F14_F09",
+      "tier": "Tier 4",
+      "feature": "F17",
+      "status": "PASS",
+      "duration_sec": 0.40086877497378737,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_08_multi_touch_gesture_canvas.TestScenario08MultiTouchGestureCanvas.test_scenario_08_multi_touch_gesture_canvas_pipeline_F03_F08_F02_F09",
+      "tier": "Tier 4",
+      "feature": "F03",
+      "status": "PASS",
+      "duration_sec": 0.009162763017229736,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_09_command_palette_automation.TestScenario09CommandPaletteAutomation.test_scenario_09_command_palette_automation_pipeline_F12_F04_F10",
+      "tier": "Tier 4",
+      "feature": "F12",
+      "status": "PASS",
+      "duration_sec": 0.006322796980384737,
+      "error_message": null,
+      "stack_trace": null
+    },
+    {
+      "test_id": "tests.e2e.tier4_realworld.test_scenario_10_full_creative_suite_pipeline.TestScenario10FullCreativeSuitePipeline.test_scenario_10_flagship_creative_suite_pipeline_all_features",
+      "tier": "Tier 4",
+      "feature": "General",
+      "status": "PASS",
+      "duration_sec": 0.014196706004440784,
+      "error_message": null,
+      "stack_trace": null
+    }
+  ]
+}

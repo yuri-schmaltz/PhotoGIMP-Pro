@@ -1,0 +1,38 @@
+.......................................................................
+----------------------------------------------------------------------
+Ran 71 tests in 16.342s
+
+OK
+
+=== Testing Feature 16: Local SAM 2 ===
+[PASS] F16_01_sam2_negative_prompt_points: Successfully handled negative prompt points
+[PASS] F16_02_sam2_corner_prompts: Corner values: (255, 255, 255, 255)
+[PASS] F16_03_sam2_1x1_image: Mask length: 1
+[PASS] F16_04_sam2_empty_points: Empty points resulted in 2500 zero-bytes
+[PASS] F16_05_sam2_bbox_oob: Clipped mask length 10000
+
+=== Testing Feature 17: RMBG-1.4 ===
+[PASS] F17_01_rmbg_1x1_image: Matte value: 255
+[PASS] F17_02_rmbg_0x0_image: Handled 0x0 safely
+[PASS] F17_03_rmbg_extreme_aspect_ratio: 10000x1 and 1x10000 handled without crash
+[PASS] F17_04_rmbg_defringe_consistency: Defringe returned consistent buffer size
+
+=== Testing Feature 18: Local Generative Inpainting ===
+[PASS] F18_01_roi_bounds_extreme_tall: ROI bounds: (4936, 0, 192, 9984)
+[PASS] F18_02_roi_bounds_full_canvas: Full canvas ROI: (0, 0, 512, 512)
+[PASS] F18_03_feather_mask_small_and_zero_radius: Zero radius safe: True, 4x4 length: 16
+[PASS] F18_04_inpaint_roi_buffer_dims: Output buffer length: 49152 bytes
+
+=== Testing Feature 15: Smart Objects ===
+[PASS] F15_01_smart_object_repeated_scaling: Accumulated scale after 900 steps: 1.0000000000
+[PASS] F15_02_corrupted_asset_payloads_recovery: All corrupted asset payloads correctly intercepted by error guards
+[PASS] F15_03_smart_object_c_interface_contracts: All GimpSmartObject C prototypes verified
+
+=== Testing Feature 19: Smart PSD & Color Management ===
+[PASS] F19_01_psd_layer_res_export_blocks: lfx2 (FX), curv (Adj), SoLd (Smart Object) resource blocks verified
+[PASS] F19_02_ocio_aces_curve_numerics: Black: -0.00038, 18% Gray: 0.10559, White: 0.61912, HDR 1000: 1.01612
+[PASS] F19_03_littlecms_softproof_gamut_detection: Delta E 2000 out-of-gamut separation: 5.486
+
+============================================================
+Summary: Total Probes: 19 | Passed: 19 | Failed: 0
+============================================================

@@ -1,0 +1,263 @@
+/* ==========================================================================
+   PhotoGIMP Modern UI Design System - gimp.css
+   OLED High-Contrast Theme with Refined Minimalist Ergonomic Controls
+   ========================================================================== */
+
+/* --- Global Variables & OLED Color Palette --- */
+@define-color pg_bg_darkest #000000;
+@define-color pg_bg_shell #141416;
+@define-color pg_bg_panel #18181c;
+@define-color pg_bg_card #202026;
+@define-color pg_bg_hover #2c2c36;
+@define-color pg_border #2e2e3a;
+@define-color pg_border_strong #424252;
+@define-color pg_accent #3b82f6;
+@define-color pg_accent_hover #60a5fa;
+@define-color pg_accent_active #2563eb;
+@define-color pg_text_main #f9fafb;
+@define-color pg_text_muted #9ca3af;
+
+/* --- Base Typography & Icon Styling --- */
+* {
+    -gtk-icon-style: symbolic;
+}
+
+window, dialog {
+    background-color: @pg_bg_shell;
+    color: @pg_text_main;
+}
+
+/* --- Docks, Notebooks & Minimalist Tabs --- */
+notebook {
+    background-color: @pg_bg_panel;
+    border: none;
+}
+
+notebook header {
+    background-color: @pg_bg_shell;
+    border-bottom: 1px solid @pg_border;
+}
+
+notebook tab, notebook header tabs tab {
+    padding: 6px 12px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background-color: transparent;
+    color: @pg_text_muted;
+    font-weight: 500;
+    transition: all 120ms ease-in-out;
+}
+
+notebook tab:hover, notebook header tabs tab:hover {
+    color: @pg_text_main;
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+notebook tab:checked, notebook header tabs tab:checked {
+    color: #ffffff;
+    background-color: @pg_bg_card;
+    border-bottom: 2px solid @pg_accent;
+    font-weight: 600;
+}
+
+notebook tab button, notebook header tabs tab button {
+    border-radius: 9999px;
+    min-width: 16px;
+    min-height: 16px;
+    padding: 2px;
+    background-color: transparent;
+    border: none;
+    transition: background-color 100ms ease;
+}
+
+notebook tab button:hover, notebook header tabs tab button:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* --- Toolbox & Left Toolbar (Single-Column 66px Layout) --- */
+.gimp-toolbox, .gimp-tool-palette {
+    background-color: @pg_bg_panel;
+    border-right: 1px solid @pg_border;
+}
+
+.gimp-toolbox button, toolbutton button {
+    border-radius: 6px;
+    margin: 2px;
+    padding: 4px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    transition: all 120ms ease;
+}
+
+.gimp-toolbox button:hover, toolbutton button:hover {
+    background-color: @pg_bg_hover;
+    border-color: @pg_border;
+}
+
+.gimp-toolbox button:checked, toolbutton button:checked {
+    background-color: @pg_bg_card;
+    border-left: 2px solid @pg_accent;
+}
+
+/* --- Layers, Channels & Paths Treeview --- */
+treeview.view {
+    background-color: @pg_bg_darkest;
+    color: @pg_text_main;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+treeview.view:hover {
+    background-color: @pg_bg_panel;
+}
+
+treeview.view:selected {
+    background-color: rgba(59, 130, 246, 0.25);
+    color: #ffffff;
+    border-left: 3px solid @pg_accent;
+}
+
+/* --- Pill Sliders, Scales & GimpSpinScale --- */
+GimpSpinScale, .gimp-spin-scale {
+    border-radius: 9999px;
+    background-color: @pg_bg_darkest;
+    border: 1px solid @pg_border;
+    padding: 0;
+    min-height: 24px;
+}
+
+GimpSpinScale entry, .gimp-spin-scale entry {
+    background-color: transparent;
+    border: none;
+    border-radius: 9999px 0 0 9999px;
+    padding: 0 8px;
+    box-shadow: none;
+    color: @pg_text_main;
+}
+
+GimpSpinScale entry progress, .gimp-spin-scale progress {
+    background-color: rgba(59, 130, 246, 0.35);
+    border-radius: 9999px 0 0 9999px;
+    border: none;
+    margin: 0;
+}
+
+GimpSpinScale button, .gimp-spin-scale button {
+    border: none;
+    background-color: transparent;
+    border-radius: 0;
+    min-width: 18px;
+    color: @pg_text_muted;
+}
+
+GimpSpinScale button:hover, .gimp-spin-scale button:hover {
+    color: @pg_text_main;
+    background-color: @pg_bg_hover;
+}
+
+GimpSpinScale button:nth-child(odd), .gimp-spin-scale button:last-child {
+    border-radius: 0 9999px 9999px 0;
+}
+
+scale trough {
+    background-color: @pg_bg_card;
+    border-radius: 9999px;
+    min-height: 4px;
+    border: none;
+}
+
+scale highlight {
+    background-color: @pg_accent;
+    border-radius: 9999px;
+}
+
+scale slider {
+    background-color: #ffffff;
+    border-radius: 50%;
+    min-width: 14px;
+    min-height: 14px;
+    margin: -5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    border: none;
+}
+
+scale slider:hover {
+    background-color: @pg_accent_hover;
+}
+
+/* --- Buttons & Inputs --- */
+button {
+    background-color: @pg_bg_card;
+    color: @pg_text_main;
+    border: 1px solid @pg_border;
+    border-radius: 6px;
+    padding: 5px 10px;
+    transition: all 120ms ease;
+}
+
+button:hover {
+    background-color: @pg_bg_hover;
+    border-color: @pg_border_strong;
+}
+
+button:active {
+    background-color: @pg_accent;
+    color: #ffffff;
+}
+
+button.suggested-action {
+    background-color: @pg_accent;
+    color: #ffffff;
+    border: 1px solid @pg_accent_active;
+}
+
+button.suggested-action:hover {
+    background-color: @pg_accent_hover;
+}
+
+button.destructive-action {
+    background-color: #dc2626;
+    color: #ffffff;
+    border: 1px solid #b91c1c;
+}
+
+entry {
+    background-color: @pg_bg_darkest;
+    color: @pg_text_main;
+    border: 1px solid @pg_border;
+    border-radius: 6px;
+    padding: 5px 8px;
+}
+
+entry:focus {
+    border-color: @pg_accent;
+    box-shadow: 0 0 0 1px @pg_accent;
+}
+
+/* --- Ultra-Discrete Scrollbars --- */
+scrollbar, scrollbar trough {
+    background-color: transparent;
+    border: none;
+    min-width: 4px;
+    min-height: 4px;
+}
+
+scrollbar slider {
+    background-color: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+    min-width: 4px;
+    min-height: 4px;
+    margin: 1px;
+    border: none;
+    transition: all 150ms ease;
+}
+
+scrollbar slider:hover {
+    min-width: 7px;
+    min-height: 7px;
+    background-color: rgba(255, 255, 255, 0.38);
+}
+
+scrollbar slider:active {
+    background-color: @pg_accent;
+}

@@ -1,0 +1,75 @@
+# Ignore Dynamic Linker
+.var/app/org.gimp.GIMP/.ld.so
+
+# Ignore Personal GIMP Files
+.var/app/org.gimp.GIMP/data
+.var/app/org.gimp.GIMP/current
+
+# VSCode Files
+.vscode/*
+
+# Devcontainer setups
+.devcontainer
+
+# Binary and packaged artifacts
+# Keep source assets (for example PNG/SVG icons and splash screens) versioned,
+# but do not commit executables, compiled libraries, installers, or archives.
+*.exe
+*.dll
+*.so
+*.so.*
+*.dylib
+*.bin
+*.msi
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.AppImage
+*.app
+*.jar
+*.class
+*.wasm
+*.pyc
+*.pyo
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tbz2
+*.tar.xz
+*.txz
+
+# Generated release output
+dist/
+__pycache__/
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk

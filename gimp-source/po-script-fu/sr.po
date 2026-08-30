@@ -1,0 +1,1512 @@
+# Serbian translation of gimp
+# Courtesy of Prevod.org team (http://www.prevod.org/) -- 2003, 2004.
+#
+# This file is distributed under the same license as the gimp package.
+#
+# Maintainer: Милош Поповић <gpopac@gmail.com>
+# Милош Поповић <gpopac@gmail.com>, 2011-2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gimp-script-fu\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gimp/issues\n"
+"POT-Creation-Date: 2026-05-27 23:25+0000\n"
+"PO-Revision-Date: 2026-03-18 21:42+0100\n"
+"Last-Translator: Марко М. Костић <marko.m.kostic@gmail.com>\n"
+"Language-Team: Serbian <gnome-sr@googlegroups.com>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
+"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Poedit 3.9\n"
+
+#: plug-ins/script-fu/script-fu.c:119
+msgid "Script-Fu _Console"
+msgstr "_Конзола за скрипте"
+
+#: plug-ins/script-fu/script-fu.c:124
+msgid "Interactive console for Script-Fu development"
+msgstr "Покреће интерактивну конзола за развој скрипти"
+
+#: plug-ins/script-fu/script-fu.c:317
+msgid "_GIMP Online"
+msgstr "_Гимп на мрежи"
+
+#: plug-ins/script-fu/script-fu.c:318
+msgid "_User Manual"
+msgstr "_Корисничко упутство"
+
+#: plug-ins/script-fu/script-fu.c:321
+msgid "_Script-Fu"
+msgstr "_Скрипте"
+
+#: plug-ins/script-fu/script-fu.c:323
+msgid "_Test"
+msgstr "_Тест"
+
+#: plug-ins/script-fu/script-fu.c:326
+msgid "_Buttons"
+msgstr "_Дугме"
+
+#: plug-ins/script-fu/script-fu.c:328
+msgid "_Logos"
+msgstr "_Лого"
+
+#: plug-ins/script-fu/script-fu.c:330
+msgid "_Patterns"
+msgstr "_Мустру"
+
+#: plug-ins/script-fu/script-fu.c:333
+msgid "_Web Page Themes"
+msgstr "_Тему за веб странице"
+
+#: plug-ins/script-fu/script-fu.c:335
+msgid "_Alien Glow"
+msgstr "_Ванземаљаки сјај"
+
+#: plug-ins/script-fu/script-fu.c:337
+msgid "_Beveled Pattern"
+msgstr "_Испупчена мустра"
+
+#: plug-ins/script-fu/script-fu.c:339
+msgid "_Classic.Gimp.Org"
+msgstr "_Класик.Гимп.Орг"
+
+#: plug-ins/script-fu/script-fu.c:342
+msgid "Alpha to _Logo"
+msgstr "Алфа _у лого"
+
+#: plug-ins/script-fu/script-fu-eval.c:52
+msgid "Script-Fu evaluation mode only allows non-interactive invocation"
+msgstr "Режим за вредносвање скрипти дозвољава само не-интерактивни позив"
+
+#: plug-ins/script-fu/console/script-fu-console.c:119
+msgid "Script Console"
+msgstr "Конзола за скрипте"
+
+#: plug-ins/script-fu/console/script-fu-console.c:124
+#: plug-ins/script-fu/console/script-fu-console.c:249
+msgid "_Save"
+msgstr "_Сачувај"
+
+#: plug-ins/script-fu/console/script-fu-console.c:125
+msgid "C_lear"
+msgstr "_Очисти"
+
+#: plug-ins/script-fu/console/script-fu-console.c:126
+#: plug-ins/script-fu/console/script-fu-console.c:313
+msgid "_Close"
+msgstr "_Затвори"
+
+#: plug-ins/script-fu/console/script-fu-console.c:187
+msgid "_Browse..."
+msgstr "_Разгледај…"
+
+#: plug-ins/script-fu/console/script-fu-console.c:246
+msgid "Save Script-Fu Console Output"
+msgstr "Сачувај излаз из конзоле за скрипте"
+
+#: plug-ins/script-fu/console/script-fu-console.c:249
+#: plug-ins/script-fu/server/script-fu-server.c:968
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:167
+msgid "_Cancel"
+msgstr "_Откажи"
+
+#: plug-ins/script-fu/console/script-fu-console.c:282
+#, c-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Не могу да отворим „%s“ за упис: %s"
+
+#: plug-ins/script-fu/console/script-fu-console.c:308
+msgid "Script-Fu Procedure Browser"
+msgstr "Разгледач процедура за скрипте"
+
+#: plug-ins/script-fu/console/script-fu-console.c:312
+msgid "_Apply"
+msgstr "_Примени"
+
+#: plug-ins/script-fu/console/script-fu-console-total.c:89
+msgid "Welcome to TinyScheme"
+msgstr "Добродошли у МајушнуШему"
+
+#: plug-ins/script-fu/console/script-fu-console-total.c:93
+msgid "Scripting GIMP in the Scheme language"
+msgstr "Скриптовање ГИМП-а на језику Scheme"
+
+#: plug-ins/script-fu/server/script-fu-server.c:964
+msgid "Script-Fu Server Options"
+msgstr "Поставке сервера за скрипте"
+
+#: plug-ins/script-fu/server/script-fu-server.c:969
+msgid "_Start Server"
+msgstr "_Покрени сервер"
+
+#: plug-ins/script-fu/server/script-fu-server.c:1002
+msgid "Listen on IP:"
+msgstr "Слушај на ИП адреси:"
+
+#: plug-ins/script-fu/server/script-fu-server.c:1009
+msgid "Server port:"
+msgstr "Порт сервера:"
+
+#: plug-ins/script-fu/server/script-fu-server.c:1015
+msgid "Server logfile:"
+msgstr "Дневник сервера:"
+
+#: plug-ins/script-fu/server/script-fu-server.c:1028
+msgid ""
+"Listening on an IP address other than 127.0.0.1 (especially 0.0.0.0) can "
+"allow attackers to remotely execute arbitrary code on this machine."
+msgstr ""
+"Ослушкивање ИП адресе које се разликује од 127.0.0.1 (посебно 0.0.0.0) може "
+"привући нападаче који желе да покрену злонамерне програме на овом рачунару."
+
+#: plug-ins/script-fu/server/script-fu-server-plugin.c:91
+msgid "_Start Server..."
+msgstr "_Покрени сервер…"
+
+#: plug-ins/script-fu/server/script-fu-server-plugin.c:96
+msgid "Server for remote Script-Fu operation"
+msgstr "Покреће сервер за удаљене радње са скриптама"
+
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:140
+msgid "Script-Fu cannot process two scripts at the same time."
+msgstr "Не могу да обрадим две скрипте у исто време"
+
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:142
+#, c-format
+msgid "You are already running the \"%s\" script."
+msgstr "Већ је покренута скрипта „%s“."
+
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:166
+msgid "_Reset"
+msgstr "_Врати"
+
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:168
+msgid "_OK"
+msgstr "_У реду"
+
+#
+#. we add a colon after the label;
+#. *  some languages want an extra space here
+#.
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:222
+#, c-format
+msgid "%s:"
+msgstr "%s:"
+
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:273
+msgid "Script-Fu Color Selection"
+msgstr "Избор боје за скрипту"
+
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:395
+msgid "Script-Fu File Selection"
+msgstr "Избор датотеке за скрипту"
+
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:398
+msgid "Script-Fu Folder Selection"
+msgstr "Избор директоријума за скрипту"
+
+#. Log to stdout.  Later to Gimp.
+#: plug-ins/script-fu/libscriptfu/script-fu-interface.c:807
+#, c-format
+msgid "Error while executing %s:"
+msgstr "Грешка при извршавању %s:"
+
+#: plug-ins/script-fu/libscriptfu/script-fu-scripts.c:541
+#, c-format
+msgid "Error while loading %s:"
+msgstr "Грешка при извршавању %s:"
+
+#: plug-ins/script-fu/scripts/add-bevel.scm:72
+msgid "Bumpmap"
+msgstr "Бумп мапа"
+
+#: plug-ins/script-fu/scripts/add-bevel.scm:199
+msgid "Add B_evel..."
+msgstr "Додај испупче_ње…"
+
+#: plug-ins/script-fu/scripts/add-bevel.scm:200
+msgid "Add a beveled border to an image"
+msgstr "Додаје испупчену ивицу око слике"
+
+#. v3 >>> additional argument
+#: plug-ins/script-fu/scripts/add-bevel.scm:206
+msgid "_Thickness"
+msgstr "_Дебљина"
+
+#: plug-ins/script-fu/scripts/add-bevel.scm:207
+msgid "_Work on copy"
+msgstr "_Рад на умношку"
+
+#: plug-ins/script-fu/scripts/add-bevel.scm:208
+msgid "_Keep bump layer"
+msgstr "_Задржи слој испупчења"
+
+#: plug-ins/script-fu/scripts/addborder.scm:121
+msgid "Border Layer"
+msgstr "Ивица слоја"
+
+#: plug-ins/script-fu/scripts/addborder.scm:174
+msgid "Add _Border..."
+msgstr "Додај _ивицу…"
+
+#: plug-ins/script-fu/scripts/addborder.scm:175
+msgid "Add a border around an image"
+msgstr "Додаје ивицу око слике"
+
+#: plug-ins/script-fu/scripts/addborder.scm:181
+msgid "Border X size"
+msgstr "Величина X ивице"
+
+#: plug-ins/script-fu/scripts/addborder.scm:182
+msgid "Border Y size"
+msgstr "Величина Y ивице"
+
+#: plug-ins/script-fu/scripts/addborder.scm:183
+msgid "Border color"
+msgstr "Боја ивице"
+
+#: plug-ins/script-fu/scripts/addborder.scm:184
+msgid "Delta value on color"
+msgstr "Делта вредност боје"
+
+#: plug-ins/script-fu/scripts/addborder.scm:185
+#: plug-ins/script-fu/scripts/drop-shadow.scm:182
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:210
+msgid "Allow resizing"
+msgstr "Дозволи промену величине"
+
+#: plug-ins/script-fu/scripts/blend-anim.scm:202
+msgid "Frame"
+msgstr "Оквир"
+
+#: plug-ins/script-fu/scripts/blend-anim.scm:218
+msgid "Blend Animation needs at least three source layers"
+msgstr "Стапање за анимацију захтева бар три изворна слоја"
+
+#: plug-ins/script-fu/scripts/blend-anim.scm:224
+msgid "_Blend..."
+msgstr "_Стопи…"
+
+#: plug-ins/script-fu/scripts/blend-anim.scm:225
+msgid ""
+"Create intermediate layers to blend two or more layers over a background as "
+"an animation"
+msgstr ""
+"Прави међу-слојеве за постепеног спајање два или више слоја са позадином у "
+"анимацију"
+
+#: plug-ins/script-fu/scripts/blend-anim.scm:231
+msgid "Intermediate frames"
+msgstr "Средишљи кадрови"
+
+#: plug-ins/script-fu/scripts/blend-anim.scm:232
+msgid "Max. blur radius"
+msgstr "Макс. полупречник замућења"
+
+#: plug-ins/script-fu/scripts/blend-anim.scm:233
+msgid "Looped"
+msgstr "Понављање"
+
+#. --- false form of "if-1"
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:220
+msgid ""
+"The Burn-In script needs two layers in total. A foreground layer with "
+"transparency and a background layer."
+msgstr ""
+"Потребан су два слоја како би користили скрипту за упаљивање (предњи "
+"провидан слој и позадински слој)"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:227
+msgid "B_urn-In..."
+msgstr "_Упали…"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:228
+msgid ""
+"Create intermediate layers to produce an animated 'burn-in' transition "
+"between two layers"
+msgstr ""
+"Прави међу-слојеве за ефекат благог „упаљеног“ прелаза између два слоја"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:234
+msgid "Glow color"
+msgstr "Боја за сјај"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:235
+msgid "Fadeout"
+msgstr "Нестајање"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:236
+msgid "Fadeout width"
+msgstr "Ширина изблеђивања"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:237
+msgid "Corona width"
+msgstr "Ширина вела"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:238
+msgid "After glow"
+msgstr "Измени сјај"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:239
+msgid "Add glowing"
+msgstr "Додај сјај"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:240
+msgid "Prepare for GIF"
+msgstr "Припреми за GIF"
+
+#: plug-ins/script-fu/scripts/burn-in-anim.scm:241
+msgid "Speed (pixels/frame)"
+msgstr "Брзина (пиксела/кадровима)"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:207
+msgid "Carved Surface"
+msgstr "Изрезбарена површина"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:208
+msgid "Bevel Shadow"
+msgstr "Сенка испупчења"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:209
+msgid "Bevel Highlight"
+msgstr "Наглашавање испупчења"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:210
+msgid "Cast Shadow"
+msgstr "Додај сенку"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:211
+msgid "Inset"
+msgstr "Уметак"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:223
+msgid "Stencil C_arve..."
+msgstr "Из_резбарена слика…"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:224
+msgid ""
+"Use the specified drawable as a stencil to carve from the specified image."
+msgstr "Омогућава да на основу цртежа направите резбарију на изабраној слици."
+
+#: plug-ins/script-fu/scripts/carve-it.scm:230
+msgid "Mask image"
+msgstr "Маска слике"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:231
+msgid "Mask drawable"
+msgstr "Маска цртежа"
+
+#: plug-ins/script-fu/scripts/carve-it.scm:232
+msgid "Carve white areas"
+msgstr "Изрезбари бела подручја"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:153
+msgid "Background"
+msgstr "Позадина"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:154
+msgid "Layer 1"
+msgstr "Слој 1"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:155
+msgid "Layer 2"
+msgstr "Слој 2"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:156
+msgid "Layer 3"
+msgstr "Слој 3"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:157
+msgid "Drop Shadow"
+msgstr "Додај сенку"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:299
+msgid "Chrome"
+msgstr "Хром"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:300
+#: plug-ins/script-fu/scripts/xach-effect.scm:69
+msgid "Highlight"
+msgstr "Светло"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:320
+msgid "Stencil C_hrome..."
+msgstr "_Хромирај…"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:321
+msgid ""
+"Add a chrome effect to the selected region (or alpha) using a specified "
+"(grayscale) stencil"
+msgstr ""
+"Додаје ефекат хромирања на изабрану област (или алфу) на основу изабраног "
+"(црно-белог) цртежа"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:327
+msgid "Chrome saturation"
+msgstr "Засићеност"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:328
+msgid "Chrome lightness"
+msgstr "Светлина"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:329
+msgid "Chrome factor"
+msgstr "Чинилац"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:330
+msgid "Environment map"
+msgstr "Мапа окружења"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:333
+msgid "Highlight balance"
+msgstr "Баланс за светло"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:334
+msgid "Chrome balance"
+msgstr "Равнотежа"
+
+#: plug-ins/script-fu/scripts/chrome-it.scm:335
+msgid "Chrome white areas"
+msgstr "Хромирај бела подручја"
+
+#: plug-ins/script-fu/scripts/circuit.scm:72
+msgid "Effect layer"
+msgstr "Слој за ефекат"
+
+#: plug-ins/script-fu/scripts/circuit.scm:135
+msgid "_Circuit..."
+msgstr "_Штампано коло…"
+
+#: plug-ins/script-fu/scripts/circuit.scm:136
+msgid ""
+"Fill the selected region (or alpha) with traces like those on a circuit board"
+msgstr ""
+"Попуњава изабрану област (или алфу) птаговима сличним као на штампаним "
+"плочама"
+
+#: plug-ins/script-fu/scripts/circuit.scm:142
+msgid "Oilify mask size"
+msgstr "Величина уљане маске"
+
+#: plug-ins/script-fu/scripts/circuit.scm:143
+msgid "Circuit seed"
+msgstr "Штампано коло"
+
+#: plug-ins/script-fu/scripts/circuit.scm:144
+msgid "No background (only for separate layer)"
+msgstr "Нема позадине (само за одвојени слој)"
+
+#: plug-ins/script-fu/scripts/circuit.scm:145
+#: plug-ins/script-fu/scripts/lava.scm:144
+#: plug-ins/script-fu/scripts/xach-effect.scm:139
+msgid "Keep selection"
+msgstr "Задржи избор"
+
+#: plug-ins/script-fu/scripts/circuit.scm:146
+#: plug-ins/script-fu/scripts/lava.scm:145
+msgid "Separate layer"
+msgstr "Одвојени слој"
+
+#: plug-ins/script-fu/scripts/clothify.scm:65
+msgid "_Clothify..."
+msgstr "Додај п_латно…"
+
+#: plug-ins/script-fu/scripts/clothify.scm:66
+msgid "Add a cloth-like texture to the selected region (or alpha)"
+msgstr "Додаје текстуру платна на изабрану област (или алфу)"
+
+#: plug-ins/script-fu/scripts/clothify.scm:72
+msgid "Blur X"
+msgstr "X замућење"
+
+#: plug-ins/script-fu/scripts/clothify.scm:73
+msgid "Blur Y"
+msgstr "Y замућење"
+
+#: plug-ins/script-fu/scripts/clothify.scm:74
+msgid "Azimuth"
+msgstr "Азимут"
+
+#: plug-ins/script-fu/scripts/clothify.scm:75
+msgid "Elevation"
+msgstr "Нагиб"
+
+#: plug-ins/script-fu/scripts/clothify.scm:76
+msgid "Depth"
+msgstr "Дубина"
+
+#: plug-ins/script-fu/scripts/coffee.scm:41
+msgid "Stain"
+msgstr "Мрљa"
+
+#: plug-ins/script-fu/scripts/coffee.scm:132
+msgid "_Stain..."
+msgstr "_Мрља…"
+
+#: plug-ins/script-fu/scripts/coffee.scm:133
+msgid "Add layers of stain or blotch marks"
+msgstr "Додај слојеве мрља или флека"
+
+#: plug-ins/script-fu/scripts/coffee.scm:139
+msgid "Number of stains to add"
+msgstr "Број мрља за додавање"
+
+#: plug-ins/script-fu/scripts/coffee.scm:140
+msgid "Darken only"
+msgstr "Само тамно"
+
+#: plug-ins/script-fu/scripts/coffee.scm:141
+msgid "Gradient to color stains"
+msgstr "Прелив за бојење мрља"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:82
+msgid "_Difference Clouds"
+msgstr "_Облаци разлике"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:83
+msgid "Solid noise applied with Difference layer mode"
+msgstr "Једнобојни шум примењен на слој у режиму „Разлика“"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:89
+msgid "Random Seed"
+msgstr "Случајно семе"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:90
+msgid "Levels"
+msgstr "Нивои"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:91
+msgid "Tileable"
+msgstr "Поплочано"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:92
+msgid "Turbulent"
+msgstr "Турбуленција"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:93
+msgid "X"
+msgstr "X"
+
+#: plug-ins/script-fu/scripts/difference-clouds.scm:94
+msgid "Y"
+msgstr "Y"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:112
+msgid "_Distort..."
+msgstr "_Изобличи…"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:113
+msgid "Distress the selection"
+msgstr "Прави неправилан облик текућег избора"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:119
+msgid "_Threshold"
+msgstr "_Праг"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:120
+msgid "_Spread"
+msgstr "_Ширење"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:121
+msgid "_Granularity (1 is low)"
+msgstr "_Грнулација (1 је мала)"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:122
+msgid "S_mooth"
+msgstr "У_глађивање"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:123
+msgid "Smooth hor_izontally"
+msgstr "Углади хор_изонтално"
+
+#: plug-ins/script-fu/scripts/distress-selection.scm:124
+msgid "Smooth _vertically"
+msgstr "Углади _вертикално"
+
+#: plug-ins/script-fu/scripts/drop-shadow.scm:170
+msgid "_Drop Shadow (legacy)..."
+msgstr "_Додај сенку (застарело)…"
+
+#: plug-ins/script-fu/scripts/drop-shadow.scm:171
+msgid "Add a drop shadow to the selected region (or alpha)"
+msgstr "Додаје сенку испод изабране области (или алфе)"
+
+#: plug-ins/script-fu/scripts/drop-shadow.scm:177
+msgid "Offset X"
+msgstr "X померај"
+
+#: plug-ins/script-fu/scripts/drop-shadow.scm:178
+msgid "Offset Y"
+msgstr "Y померај"
+
+#: plug-ins/script-fu/scripts/drop-shadow.scm:179
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:206
+#: plug-ins/script-fu/scripts/round-corners.scm:145
+msgid "Blur radius"
+msgstr "Полупречник замућења"
+
+#: plug-ins/script-fu/scripts/drop-shadow.scm:180
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:149
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:207
+msgid "Color"
+msgstr "Боја"
+
+#: plug-ins/script-fu/scripts/drop-shadow.scm:181
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:208
+msgid "Opacity"
+msgstr "Непровидност"
+
+#: plug-ins/script-fu/scripts/font-map.scm:165
+msgid "Render _Font Map..."
+msgstr "Исцртај мапу _фонтова…"
+
+#: plug-ins/script-fu/scripts/font-map.scm:166
+msgid ""
+"Create an image filled with previews of fonts matching a fontname filter"
+msgstr ""
+"Прави слику испуњени прегледима фонтова који се поклапају са задатим филтером"
+
+#: plug-ins/script-fu/scripts/font-map.scm:169
+msgid "_Text"
+msgstr "_Текст"
+
+#: plug-ins/script-fu/scripts/font-map.scm:170
+msgid "Use font _name as text"
+msgstr "_Користи име фонта за текст"
+
+#: plug-ins/script-fu/scripts/font-map.scm:171
+msgid "_Labels"
+msgstr "О_знаке"
+
+#: plug-ins/script-fu/scripts/font-map.scm:172
+msgid "_Filter (regexp)"
+msgstr "_Филтер (регуларни израз)"
+
+#: plug-ins/script-fu/scripts/font-map.scm:173
+msgid "Font _size (pixels)"
+msgstr "_Величина фонта (у пикселима)"
+
+#: plug-ins/script-fu/scripts/font-map.scm:174
+msgid "_Border (pixels)"
+msgstr "_Ивица (у пикселима)"
+
+#: plug-ins/script-fu/scripts/font-map.scm:175
+msgid "_Color scheme"
+msgstr "Шема _боја"
+
+#: plug-ins/script-fu/scripts/font-map.scm:175
+msgid "Black on white"
+msgstr "Црно на белом"
+
+#: plug-ins/script-fu/scripts/font-map.scm:175
+msgid "Active colors"
+msgstr "Текуће боје"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:142
+msgid "_Fuzzy Border..."
+msgstr "_Неправилан оквир…"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:143
+msgid "Add a jagged, fuzzy border to an image"
+msgstr "Додаје неправилну, назубљену ивицу на слику"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:150
+#: plug-ins/script-fu/scripts/old-photo.scm:106
+msgid "Border size"
+msgstr "Величина ивице"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:151
+msgid "Blur border"
+msgstr "Замути ивицу"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:152
+msgid "Granularity (1 is Low)"
+msgstr "Зрновитост (1 је мала)"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:153
+msgid "Add shadow"
+msgstr "Додај сенку"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:154
+msgid "Shadow weight (%)"
+msgstr "Тежина сенке (%)"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:155
+#: plug-ins/script-fu/scripts/old-photo.scm:112
+#: plug-ins/script-fu/scripts/round-corners.scm:147
+#: plug-ins/script-fu/scripts/slide.scm:270
+#: plug-ins/script-fu/scripts/spinning-globe.scm:127
+msgid "Work on copy"
+msgstr "Ради на копији"
+
+#: plug-ins/script-fu/scripts/fuzzyborder.scm:156
+msgid "Flatten image"
+msgstr "Изравнај слику"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:59
+msgid "_Using Paths"
+msgstr "_Коришћењем путања"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:60
+#: plug-ins/script-fu/scripts/gimp-online.scm:71
+#: plug-ins/script-fu/scripts/gimp-online.scm:82
+#: plug-ins/script-fu/scripts/gimp-online.scm:93
+#: plug-ins/script-fu/scripts/gimp-online.scm:104
+#: plug-ins/script-fu/scripts/gimp-online.scm:115
+#: plug-ins/script-fu/scripts/gimp-online.scm:126
+#: plug-ins/script-fu/scripts/gimp-online.scm:137
+#: plug-ins/script-fu/scripts/gimp-online.scm:147
+msgid "Bookmark to the user manual"
+msgstr "Обележивач до упутства за кориснике"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:70
+msgid "_Preparing your Images for the Web"
+msgstr "С_премам слике за веб"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:81
+msgid "_Working with Digital Camera Photos"
+msgstr "Рад са _фотографијама из дигиталних апарата"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:92
+msgid "Create, Open and Save _Files"
+msgstr "Направи, отвори и сачувај _датотеке"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:103
+msgid "_Basic Concepts"
+msgstr "_Основни концепти"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:114
+msgid "How to Use _Dialogs"
+msgstr "Прозорчићи „_Како се користи“"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:125
+msgid "Drawing _Simple Objects"
+msgstr "Исцртај _просте објекте"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:136
+msgid "_Create and Use Selections"
+msgstr "_Направи и користи одабире"
+
+#: plug-ins/script-fu/scripts/gimp-online.scm:146
+msgid "_Table of Contents"
+msgstr "_Табела садржаја"
+
+#: plug-ins/script-fu/scripts/gradient-example.scm:73
+msgid "Custom _Gradient..."
+msgstr "Произвољни пре_лив…"
+
+#: plug-ins/script-fu/scripts/gradient-example.scm:74
+msgid "Create an image filled with an example of the current gradient"
+msgstr "Прави слику испуњену испуњену узорком текућег прелива"
+
+#: plug-ins/script-fu/scripts/gradient-example.scm:77
+#: plug-ins/script-fu/scripts/mkbrush.scm:69
+#: plug-ins/script-fu/scripts/mkbrush.scm:137
+#: plug-ins/script-fu/scripts/mkbrush.scm:191
+#: plug-ins/script-fu/scripts/mkbrush.scm:258
+msgid "Width"
+msgstr "Ширина"
+
+#: plug-ins/script-fu/scripts/gradient-example.scm:78
+#: plug-ins/script-fu/scripts/mkbrush.scm:70
+#: plug-ins/script-fu/scripts/mkbrush.scm:138
+#: plug-ins/script-fu/scripts/mkbrush.scm:192
+#: plug-ins/script-fu/scripts/mkbrush.scm:259
+msgid "Height"
+msgstr "Висина"
+
+#: plug-ins/script-fu/scripts/gradient-example.scm:79
+msgid "Gradient reverse"
+msgstr "Обрнути прелив"
+
+#: plug-ins/script-fu/scripts/guides-from-rule.scm:60
+#| msgid "New Guides from _Selection"
+msgid "New Guides from Rule..."
+msgstr "Нове вођице из правила..."
+
+#: plug-ins/script-fu/scripts/guides-from-rule.scm:61
+msgid "Add guides based on a selected composition rule"
+msgstr "Додај вођице на основу изабраног правила композиције"
+
+#. doesn't matter how many drawables are selected
+#: plug-ins/script-fu/scripts/guides-from-rule.scm:67
+msgid "R_ule"
+msgstr "Правил_о"
+
+#: plug-ins/script-fu/scripts/guides-from-rule.scm:67
+msgid "Center lines"
+msgstr "Средишне линије"
+
+#: plug-ins/script-fu/scripts/guides-from-rule.scm:68
+msgid "Rule of thirds"
+msgstr "Правило трећина"
+
+#: plug-ins/script-fu/scripts/guides-from-rule.scm:69
+msgid "Rule of fifths"
+msgstr "Правило петина"
+
+#: plug-ins/script-fu/scripts/guides-from-rule.scm:70
+msgid "Golden sections"
+msgstr "Златни пресеци"
+
+#: plug-ins/script-fu/scripts/guides-from-selection.scm:32
+msgid "New Guides from _Selection"
+msgstr "Нове во_ђице из избора"
+
+#: plug-ins/script-fu/scripts/guides-from-selection.scm:33
+msgid "Create four guides around the bounding box of the current selection"
+msgstr "Додаје четири вођице које прате ивицу тренутног избора"
+
+#: plug-ins/script-fu/scripts/guides-new-percent.scm:30
+msgid "New Guide (by _Percent)..."
+msgstr "Нова вођица (по про_центу)…"
+
+#: plug-ins/script-fu/scripts/guides-new-percent.scm:31
+msgid "Add a guide at the position specified as a percentage of the image size"
+msgstr "Додаје вођице на процентима задату вредност од величине слике"
+
+#. doesn't matter how many drawables are selected
+#: plug-ins/script-fu/scripts/guides-new-percent.scm:37
+#: plug-ins/script-fu/scripts/guides-new.scm:33
+msgid "_Direction"
+msgstr "_Смер"
+
+#: plug-ins/script-fu/scripts/guides-new-percent.scm:37
+#: plug-ins/script-fu/scripts/guides-new.scm:33
+msgid "Horizontal"
+msgstr "Хоризонтално"
+
+#: plug-ins/script-fu/scripts/guides-new-percent.scm:38
+#: plug-ins/script-fu/scripts/guides-new.scm:33
+msgid "Vertical"
+msgstr "Вертикално"
+
+#: plug-ins/script-fu/scripts/guides-new-percent.scm:39
+msgid "_Position (in %)"
+msgstr "_Место (у %)"
+
+#: plug-ins/script-fu/scripts/guides-new.scm:26
+msgid "New _Guide..."
+msgstr "Нова _вођица…"
+
+#: plug-ins/script-fu/scripts/guides-new.scm:27
+msgid "Add a guide at the orientation and position specified (in pixels)"
+msgstr "Додаје вођицу на одређено место задато у пикселима"
+
+#: plug-ins/script-fu/scripts/guides-new.scm:34
+msgid "_Position"
+msgstr "_Место"
+
+#: plug-ins/script-fu/scripts/guides-remove-all.scm:19
+msgid "_Remove all Guides"
+msgstr "У_клони све вођице"
+
+#: plug-ins/script-fu/scripts/guides-remove-all.scm:20
+msgid "Remove all horizontal and vertical guides"
+msgstr "Уклони све хоризонталне и вертикалне вођице"
+
+#. else
+#: plug-ins/script-fu/scripts/lava.scm:127
+msgid "Lava works with exactly one selected layer"
+msgstr "Лава ради са тачно једним изабраним слојем"
+
+#: plug-ins/script-fu/scripts/lava.scm:133
+msgid "_Lava..."
+msgstr "_Лава…"
+
+#: plug-ins/script-fu/scripts/lava.scm:134
+msgid "Fill the current selection with lava"
+msgstr "Попуњава текући избор лавом"
+
+#: plug-ins/script-fu/scripts/lava.scm:140
+msgid "Seed"
+msgstr "Семе"
+
+#: plug-ins/script-fu/scripts/lava.scm:141
+msgid "Size"
+msgstr "Величина"
+
+#: plug-ins/script-fu/scripts/lava.scm:142
+msgid "Roughness"
+msgstr "Храпавост"
+
+#: plug-ins/script-fu/scripts/lava.scm:143
+msgid "Gradient"
+msgstr "Прелив"
+
+#: plug-ins/script-fu/scripts/lava.scm:146
+msgid "Use current gradient"
+msgstr "Користи текући прелив"
+
+#: plug-ins/script-fu/scripts/line-nova.scm:117
+msgid "Line _Nova..."
+msgstr "_Зраци…"
+
+#: plug-ins/script-fu/scripts/line-nova.scm:118
+msgid ""
+"Fill a layer with rays emanating outward from its center using the "
+"foreground color"
+msgstr ""
+"Попуњава слој зрацима који исијавају из одређеног центра користећи се бојом "
+"четкице"
+
+#: plug-ins/script-fu/scripts/line-nova.scm:124
+msgid "_Number of lines"
+msgstr "Број ли_нија"
+
+#: plug-ins/script-fu/scripts/line-nova.scm:125
+msgid "S_harpness (degrees)"
+msgstr "Ош_трина (степени)"
+
+#: plug-ins/script-fu/scripts/line-nova.scm:126
+msgid "O_ffset radius"
+msgstr "П_омерај полупречника"
+
+#: plug-ins/script-fu/scripts/line-nova.scm:127
+msgid "Ran_domness"
+msgstr "Нас_умичност"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:64
+msgid "_Rectangular..."
+msgstr "_Правоугаона…"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:65
+msgid "Create a rectangular brush"
+msgstr "Направи правоугаону четкицу"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:68
+#: plug-ins/script-fu/scripts/mkbrush.scm:136
+#: plug-ins/script-fu/scripts/mkbrush.scm:190
+#: plug-ins/script-fu/scripts/mkbrush.scm:257
+msgid "Name"
+msgstr "Назив"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:71
+#: plug-ins/script-fu/scripts/mkbrush.scm:140
+#: plug-ins/script-fu/scripts/mkbrush.scm:193
+#: plug-ins/script-fu/scripts/mkbrush.scm:261
+msgid "Spacing"
+msgstr "Размак"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:132
+msgid "Re_ctangular, Feathered..."
+msgstr "Правоу_гаона, умекшана…"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:133
+msgid "Create a rectangular brush with feathered edges"
+msgstr "Направи правоугаону четкицу са умекшаним ивицама"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:139
+#: plug-ins/script-fu/scripts/mkbrush.scm:260
+msgid "Feathering"
+msgstr "Умекшавање"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:186
+msgid "_Elliptical..."
+msgstr "_Округла…"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:187
+msgid "Create an elliptical brush"
+msgstr "Направи округлу четкицу"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:253
+msgid "Elli_ptical, Feathered..."
+msgstr "О_кругла, умекшана…"
+
+#: plug-ins/script-fu/scripts/mkbrush.scm:254
+msgid "Create an elliptical brush with feathered edges"
+msgstr "Направи округлу четкицу са умекшаним ивицама"
+
+#: plug-ins/script-fu/scripts/old-photo.scm:98
+msgid "_Old Photo..."
+msgstr "Стара _фотографија…"
+
+#: plug-ins/script-fu/scripts/old-photo.scm:99
+msgid "Make an image look like an old photo"
+msgstr "Прави стару фотографију од жељене слике"
+
+#: plug-ins/script-fu/scripts/old-photo.scm:105
+msgid "Defocus"
+msgstr "Дефокусирај"
+
+#. since this plug-in uses the fuzzy-border plug-in, I used the
+#. values of the latter, with the exception of the initial value
+#. and the 'minimum' value.
+#: plug-ins/script-fu/scripts/old-photo.scm:110
+msgid "Sepia"
+msgstr "Сепиа"
+
+#: plug-ins/script-fu/scripts/old-photo.scm:111
+msgid "Mottle"
+msgstr "Истачкана"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:162
+msgid "The filename you entered is not a suitable name for a file."
+msgstr "Име датотеке које сте одабрали није одговарајуће за датотеку."
+
+#: plug-ins/script-fu/scripts/palette-export.scm:164
+msgid ""
+"All characters in the name are either white-spaces or characters which can "
+"not appear in filenames."
+msgstr ""
+"Сва слова у називу су или размаци или слова која нису дозвољена у именима "
+"датотека."
+
+#. Side effect.
+#. Tell the user the mangled path, might be different than user entered.
+#. The user should not need to search for the file.
+#: plug-ins/script-fu/scripts/palette-export.scm:199
+msgid "Exported palette to file: "
+msgstr "Палета је извезена у датотеку: "
+
+#: plug-ins/script-fu/scripts/palette-export.scm:287
+msgid "Folder for the output file"
+msgstr "Фасцикла за излазну датотеку"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:288
+msgid ""
+"The name of the file to create (if a file with this name already exist, it "
+"will be replaced)"
+msgstr ""
+"Име за нову датотеку (уколико датотека са тим именом већ постоји, биће "
+"замењена)"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:317
+msgid "_CSS stylesheet..."
+msgstr "_ЦСС стилски лист…"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:318
+msgid ""
+"Export the active palette as a CSS stylesheet with the color entry name as "
+"their class name, and the color itself as the color attribute"
+msgstr ""
+"Извози тренутну палету као ЦСС таблицу, где је име боје представљено именом "
+"класе, а сама боја као атрибут боје."
+
+#: plug-ins/script-fu/scripts/palette-export.scm:338
+msgid "P_HP dictionary..."
+msgstr "П_ХП речник…"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:339
+msgid "Export the active palette as a PHP dictionary (name => color)"
+msgstr "Извози тренутну палету као ПХП речник (име => боја)"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:363
+msgid "_Python dictionary..."
+msgstr "_Пајтон речник…"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:364
+msgid "Export the active palette as a Python dictionary (name: color)"
+msgstr "Извози тренутну палету као Пајтонов речник (име: боја)"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:385
+msgid "_Text file..."
+msgstr "_Текстуална датотека…"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:386
+msgid ""
+"Write all the colors in a palette to a text file, one hexadecimal value per "
+"line (no names)"
+msgstr ""
+"Уписује све боје палете у текстуалну датотеку, једна хексадекадна вредност "
+"по реду (без имена)"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:425
+msgid "J_ava map..."
+msgstr "Ј_ава мапа…"
+
+#: plug-ins/script-fu/scripts/palette-export.scm:426
+msgid "Export the active palette as a java.util.Hashtable&lt;String,Color&gt;"
+msgstr "Извезите активну палету као java.util.Hashtable&lt;String,Color&gt;"
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:59
+#: plug-ins/script-fu/scripts/paste-as-pattern.scm:45
+msgid "There is no image data in the clipboard to paste."
+msgstr "Не постоји исечак са сликом у остави."
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:65
+msgid "Paste as New _Brush..."
+msgstr "Убаци као нову _четкицу…"
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:66
+msgid "Paste the clipboard contents into a new brush"
+msgstr "Убаци исечак из оставе у нову четкицу"
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:69
+msgid "_Brush name"
+msgstr "_Име четкице"
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:69
+msgid "My Brush"
+msgstr "Моја четкица"
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:70
+#: plug-ins/script-fu/scripts/paste-as-pattern.scm:56
+msgid "_File name"
+msgstr "Име _датотеке"
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:70
+msgid "mybrush"
+msgstr "мојачеткица"
+
+#: plug-ins/script-fu/scripts/paste-as-brush.scm:71
+msgid "_Spacing"
+msgstr "_Размак"
+
+#: plug-ins/script-fu/scripts/paste-as-pattern.scm:51
+msgid "Paste as New _Pattern..."
+msgstr "Убаци као нови _образац…"
+
+#: plug-ins/script-fu/scripts/paste-as-pattern.scm:52
+msgid "Paste the clipboard contents into a new pattern"
+msgstr "Убаци исечак из оставе у нову мустру"
+
+#: plug-ins/script-fu/scripts/paste-as-pattern.scm:55
+msgid "_Pattern name"
+msgstr "Име _мустре"
+
+#: plug-ins/script-fu/scripts/paste-as-pattern.scm:55
+msgid "My Pattern"
+msgstr "Моја мустра"
+
+#: plug-ins/script-fu/scripts/paste-as-pattern.scm:56
+msgid "mypattern"
+msgstr "мојамустра"
+
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:196
+msgid "_Perspective..."
+msgstr "Пе_рспективна сенка…"
+
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:197
+msgid "Add a perspective shadow to the selected region (or alpha)"
+msgstr "Додаје сенку у перспективи на изабрану област (или алфу)"
+
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:203
+msgid "Angle"
+msgstr "Угао"
+
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:204
+msgid "Relative distance of horizon"
+msgstr "Релативна удаљеност од хоризонта"
+
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:205
+msgid "Relative length of shadow"
+msgstr "Релативна дужина сенке"
+
+#: plug-ins/script-fu/scripts/perspective-shadow.scm:209
+msgid "Interpolation"
+msgstr "Интерполација"
+
+#: plug-ins/script-fu/scripts/reverse-layers.scm:41
+msgid "Reverse Layer _Order"
+msgstr "Обрни редослед сл_ојева"
+
+#: plug-ins/script-fu/scripts/reverse-layers.scm:42
+msgid "Reverse the order of layers in the image"
+msgstr "Обрће редослед слојева на слици"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:83
+msgid "_Rippling..."
+msgstr "_Таласање…"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:84
+msgid ""
+"Create a multi-layer image by adding a ripple effect to the current layer"
+msgstr "Прави слику са више слојева додајући ефекат таласања на текућу слику"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:90
+msgid "Ri_ppling strength"
+msgstr "Јачина _таласања"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:91
+msgid "_Number of frames"
+msgstr "_Број кадрова"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:92
+msgid "Edge _behavior"
+msgstr "_Понашање ивице"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:92
+msgid "Wrap"
+msgstr "Умотај"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:92
+msgid "Smear"
+msgstr "Замажи"
+
+#: plug-ins/script-fu/scripts/ripply-anim.scm:92
+msgid "Black"
+msgstr "Црна"
+
+#: plug-ins/script-fu/scripts/round-corners.scm:134
+msgid "_Round Corners..."
+msgstr "_Заобли ћошкове…"
+
+#: plug-ins/script-fu/scripts/round-corners.scm:135
+msgid ""
+"Round the corners of an image and optionally add a drop-shadow and background"
+msgstr "Заобљава ћошкове на слици и по жељи база сенку и додаје позадину"
+
+#: plug-ins/script-fu/scripts/round-corners.scm:141
+msgid "Edge radius"
+msgstr "Полупречник ивице"
+
+#: plug-ins/script-fu/scripts/round-corners.scm:142
+msgid "Add drop-shadow"
+msgstr "Додај сенку"
+
+#: plug-ins/script-fu/scripts/round-corners.scm:143
+msgid "Shadow X offset"
+msgstr "X померај сенке"
+
+#: plug-ins/script-fu/scripts/round-corners.scm:144
+msgid "Shadow Y offset"
+msgstr "Y померај сенке"
+
+#: plug-ins/script-fu/scripts/round-corners.scm:146
+msgid "Add background"
+msgstr "Додај позадину"
+
+#: plug-ins/script-fu/scripts/script-fu-set-cmap.scm:53
+msgid "Se_t Colormap..."
+msgstr "_Постави мапу боја…"
+
+#: plug-ins/script-fu/scripts/script-fu-set-cmap.scm:54
+msgid "Change the colormap of an image to the colors in a specified palette."
+msgstr "Мења мапу боја слике на боје у жељеној палети."
+
+#: plug-ins/script-fu/scripts/script-fu-set-cmap.scm:60
+msgid "Palette"
+msgstr "Палета"
+
+#: plug-ins/script-fu/scripts/selection-round.scm:143
+msgid "Rounded R_ectangle..."
+msgstr "_Заобљени правоугаоник…"
+
+#: plug-ins/script-fu/scripts/selection-round.scm:144
+msgid "Round the corners of the current selection"
+msgstr "Заобљава ћошкове текућег избора"
+
+#: plug-ins/script-fu/scripts/selection-round.scm:150
+msgid "R_adius (%)"
+msgstr "_Полупречник (%)"
+
+#: plug-ins/script-fu/scripts/selection-round.scm:151
+msgid "Co_ncave"
+msgstr "Ко_нкавно"
+
+#: plug-ins/script-fu/scripts/slide.scm:259
+msgid "_Slide..."
+msgstr "_Слајд…"
+
+#: plug-ins/script-fu/scripts/slide.scm:260
+msgid "Add a slide-film like frame, sprocket holes, and labels to an image"
+msgstr "Додаје оквир као на слајдовима, рупице са стране и натписе на слику"
+
+#: plug-ins/script-fu/scripts/slide.scm:266
+msgid "Text"
+msgstr "Текст"
+
+#: plug-ins/script-fu/scripts/slide.scm:267
+msgid "Number"
+msgstr "Број"
+
+#: plug-ins/script-fu/scripts/slide.scm:268
+msgid "Font"
+msgstr "Фонт"
+
+#: plug-ins/script-fu/scripts/slide.scm:269
+msgid "Font color"
+msgstr "Боја фонта"
+
+#: plug-ins/script-fu/scripts/spinning-globe.scm:116
+msgid "_Spinning Globe..."
+msgstr "Анимирани _глобус…"
+
+#: plug-ins/script-fu/scripts/spinning-globe.scm:117
+msgid "Create an animation by mapping the current image onto a spinning sphere"
+msgstr "Прави анимацију мапирањем текуће слике у глобус који се окреће"
+
+#: plug-ins/script-fu/scripts/spinning-globe.scm:123
+msgid "Frames"
+msgstr "Оквира"
+
+#: plug-ins/script-fu/scripts/spinning-globe.scm:124
+msgid "Turn from left to right"
+msgstr "Окрени са лева на десно"
+
+#: plug-ins/script-fu/scripts/spinning-globe.scm:125
+msgid "Transparent background"
+msgstr "Провидна позадина"
+
+#: plug-ins/script-fu/scripts/spinning-globe.scm:126
+msgid "Index to n colors (0 = remain RGB)"
+msgstr "Индекс у n боја (0 = остаје РГБ)"
+
+#. Translator: this means "in the Scheme programming language" aka ScriptFu.
+#: plug-ins/script-fu/scripts/test-sphere-v3.scm:154
+msgid "Plug-In Example in _Scheme"
+msgstr "Пример прикључка у језику _Scheme"
+
+#: plug-ins/script-fu/scripts/test-sphere-v3.scm:155
+msgid "Plug-in example in Scheme"
+msgstr "Пример прикључка у језику Scheme"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:77
+msgid "_Tileable Blur..."
+msgstr "Пл_очасто замућење…"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:78
+msgid "Blur the edges of an image so the result tiles seamlessly"
+msgstr "Замућује ивице слике тако да настану плочице без ивица"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:84
+msgid "Ra_dius"
+msgstr "По_лупречник"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:85
+msgid "Blur _vertically"
+msgstr "Замути _усправно"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:86
+msgid "Blur _horizontally"
+msgstr "Замути _водоравно"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:87
+msgid "Blur _type"
+msgstr "Врста _замућења"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:87
+msgid "IIR"
+msgstr "ИИР"
+
+#: plug-ins/script-fu/scripts/tileblur.scm:87
+msgid "RLE"
+msgstr "РЛЕ"
+
+#: plug-ins/script-fu/scripts/unsharp-mask.scm:103
+msgid "Mask size"
+msgstr "Величина маске"
+
+#: plug-ins/script-fu/scripts/unsharp-mask.scm:104
+msgid "Mask opacity"
+msgstr "Непровидност маске"
+
+#: plug-ins/script-fu/scripts/waves-anim.scm:116
+msgid "_Waves..."
+msgstr "_Таласи…"
+
+#: plug-ins/script-fu/scripts/waves-anim.scm:117
+msgid ""
+"Create a multi-layer image with an effect like a stone was thrown into the "
+"current image"
+msgstr ""
+"Прави вишеслојнну слику са ефектом као да је камен бачен на текућу слику"
+
+#: plug-ins/script-fu/scripts/waves-anim.scm:123
+msgid "Amplitude"
+msgstr "Амплитуда"
+
+#: plug-ins/script-fu/scripts/waves-anim.scm:124
+msgid "Wavelength"
+msgstr "Таласна дужина"
+
+#: plug-ins/script-fu/scripts/waves-anim.scm:125
+msgid "Number of frames"
+msgstr "Број оквира"
+
+#: plug-ins/script-fu/scripts/waves-anim.scm:126
+msgid "Invert direction"
+msgstr "Супротни смер"
+
+#: plug-ins/script-fu/scripts/weave.scm:425
+msgid "_Weave..."
+msgstr "_Талас…"
+
+#: plug-ins/script-fu/scripts/weave.scm:426
+msgid ""
+"Create a new layer filled with a weave effect to be used as an overlay or "
+"bump map"
+msgstr ""
+"Прави нови слој испуњен таласним ефектом који се изцртава у режиму "
+"„Преклопи“ или као брдовит терен"
+
+#: plug-ins/script-fu/scripts/weave.scm:432
+msgid "Ribbon width"
+msgstr "Ширина траке"
+
+#: plug-ins/script-fu/scripts/weave.scm:433
+msgid "Ribbon spacing"
+msgstr "Размак траке"
+
+#: plug-ins/script-fu/scripts/weave.scm:434
+msgid "Shadow darkness"
+msgstr "Затамњење сенке"
+
+#: plug-ins/script-fu/scripts/weave.scm:435
+msgid "Shadow depth"
+msgstr "Дубина сенке"
+
+#: plug-ins/script-fu/scripts/weave.scm:436
+msgid "Thread length"
+msgstr "Дужина нити"
+
+#: plug-ins/script-fu/scripts/weave.scm:437
+msgid "Thread density"
+msgstr "Густина нити"
+
+#: plug-ins/script-fu/scripts/weave.scm:438
+msgid "Thread intensity"
+msgstr "Интезитет нити"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:90
+msgid "Shadow"
+msgstr "Сенка"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:123
+msgid "_Xach-Effect..."
+msgstr "_Издигни…"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:124
+msgid "Add a subtle translucent 3D effect to the selected region (or alpha)"
+msgstr "Додаје префињени полупровидан 3Д ефекат на изабрану област (или алфу)"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:130
+msgid "Highlight X offset"
+msgstr "X померај сјаја"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:131
+msgid "Highlight Y offset"
+msgstr "Y померај сјаја"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:132
+msgid "Highlight color"
+msgstr "Боја за светло"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:133
+msgid "Highlight opacity"
+msgstr "Непровидност сјаја"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:134
+msgid "Drop shadow color"
+msgstr "Боја сенке"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:135
+msgid "Drop shadow opacity"
+msgstr "Непровидност сенке"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:136
+msgid "Drop shadow blur radius"
+msgstr "Полупречник замућења сенке"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:137
+msgid "Drop shadow X offset"
+msgstr "X померај сенке"
+
+#: plug-ins/script-fu/scripts/xach-effect.scm:138
+msgid "Drop shadow Y offset"
+msgstr "Y померај сенке"

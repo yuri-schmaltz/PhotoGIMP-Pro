@@ -1,0 +1,14 @@
+========================================================================
+  PATCH APPLICABILITY VERIFICATION REPORT
+========================================================================
+Date: 2026-08-29
+Method: git apply --3way (3-way merge with fallback)
+
+Patches tested against: gimp-source/ (HEAD = b870a08c5c)
+
+  patches/0001-gtk4-gsk-pipeline-port.patch                    OK (3way)
+  patches/0002-ui-ux-modernization-design-system.patch         OK (3way)
+  patches/0003-top10-high-return-integrated-features.patch     OK (3way)
+  patches/0004-e2e-gauntlet-test-suite.patch                   OK (3way)
+
+Total files touched by all 4 patches: 51 files, 13,602 insertions, ~520 deletions

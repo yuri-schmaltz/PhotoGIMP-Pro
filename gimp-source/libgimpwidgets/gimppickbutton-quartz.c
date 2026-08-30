@@ -1,0 +1,542 @@
+/* LIBGIMP - The GIMP Library
+ * Copyright (C) 1995-1997 Peter Mattis and Spencer Kimball
+ *
+ * gimppickbutton-quartz.c
+ * Copyright (C) 2015 Kristian Rietveld <kris@loopnest.org>
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.  If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+
+#include "config.h"
+
+#include <gegl.h>
+#include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
+
+#include "libgimpcolor/gimpcolor.h"
+
+#include "gimpwidgetstypes.h"
+#include "gimppickbutton.h"
+#include "gimppickbutton-private.h"
+#include "gimppickbutton-quartz.h"
+
+#ifdef GDK_WINDOWING_QUARTZ
+#import <AppKit/AppKit.h>
+#include <Carbon/Carbon.h>  /* For virtual key codes ... */
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 120300
+#import <ScreenCaptureKit/ScreenCaptureKit.h>
+#endif
+
+@interface GimpPickWindowController : NSObject
+{
+  GimpPickButton *button;
+  NSMutableArray *windows;
+}
+
+@property (nonatomic, assign) BOOL firstBecameKey;
+@property (readonly, retain) NSCursor *cursor;
+
+- (id)initWithButton:(GimpPickButton *)_button;
+- (void)updateKeyWindow;
+- (void)shutdown;
+@end
+
+@interface GimpPickView : NSView
+{
+  GimpPickButton *button;
+  GimpPickWindowController *controller;
+}
+
+@property (readonly,assign) NSTrackingArea *area;
+
+- (id)initWithButton:(GimpPickButton *)_button controller:(GimpPickWindowController *)controller;
+@end
+
+@implementation GimpPickView
+
+@synthesize area;
+
+- (id)initWithButton:(GimpPickButton *)_button controller:(GimpPickWindowController *)_controller
+{
+  self = [super init];
+
+  if (self)
+    {
+      button = _button;
+      controller = _controller;
+    }
+
+  return self;
+}
+
+- (void)dealloc
+{
+  [self removeTrackingArea:self.area];
+
+  [super dealloc];
+}
+
+- (void)viewDidMoveToWindow
+{
+  NSTrackingAreaOptions options;
+
+  [super viewDidMoveToWindow];
+
+  if ([self window] == nil)
+    return;
+
+  options = NSTrackingMouseEnteredAndExited |
+            NSTrackingMouseMoved |
+            NSTrackingActiveAlways;
+
+  /* Add assume inside if mouse pointer is above this window */
+  if (NSPointInRect ([NSEvent mouseLocation], self.window.frame))
+    options |= NSTrackingAssumeInside;
+
+  area = [[NSTrackingArea alloc] initWithRect:self.bounds
+                                 options:options
+                                 owner:self
+                                 userInfo:nil];
+  [self addTrackingArea:self.area];
+}
+
+- (void)mouseEntered:(NSEvent *)event
+{
+  /* We handle the mouse cursor manually, see also the comment in
+   * [GimpPickWindow windowDidBecomeMain below].
+   */
+  if (controller.cursor)
+    [controller.cursor push];
+}
+
+- (void)mouseExited:(NSEvent *)event
+{
+  if (controller.cursor)
+    [controller.cursor pop];
+
+  [controller updateKeyWindow];
+}
+
+- (void)mouseMoved:(NSEvent *)event
+{
+  [self pickColor:event];
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
+  [self pickColor:event];
+
+  [controller shutdown];
+}
+
+- (void)rightMouseUp:(NSEvent *)event
+{
+  [self mouseUp:event];
+}
+
+- (void)otherMouseUp:(NSEvent *)event
+{
+  [self mouseUp:event];
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+  if (event.keyCode == kVK_Escape)
+    [controller shutdown];
+}
+
+- (void)pickColor:(NSEvent *)event
+{
+  CGImageRef                     root_image_ref;
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 120300
+  __block CGImageRef             captured_image;
+  dispatch_semaphore_t           semaphore;
+  __block SCContentFilter       *monitor_size;
+  __block SCStreamConfiguration *monitor_config;
+#endif
+  CFDataRef                      pixel_data;
+  const guchar                  *data;
+  guchar                         temp_rgb[3];
+  NSPoint                        point;
+  NSRect                         rect;
+  GeglColor                     *rgb          = gegl_color_new ("black");
+  const Babl                    *space        = NULL;
+  GimpColorProfile              *profile      = NULL;
+  CGColorSpaceRef                color_space  = NULL;
+
+  /* The event gives us a point in Cocoa window coordinates. The function
+   * CGWindowListCreateImage expects a rectangle in screen coordinates
+   * with the origin in the upper left (contrary to Cocoa). The origin is
+   * on the screen showing the menu bar (this is the screen at index 0 in the
+   * screens array). So, after converting the rectangle to Cocoa screen
+   * coordinates, we use the height of this particular screen to translate
+   * to the coordinate space expected by CGWindowListCreateImage.
+   */
+  point = event.locationInWindow;
+  rect = NSMakeRect (point.x, point.y,
+                     1, 1);
+  rect = [self.window convertRectToScreen:rect];
+  rect.origin.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.origin.y;
+
+  root_image_ref = nil;
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 120300
+  /* ScreenCaptureKit is asyncronous */
+  captured_image  = nil;
+  semaphore       = dispatch_semaphore_create(0);
+
+  [SCShareableContent getShareableContentWithCompletionHandler:^(SCShareableContent *monitor_content, NSError *monitor_error) {
+    if (monitor_error == nil && monitor_content != nil)
+      {
+        /* find the monitor that contains the rect.origin where the user clicked */
+        SCDisplay *target_monitor = monitor_content.displays.firstObject;
+        for (SCDisplay *monitor in monitor_content.displays)
+          {
+            if (CGRectContainsPoint (monitor.frame, rect.origin))
+              {
+                target_monitor = monitor;
+                break;
+              }
+          }
+
+        /* get the whole monitor, without scaling or anti-aliasing effects */
+        monitor_size   = [[SCContentFilter alloc] initWithDisplay:target_monitor excludingWindows:@[]];
+        monitor_config = [[SCStreamConfiguration alloc] init];
+        monitor_config.scalesToFit = NO;
+
+        /* take the actual "screenshot" on the monitor */
+        [SCScreenshotManager captureImageWithFilter:monitor_size configuration:monitor_config
+         completionHandler:^(CGImageRef captured_monitor, NSError *captured_error) {
+          if (captured_error == nil && captured_monitor != NULL)
+            {
+              CGRect captured_crop = CGRectMake (rect.origin.x - target_monitor.frame.origin.x,
+                                                 rect.origin.y - target_monitor.frame.origin.y,
+                                                 rect.size.width, rect.size.height);
+              captured_image = CGImageCreateWithImageInRect (captured_monitor, captured_crop);
+            }
+          dispatch_semaphore_signal (semaphore);
+        }];
+
+        [monitor_size release];
+        [monitor_config release];
+      }
+    else
+      {
+        dispatch_semaphore_signal (semaphore);
+      }
+  }];
+
+  dispatch_semaphore_wait(semaphore, dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC));
+  root_image_ref = captured_image;
+
+#else
+  root_image_ref = CGWindowListCreateImage (rect,
+                                            kCGWindowListOptionOnScreenOnly,
+                                            kCGNullWindowID,
+                                            kCGWindowImageDefault);
+#endif
+  if (root_image_ref == NULL)
+    {
+      g_warning ("Failed to capture screen pixels. Permission denied or DRM protected content.");
+      return;
+    }
+
+  pixel_data = CGDataProviderCopyData (CGImageGetDataProvider (root_image_ref));
+  data = CFDataGetBytePtr (pixel_data);
+
+  color_space = CGImageGetColorSpace (root_image_ref);
+  if (color_space)
+    {
+      CFDataRef icc_data = NULL;
+
+      icc_data = CGColorSpaceCopyICCData (color_space);
+      if (icc_data)
+        {
+          UInt8 *buffer = g_malloc (CFDataGetLength (icc_data));
+
+          CFDataGetBytes (icc_data, CFRangeMake (0, CFDataGetLength (icc_data)),
+                          buffer);
+
+          profile = gimp_color_profile_new_from_icc_profile (buffer,
+                                                             CFDataGetLength (icc_data),
+                                                             NULL);
+          g_free (buffer);
+          CFRelease (icc_data);
+        }
+    }
+
+  if (profile)
+    {
+      space = gimp_color_profile_get_space (profile,
+                                            GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                            NULL);
+      g_object_unref (profile);
+    }
+
+  for (gint i = 0; i < 3; i++)
+    temp_rgb[i] = data[2 - i];
+
+  gegl_color_set_pixel (rgb, babl_format_with_space ("R'G'B' u8", space),
+                        temp_rgb);
+
+  CGImageRelease (root_image_ref);
+  CFRelease (pixel_data);
+
+  g_signal_emit_by_name (button, "color-picked", rgb);
+  g_object_unref (rgb);
+}
+@end
+
+
+@interface GimpPickWindow : NSWindow <NSWindowDelegate>
+{
+  GimpPickWindowController *controller;
+}
+
+- (id)initWithButton:(GimpPickButton *)button forScreen:(NSScreen *)screen withController:(GimpPickWindowController *)_controller;
+@end
+
+@implementation GimpPickWindow
+- (id)initWithButton:(GimpPickButton *)button forScreen:(NSScreen *)screen withController:(GimpPickWindowController *)_controller
+{
+  self = [super initWithContentRect:screen.frame
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+                styleMask:NSWindowStyleMaskBorderless
+#else
+                styleMask:NSBorderlessWindowMask
+#endif
+                backing:NSBackingStoreBuffered
+                defer:NO];
+
+  if (self)
+    {
+      GimpPickView *view;
+
+      controller = _controller;
+
+      [self setDelegate:self];
+
+      [self setAlphaValue:0.0];
+#if 0
+      /* Useful for debugging purposes */
+      [self setBackgroundColor:[NSColor redColor]];
+      [self setAlphaValue:0.2];
+#endif
+      [self setIgnoresMouseEvents:NO];
+      [self setAcceptsMouseMovedEvents:YES];
+      [self setHasShadow:NO];
+      [self setOpaque:NO];
+
+      /* Set the highest level, so on top of everything */
+      [self setLevel:NSScreenSaverWindowLevel];
+
+      view = [[GimpPickView alloc] initWithButton:button controller:controller];
+      [self setContentView:view];
+      [self makeFirstResponder:view];
+      [view release];
+
+      [self disableCursorRects];
+    }
+
+  return self;
+}
+
+/* Borderless windows cannot become key/main by default, so we force it
+ * to make it so. We need this to receive events.
+ */
+- (BOOL)canBecomeKeyWindow
+{
+  return YES;
+}
+
+- (BOOL)canBecomeMainWindow
+{
+  return YES;
+}
+
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+  /* We cannot use the usual Cocoa method for handling cursor updates,
+   * since the GDK Quartz backend is interfering. Additionally, because
+   * one of the screen-spanning windows pops up under the mouse pointer this
+   * view will not receive a MouseEntered event. So, we synthesize such
+   * an event here and the view can set the mouse pointer in response to
+   * this. So, this event only has to be synthesized once and only for
+   * the window that pops up under the mouse cursor. Synthesizing multiple
+   * times messes up the mouse cursor stack.
+   *
+   * We cannot set the mouse pointer at this moment, because the GDK window
+   * will still receive an MouseExited event in which turn it will modify
+   * the cursor. So, with this synthesized event we also ensure we set
+   * the mouse cursor *after* the GDK window has manipulated the cursor.
+   */
+  NSEvent *event;
+
+  if (!controller.firstBecameKey ||
+      !NSPointInRect ([NSEvent mouseLocation], self.frame))
+    return;
+
+  controller.firstBecameKey = NO;
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+  event = [NSEvent enterExitEventWithType:NSEventTypeMouseEntered
+                   location:[self mouseLocationOutsideOfEventStream]
+                   modifierFlags:0
+                   timestamp:[[NSApp currentEvent] timestamp]
+                   windowNumber:self.windowNumber
+                   context:nil
+                   eventNumber:0
+                   trackingNumber:(NSInteger)[[self contentView] area]
+                   userData:nil];
+#else
+  event = [NSEvent enterExitEventWithType:NSMouseEntered
+                   location:[self mouseLocationOutsideOfEventStream]
+                   modifierFlags:0
+                   timestamp:[[NSApp currentEvent] timestamp]
+                   windowNumber:self.windowNumber
+                   context:nil
+                   eventNumber:0
+                   trackingNumber:(NSInteger)[[self contentView] area]
+                   userData:nil];
+#endif
+
+  [NSApp postEvent:event atStart:NO];
+}
+@end
+
+
+/* To properly handle multi-monitor setups we need to create a
+ * GimpPickWindow for each monitor (NSScreen). This is necessary because
+ * a window on Mac OS X (tested on 10.9) cannot span more than one
+ * monitor, so any approach that attempts to create one large window
+ * spanning all monitors cannot work. So, we have to create multiple
+ * windows in case of multi-monitor setups and these different windows
+ * are managed by GimpPickWindowController.
+ */
+@implementation GimpPickWindowController
+
+@synthesize firstBecameKey;
+@synthesize cursor;
+
+- (id)initWithButton:(GimpPickButton *)_button;
+{
+  self = [super init];
+
+  if (self)
+    {
+      firstBecameKey = YES;
+      button = _button;
+      cursor = [GimpPickWindowController makePickCursor];
+
+      windows = [[NSMutableArray alloc] init];
+
+      for (NSScreen *screen in [NSScreen screens])
+        {
+          GimpPickWindow *window;
+
+          window = [[GimpPickWindow alloc] initWithButton:button
+                                           forScreen:screen
+                                           withController:self];
+
+          [window orderFrontRegardless];
+          [window makeMainWindow];
+
+          [windows addObject:window];
+        }
+
+      [self updateKeyWindow];
+    }
+
+  return self;
+}
+
+- (void)updateKeyWindow
+{
+  for (GimpPickWindow *window in windows)
+    {
+      if (NSPointInRect ([NSEvent mouseLocation], window.frame))
+        [window makeKeyWindow];
+    }
+}
+
+- (void)shutdown
+{
+  GtkWidget *window;
+
+  for (GimpPickWindow *window in windows)
+    [window close];
+
+  [windows release];
+
+  if (cursor)
+    [cursor release];
+
+  /* Give focus back to the window containing the pick button */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (button));
+  gtk_window_present_with_time (GTK_WINDOW (window), GDK_CURRENT_TIME);
+
+  [self release];
+}
+
++ (NSCursor *)makePickCursor
+{
+  GBytes    *bytes = NULL;
+  GError    *error = NULL;
+
+  bytes = g_resources_lookup_data ("/org/gimp/color-picker-cursors-raw/cursor-color-picker.png",
+                                   G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
+
+  if (bytes)
+    {
+      NSData   *data = [NSData dataWithBytes:g_bytes_get_data (bytes, NULL)
+                               length:g_bytes_get_size (bytes)];
+      NSImage  *image = [[NSImage alloc] initWithData:data];
+      NSCursor *cursor = [[NSCursor alloc] initWithImage:image hotSpot:NSMakePoint(1, 30)];
+
+      [image release];
+      g_bytes_unref (bytes);
+
+      return [cursor retain];
+    }
+  else
+    {
+      g_critical ("Failed to create cursor image: %s", error->message);
+      g_clear_error (&error);
+    }
+
+  return NULL;
+}
+@end
+
+/* entry point to this file, called from gimppickbutton.c */
+void
+_gimp_pick_button_quartz_pick (GimpPickButton *button)
+{
+  NSAutoreleasePool        *pool;
+
+  pool = [[NSAutoreleasePool alloc] init];
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 120300
+  /* Needed for ScreenCaptureKit which is asyncronous */
+  if (!CGPreflightScreenCaptureAccess())
+    {
+      CGRequestScreenCaptureAccess();
+
+      [pool release];
+      return;
+    }
+#endif
+
+  [[GimpPickWindowController alloc] initWithButton:button];
+
+  [pool release];
+}

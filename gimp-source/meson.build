@@ -1,0 +1,2316 @@
+project('gimp',
+  'c', 'cpp',
+  version: '3.3.1',
+  meson_version: '>=0.61.0',
+  default_options: [
+    #'c_std=none', # c11 breaks Linux/GNU, gnu11 breaks Windows/MSVC, so set to none
+    'cpp_std=c++14',
+    'buildtype=debugoptimized',
+  ],
+)
+
+project_url = 'https://gitlab.gnome.org/GNOME/gimp'
+project_url_issues = 'https://www.gimp.org/bugs/' #see Infrastructure/gimp-web@d6d0559d
+
+conf = configuration_data()
+
+warnings = []
+
+################################################################################
+# Project info
+
+prettyname = 'GIMP'
+full_name  = 'GNU Image Manipulation Program'
+
+# General version
+gimp_version = meson.project_version()
+
+package_string= prettyname + ' ' + gimp_version
+
+gimp_app_version_arr = gimp_version.split('.')
+gimp_app_version_major = gimp_app_version_arr[0].to_int()
+gimp_app_version_minor = gimp_app_version_arr[1].to_int()
+gimp_app_micro_rc      = gimp_app_version_arr[2].split('-')
+gimp_app_version_micro = gimp_app_micro_rc[0].to_int()
+gimp_app_version_rc    = 0
+gimp_rc_git            = false
+if gimp_app_micro_rc.length() > 1
+  if not gimp_app_micro_rc[1].startswith('RC')
+    error('Version format is: <major>.<minor>.<micro> with optional "-RC<num>" suffix and optional "+git".')
+  endif
+  if gimp_app_micro_rc[1].endswith('+git')
+    gimp_app_version_rc = gimp_app_micro_rc[1].substring(2, -4).to_int()
+    gimp_rc_git = true
+  else
+    gimp_app_version_rc = gimp_app_micro_rc[1].substring(2).to_int()
+  endif
+endif
+
+# Override for Release-candidates
+gimp_app_version = '@0@.@1@'.format(
+  gimp_app_version_major,
+  gimp_app_version_minor
+)
+
+
+# API & pkg-config version
+api_version_major = gimp_app_version_major
+api_version_minor = 0
+
+if gimp_app_version_minor == 99
+  api_version_major += 1
+endif
+
+gimp_api_version = '@0@.@1@'.format(api_version_major, api_version_minor)
+gimp_api_name = 'gimp-' + gimp_api_version
+
+
+# Libtool versioning
+gimp_interface_age = 1
+
+gimp_binary_age = 100 * gimp_app_version_minor + gimp_app_version_micro
+lt_current      = gimp_binary_age - gimp_interface_age
+lt_revision     = gimp_interface_age
+lt_age          = gimp_binary_age - gimp_interface_age
+
+# libtool's -version-info transforms "current:revision:age" into "(current - age).age.revision".
+# Let's compute this ourselves.
+so_version = '@0@.@1@.@2@'.format(lt_current - lt_age, lt_age, lt_revision)
+#Same as darwin_versions of glib meson.build which also follows libtool versioning
+darwin_versions = [lt_current + 1, '@0@.@1@'.format(lt_current + 1, lt_revision)]
+
+
+gimp_command  = 'gimp-' + gimp_app_version
+
+exec_ver  = '-' + gimp_app_version
+
+gimpconsole_exe_name = 'gimp-console' + exec_ver
+gimpmain_exe_name    = 'gimp' + exec_ver
+
+# A specific desktop name to fix window icon under Wayland
+gimp_desktop_name = 'gimp'
+
+gettext_package= 'gimp@0@@1@'.format(api_version_major, api_version_minor)
+conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
+
+conf.set_quoted('GIMP_VERSION', gimp_version)
+
+# GIMP_UNSTABLE tells if we are on an unstable or stable development branch.
+stable = (gimp_app_version_minor % 2 == 0)
+conf.set('GIMP_UNSTABLE', stable ? false : 1)
+
+# GIMP_RELEASE tells if this is a release or in-between release (git) code.
+release = (gimp_app_version_micro % 2 == 0)
+conf.set('GIMP_RELEASE', release ? 1 : false)
+
+# GIMP_RC_VERSION can only be set on release candidates.
+conf.set('GIMP_RC_VERSION', release and gimp_app_version_rc > 0 ? gimp_app_version_rc : false)
+# GIMP_IS_GIT can only be set during development of a RC.
+conf.set('GIMP_IS_RC_GIT', gimp_rc_git ? 1 : false)
+
+# Mutex version
+if not stable and gimp_app_version_rc <= 0
+  gimp_mutex_version = gimp_app_version
+elif gimp_app_version_rc > 0
+  # same as unstable gimp_app_version. See: https://gitlab.gnome.org/GNOME/gimp/-/issues/15341
+  if gimp_app_version_minor == 0
+    gimp_mutex_version = (gimp_app_version_major - 1).to_string() + '.' + '99'
+  else
+    gimp_mutex_version = gimp_app_version_major.to_string() + '.' + (gimp_app_version_minor - 1).to_string()
+  endif
+else
+  gimp_mutex_version = gimp_app_version_major.to_string()
+endif
+conf.set_quoted('GIMP_MUTEX_VERSION', gimp_mutex_version)
+
+versionconfig = configuration_data()
+versionconfig.set('GIMP_FULL_NAME',     full_name)
+versionconfig.set('GIMP_MAJOR_VERSION', gimp_app_version_major)
+versionconfig.set('GIMP_MINOR_VERSION', gimp_app_version_minor)
+versionconfig.set('GIMP_MICRO_VERSION', gimp_app_version_micro)
+versionconfig.set('GIMP_VERSION',       gimp_version)
+versionconfig.set('GIMP_API_VERSION',   gimp_api_version)
+
+
+################################################################################
+# Get configuration and Meson modules
+
+pkgconfig = import('pkgconfig')
+i18n      = import('i18n')
+gnome     = import('gnome')
+pythonmod = import('python')
+simd      = import('unstable-simd')
+fs        = import('fs')
+
+cc        = meson.get_compiler('c')
+cxx       = meson.get_compiler('cpp')
+prefix    = get_option('prefix').replace('\\', '/')
+buildtype = get_option('buildtype')
+
+compiler_args = []
+linker_args = []
+
+################################################################################
+# Host system detection
+
+host_cpu_family = host_machine.cpu_family()
+message('Host machine cpu family: ' + host_cpu_family)
+
+host_cpu_family = host_machine.cpu_family()
+if   host_cpu_family == 'x86'
+  conf.set10('ARCH_X86',    true)
+elif host_cpu_family == 'x86_64'
+  conf.set10('ARCH_X86',    true)
+  conf.set10('ARCH_X86_64', true)
+elif host_cpu_family == 'ppc'
+  conf.set10('ARCH_PPC',    true)
+elif host_cpu_family == 'ppc64'
+  conf.set10('ARCH_PPC',    true)
+  conf.set10('ARCH_PPC64',  true)
+elif host_cpu_family == 'aarch64'
+  conf.set10('ARCH_ARM64',  true)
+endif
+
+
+host_os = host_machine.system().to_lower()
+message('Host os: ' + host_os)
+
+platform_linux = (
+  host_os.contains('linux')
+)
+
+platform_windows = (
+  host_os.contains('mingw') or
+  host_os.contains('cygwin') or
+  host_os.contains('windows')
+)
+
+platform_osx = (
+  host_os.contains('machten') or
+  host_os.contains('rhapsody') or
+  host_os.contains('darwin')
+)
+
+if platform_windows
+  windows = import('windows')
+  # AC_CHECK_PROG(ms_librarian, lib.exe, yes, no)
+  # AM_CONDITIONAL(MS_LIB_AVAILABLE, test "x$ms_librarian" = xyes)
+  # compiler_args += '-Wl,--large-address-aware'
+
+  if cc.get_argument_syntax() == 'msvc'
+    # MSVC's rc.exe style: /DKey=Value'
+    rc_define_flag = []
+    rc_define_fmt  = '/D@0@=@1@'
+  else
+    # GNU's windres.exe style: --define Key="Value"
+    rc_define_flag = ['--define']
+    rc_define_fmt  = '@0@="@1@"'
+  endif
+endif
+
+# on OSX ObjC and C sources are mixed so adding objc to the linkflags
+
+osx_ldflags = []
+if platform_osx
+  conf.set('PLATFORM_OSX', 1)
+  add_languages('objc', native: true)
+  osx_cflags = '-Werror=unguarded-availability-new'
+  if cc.has_argument(osx_cflags)
+    #needed to allow targeting older macOS while building on newer macOS (like on MS Windows)
+    add_project_arguments(osx_cflags, language: ['objc', 'c'])
+  endif
+  osx_ldflags += ['-Wl,-framework,Foundation', '-Wl,-framework,AppKit', '-ObjC']
+  add_project_link_arguments(osx_ldflags, language : ['objc', 'c'])
+  # libgimp_cflags += '-xobjective-c'
+  # libgimp_lflags += ['-framework', 'Cocoa']
+endif
+
+if cc.get_id() == 'gcc' and cc.version() == '7.2.0'
+  gcc_warning = '''
+    GCC 7.2.0 has a serious bug affecting GEGL/GIMP. We advise
+    against using this version of the compiler (previous and
+    further versions are fine).
+    See https://bugzilla.gnome.org/show_bug.cgi?id=787222
+  '''
+  warning(gcc_warning)
+  warnings += gcc_warning
+endif
+
+
+
+################################################################################
+# Compiler CPU extensions for optimizations
+#
+# -- Don't enable these flags project-wide, only files needing them
+# should be built with a given extension, which we do with meson simd
+# module. Otherwise GIMP would end up crashing when run on CPUs which
+# don't support all the flags supported by the compiler.
+# See merge request !262 for more details.
+
+# Note that Meson has a SIMD module which can also do this for us, but it uses
+# its own #defines and we want to stay compatible with the autotools build
+conf.set('USE_MMX', cc.has_argument('-mmmx'))
+conf.set('USE_SSE', cc.has_argument('-msse'))
+conf.set10('COMPILE_SSE2_INTRINISICS', cc.has_argument('-msse2'))
+conf.set10('COMPILE_SSE4_1_INTRINISICS', cc.has_argument('-msse4.1'))
+
+if host_cpu_family == 'ppc'
+  altivec_args = cc.get_supported_arguments([
+    '-faltivec',
+    '-maltivec',
+    '-mabi=altivec',
+  ])
+
+  if altivec_args != []
+    if host_os.contains('darwin')
+      conf.set('USE_ALTIVEC', true)
+      conf.set('HAVE_ALTIVEC_SYSCTL', true)
+    elif cc.compiles('''
+      int main() { asm ("vand %v0, %v0, %v0"); return 0; }
+      ''')
+      conf.set('USE_ALTIVEC', true)
+    endif
+  endif
+endif
+
+
+################################################################################
+# CFlags
+
+
+if get_option('profiling') and cc.get_id() == 'gcc'
+  compiler_args += '-pg'
+  linker_args   += '-pg'
+endif
+
+if get_option('ansi')
+  compiler_args += [ '-ansi', '-pedantic']
+endif
+
+warning_cflags_common = [
+  '-fdiagnostics-show-option',
+  '-fno-common',
+
+  '-Wformat',
+  '-Wformat-security',
+  '-Winit-self',
+  '-Wlogical-op',
+  '-Wmissing-declarations',
+  '-Wmissing-format-attribute',
+  '-Wpointer-arith',
+  '-Wreturn-type',
+  '-Wtype-limits',
+]
+warning_cflags_c = [
+  '-Wabsolute-value',
+  '-Wdeclaration-after-statement',
+  '-Wenum-conversion',
+  '-Wliteral-conversion',
+  '-Wno-strict-prototypes',
+  '-Wold-style-definition',
+  '-Wparentheses-equality',
+  '-W#pragma-messages',
+  '-Wsometimes-uninitialized',
+  '-Wtautological-unsigned-enum-zero-compare',
+  '-Wunneeded-internal-declaration',
+  '-Wunused-function',
+  '-Wunused-value',
+
+  '-Werror=implicit-function-declaration',
+]
+warning_cflags_cpp = [
+]
+
+compiler_args += cc.get_supported_arguments(warning_cflags_common)
+add_project_arguments(cc .get_supported_arguments(warning_cflags_c),   language: 'c')
+add_project_arguments(cxx.get_supported_arguments(warning_cflags_cpp), language: 'cpp')
+
+
+# Ensure MSVC-compatible struct packing convention is used when
+# compiling for Win32 with gcc.
+if platform_windows and cc.get_id() == 'gcc'
+  msvc_compat_args = cc.first_supported_argument([
+    '-fnative-struct',
+    '-mms-bitfields',
+  ])
+  if msvc_compat_args == []
+    error('''
+      GCC does not support '-fnative-struct' nor '-mms-bitfields'.
+      Build will be incompatible with GTK DLLs.
+    ''')
+  endif
+  compiler_args += msvc_compat_args
+endif
+
+
+if platform_windows and cc.get_id() == 'clang'
+  # Workaround to get colored output
+  # https://github.com/msys2/MINGW-packages/issues/2988
+  compiler_args += '-fansi-escape-codes'
+endif
+
+
+# DEBUG SYMBOLS
+debugging_format = 'disabled'
+if buildtype == 'debug' or buildtype == 'debugoptimized'
+  if not platform_windows
+    # DWARF symbols for GCC and LLDB on Unix
+    debugging_format = 'native'
+  elif cc.get_argument_syntax() == 'msvc'
+    # CodeView symbols for DIA or DbgHelp debuggers and LLDB on Windows
+    debugging_format = 'Native'
+  elif platform_windows and get_option('win-debugging') == 'native' and cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=') and cc.get_id() == 'clang'
+    # CodeView symbols for DIA or DbgHelp debuggers and LLDB on Windows
+    debugging_format = 'native'
+    compiler_args += '-gcodeview'
+    linker_args += '-Wl,--pdb='
+  else
+    # DWARF symbols for GCC and LLDB on Windows (fallback)
+    debugging_format = 'DWARF'
+    if cc.get_id() == 'clang'
+      # Optimize DWARF symbols to Dr. Mingw (not needed anymore)
+      # https://github.com/jrfonseca/drmingw/issues/42
+      #compiler_args += '-gdwarf-aranges'
+    endif
+  endif
+endif
+
+
+conf.set('HAVE__NL_MEASUREMENT_MEASUREMENT',
+  cc.compiles('''
+    #include<langinfo.h>
+    int main() {
+      char c = *((unsigned char *)  nl_langinfo(_NL_MEASUREMENT_MEASUREMENT));
+    }
+  ''')
+)
+
+conf.set('HAVE__NL_IDENTIFICATION_LANGUAGE',
+  cc.compiles('''
+    #include<langinfo.h>
+    int main() {
+      char c = *((unsigned char *) nl_langinfo(_NL_IDENTIFICATION_LANGUAGE));
+    }
+  ''')
+)
+
+
+################################################################################
+# Dependencies
+no_dep = dependency('', required: false)
+
+################################################################################
+# Mandatory Dependencies
+
+if get_option('relocatable-bundle') == 'yes'
+  relocatable_bundle = true
+elif get_option('relocatable-bundle') == 'no'
+  relocatable_bundle = false
+else # == 'platform-default'
+  # By default, assume building for Windows or macOS everything to be on
+  # the same prefix and can be relocated.
+  # On other platforms, build-time paths are meaningful.
+  if platform_windows or platform_osx
+      relocatable_bundle = true
+  else
+      relocatable_bundle = false
+  endif
+endif
+conf.set('ENABLE_RELOCATABLE_RESOURCES', relocatable_bundle)
+
+
+math              = cc.find_library('m', required: false)
+if platform_windows
+  #Needed otherwise compilers get angry with the headers provided by UCRT
+  compiler_args +='-D_USE_MATH_DEFINES'
+endif
+
+# libdl is only required on Linux. On Windows and some (all?) BSD, it
+# doesn't exist, but the API exists in libc by default (see #8604). On
+# macOS, it apparently exists but linking it explicitly is actually
+# unneeded as well.
+dl                = cc.find_library('dl', required: platform_linux)
+
+rpc               = platform_windows ? cc.find_library('rpcrt4') : no_dep
+dbghelp           = platform_windows ? cc.find_library('dbghelp') : no_dep
+winsock           = platform_windows ? cc.find_library('ws2_32') : no_dep
+mscms             = platform_windows ? cc.find_library('mscms') : no_dep
+
+screencapturekit  = platform_osx ? dependency('appleframeworks', modules: 'ScreenCaptureKit', required: false) : no_dep
+
+atk_minver        = '2.4.0'
+atk               = no_dep
+babl_minver       = '0.1.118'
+babl              = dependency('babl-0.1',           version: '>='+babl_minver)
+# TODO: we want to bump to Cairo 1.17.2 when possible in order to use
+# CAIRO_FORMAT_RGBA128F unconditionally. At time of writing, it's not possible
+# because of our bookworm availability requirement.
+cairo_minver      = '1.14.0'
+cairo             = dependency('cairo',              version: '>='+cairo_minver)
+
+# fontconfig_name   = platform_windows ? 'fontconfig_win32' : 'fontconfig'
+fontconfig_name   = 'fontconfig'
+fontconfig_minver = '2.12.4'
+fontconfig        = dependency(fontconfig_name,      version: '>='+fontconfig_minver)
+freetype2_minver  = '2.1.7'
+freetype2         = dependency('freetype2',          version: '>='+freetype2_minver)
+
+gudev             = gudev_option ? dependency('gudev-1.0', version: '>=167') : no_dep
+conf.set('HAVE_UDEV', gudev.found())
+
+gdk_pixbuf_minver = '2.32.0'
+gdk_pixbuf        = dependency('gdk-pixbuf-2.0',     version: '>='+gdk_pixbuf_minver)
+gdk_pixbuf_version_split = gdk_pixbuf_minver.split('.')
+gdk_pixbuf_major = gdk_pixbuf_version_split[0].to_int()
+gdk_pixbuf_minor = gdk_pixbuf_version_split[1].to_int()
+gdk_pixbuf_min_macro = 'GDK_PIXBUF_VERSION_@0@_@1@'.format(gdk_pixbuf_major, gdk_pixbuf_minor)
+add_project_arguments('-DGDK_PIXBUF_VERSION_MIN_REQUIRED=' + gdk_pixbuf_min_macro, language: 'c')
+add_project_arguments('-DGDK_PIXBUF_VERSION_MAX_ALLOWED=' + gdk_pixbuf_min_macro, language: 'c')
+
+gegl_minver       = '0.4.66'
+gegl              = dependency('gegl-0.4',           version: '>='+gegl_minver)
+exiv2_minver      = '0.27.4'
+exiv2             = dependency('exiv2',              version: '>='+exiv2_minver)
+gexiv2_minver     = '0.14.0'
+gexiv2_maxver     = '0.15.0'
+gexiv2            = dependency('gexiv2',             version: ['>='+gexiv2_minver, '<'+gexiv2_maxver])
+
+gio               = dependency('gio-2.0')
+gio_specific_name = platform_windows ? 'gio-windows-2.0' : 'gio-unix-2.0'
+gio_specific      = dependency(gio_specific_name)
+
+glib_minver       = '2.80.0'
+glib              = dependency('glib-2.0',           version: '>='+glib_minver)
+glib_version_split = glib_minver.split('.')
+glib_major = glib_version_split[0].to_int()
+glib_minor = glib_version_split[1].to_int()
+glib_min_macro = 'GLIB_VERSION_@0@_@1@'.format(glib_major, glib_minor)
+add_project_arguments('-DGLIB_VERSION_MIN_REQUIRED=' + glib_min_macro, language: 'c')
+add_project_arguments('-DGLIB_VERSION_MAX_ALLOWED=' + glib_min_macro, language: 'c')
+
+gi                = dependency('gobject-introspection-1.0')
+
+gobject           = dependency('gobject-2.0',        version: '>='+glib_minver)
+gmodule           = dependency('gmodule-no-export-2.0')
+
+gtk4_minver       = '4.14.0'
+gtk4              = dependency('gtk4',               version: '>='+gtk4_minver)
+gtk3_minver       = gtk4_minver
+gtk3              = gtk4 # backward-compatibility alias
+gdk_specific_name = platform_osx ? 'gdk-quartz-3.0' : 'gdk-3.0'
+gdk_specific      = gtk4
+gtk_version_split = gtk4_minver.split('.')
+gtk_major = gtk_version_split[0].to_int()
+gtk_minor = gtk_version_split[1].to_int()
+gtk_min_macro = 'GDK_VERSION_@0@_@1@'.format(gtk_major, gtk_minor)
+add_project_arguments('-DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_4_14', language: 'c')
+add_project_arguments('-DGDK_VERSION_MAX_ALLOWED=GDK_VERSION_4_14', language: 'c')
+
+harfbuzz_minver   = '2.8.2'
+harfbuzz          = dependency('harfbuzz',           version: '>='+harfbuzz_minver)
+
+if platform_osx and \
+   cc.run('''
+          #include <string.h>
+          #include <hb.h>
+
+          int
+          main (int argc, char **argv)
+          {
+            const char **shapers = hb_shape_list_shapers ();
+
+            for (int i = 0; shapers[i] != NULL; i++)
+              if (strcmp (shapers[i], "graphite2") == 0)
+                return 0;
+
+            return 1;
+          }
+          ''',
+          name: 'harfbuzz is built with graphite2 shaper',
+          dependencies: harfbuzz).returncode() != 0
+  error('harfbuzz must be built with graphite2 shaper on macOS.')
+endif
+
+
+json_glib_minver  = '1.8.0'
+json_glib         = dependency('json-glib-1.0',      version: '>='+json_glib_minver)
+lcms_minver       = '2.8'
+lcms              = dependency('lcms2',              version: '>='+lcms_minver)
+libmypaint_minver = '1.5.0'
+libmypaint        = dependency('libmypaint',         version: '>='+libmypaint_minver)
+mypaint_brushes   = dependency('mypaint-brushes-2.0')
+
+if relocatable_bundle
+  mypaint_brushes_dir = '${gimp_installation_dir}'\
+                        /'share'/'mypaint-data'/'2.0'/'brushes'
+else
+  mypaint_brushes_dir = mypaint_brushes.get_variable(pkgconfig: 'brushesdir')
+endif
+
+conf.set_quoted('MYPAINT_BRUSHES_DIR', mypaint_brushes_dir)
+
+pango_minver = '1.50.0'
+if platform_osx
+  pango_macos_recommended_version = '1.55.0'
+  pango_macos_warning='''
+        GIMP encounters major display breakage on some macOS installations
+        with pango < 1.55.0. We highly recommend pango >= 1.55.0.
+        See: https://gitlab.gnome.org/GNOME/gimp/-/issues/7589
+  '''
+  pango = dependency('pango',
+                     version: '>='+pango_macos_recommended_version,
+                     required: false)
+  if pango.found()
+    pangocairo = dependency('pangocairo',  version: '>='+pango_macos_recommended_version)
+    pangoft2   = dependency('pangoft2',    version: '>='+pango_macos_recommended_version)
+  else
+    warning(pango_macos_warning)
+    warnings += pango_macos_warning
+  endif
+else
+  pango = no_dep
+endif
+
+if not pango.found()
+  pango        = dependency('pango',       version: '>='+pango_minver)
+  pangocairo   = dependency('pangocairo',  version: '>='+pango_minver)
+  pangoft2     = dependency('pangoft2',    version: '>='+pango_minver)
+endif
+
+if cc.run('''
+  #include <pango/pango.h>
+  #include <string.h>
+  #include <stdlib.h>
+
+  int main () {
+    const char *text = "ภาษาไทย";
+    int char_count = 7;
+    int byte_len = strlen(text);
+    int breaks_found = 0;
+
+    PangoLogAttr *attrs = (PangoLogAttr *) calloc(char_count + 1, sizeof(PangoLogAttr));
+
+    pango_get_log_attrs (text, byte_len, -1, pango_language_from_string("th"), attrs, char_count + 1);
+    for (int i = 1; i < char_count; i++) {
+      if (attrs[i].is_line_break)
+        breaks_found++;
+    }
+
+    if (breaks_found > 0)
+      return 0;
+    else
+      return 1;
+  }
+  ''',
+  name: 'pango is built with libthai support',
+  dependencies: [pango]).returncode() != 0
+  thai_warning = 'Pango was not built with libthai support. Line breaking on Text tool may be incorrect on Thai language.'
+  warning(thai_warning)
+  warnings += thai_warning
+endif
+
+conf.set('PANGO_DISABLE_DEPRECATED',pangocairo.version().version_compare('<1.43'))
+
+# Check if Pango is built with a recent fontconfig
+pango_check = cc.links(
+  '''#include <fontconfig/fontconfig.h>
+  int main() {
+    FcObjectSet *os; os = FcObjectSetBuild (FC_FAMILY, FC_WIDTH);
+  }''',
+  dependencies: fontconfig,
+)
+
+if not pango_check
+  pango_warning = '\n  *** '.join([
+  'You have a fontconfig >= fontconfig_required_version installed on your',
+  'system, but your Pango library is using an older version. This old version',
+  'is probably in /usr/X11R6. Look at the above output, and note that the',
+  'result for FONTCONFIG_CFLAGS is not in the result for PANGOCAIRO_CFLAGS,',
+  'and that there is likely an extra -I line, other than the ones for GLIB,',
+  'Freetype, and Pango itself. That\'s where your old fontconfig files are.',
+  'Rebuild pango, and make sure that it uses the newer fontconfig.',
+  'The easiest way be sure of this is to simply get rid of the old',
+  'fontconfig. When you rebuild pango, make sure the result for',
+  'FONTCONFIG_CFLAGS is the same as the result here.',
+  ])
+  warning(pango_warning)
+  warnings += pango_warning
+endif
+
+rsvg_minver  = '2.40.6'
+rsvg         = dependency('librsvg-2.0', version: '>='+rsvg_minver)
+
+################################################################################
+# Check for GLib Networking
+
+glib_networking_works_run=false
+if meson.is_cross_build() and not meson.can_run_host_binaries()
+    # Cross-compilation without run capability: we won't be able to
+    # check networking support.
+    glib_networking_works = true
+    glib_warning = '''
+      Test for glib-networking cannot be performed while cross-compiling,
+      unless you set an `exe_wrapper` binary in your toolchain file.
+      Make sure glib-networking is installed, otherwise GIMP will not be able
+      to display the remote help pages through the help browser, nor will it
+      be able to open remote HTTPS (or other protocol using SSL/TLS) files.
+      HTTPS is becoming the expected standard and should not be considered
+      optional anymore.
+    '''
+    warning(glib_warning)
+    warnings += glib_warning
+else # not meson.is_cross_build() or meson.can_run_host_binaries()
+    glib_networking_works_run = cc.run(
+      '''#include <gio/gio.h>
+      #include <stdio.h>
+      int main() {
+        GTlsBackend *module = g_tls_backend_get_default ();
+        if (!g_tls_backend_supports_tls (module)) {
+          fprintf (stderr, "No valid SSL/TLS module found (%s). Maybe you need to set GIO_MODULE_DIR?\n", G_OBJECT_TYPE_NAME (module));
+          return 1;
+        }
+        fprintf (stdout, "Valid SSL/TLS module found (%s).\n", G_OBJECT_TYPE_NAME (module));
+        return 0;
+      }''',
+      dependencies: gio,
+    )
+    glib_networking_works = (glib_networking_works_run.compiled() and
+                             glib_networking_works_run.returncode() == 0)
+    if not glib_networking_works and meson.is_cross_build()
+        # Since cross-platform test runs may be unreliable, let's be
+        # flexible and pass the test with a warning.
+        glib_networking_works = true
+        glib_warning = '''
+      The cross-platform test for glib-networking failed, using the
+      `exe_wrapper` set in your toolchain file.
+      Make sure glib-networking is installed, otherwise GIMP will not be able
+      to display the remote help pages through the help browser, nor will it
+      be able to open remote HTTPS (or other protocol using SSL/TLS) files.
+      HTTPS is becoming the expected standard and should not be considered
+      optional anymore.
+        '''
+        warning(glib_warning)
+        warnings += glib_warning
+    endif
+endif
+
+if not glib_networking_works
+  error('Test for glib-networking failed. This is required.')
+endif
+
+################################################################################
+# Check for extension support
+
+appstream_minver = '0.16.1'
+appstream = dependency('appstream', version: '>='+appstream_minver)
+
+libarchive = dependency('libarchive')
+
+################################################################################
+# Check for detailed backtraces support
+
+## Check for libbacktrace
+if get_option('libbacktrace') and platform_linux
+  libbacktrace = cc.find_library('backtrace', required: false)
+
+  if libbacktrace.found()
+    libbacktrace_links = cc.links('''
+        #include <stddef.h>
+        #include <backtrace.h>
+        #include <backtrace-supported.h>
+
+        #if ! BACKTRACE_SUPPORTED
+        #   error ! BACKTRACE_SUPPORTED
+        #endif
+
+        int main() {
+          (void) backtrace_create_state (NULL, 0, NULL, NULL);
+          return 0;
+        }
+      ''',
+      dependencies: libbacktrace,
+    )
+
+    if not libbacktrace_links
+      warning(
+        'libbacktrace was found, but the test compilation failed.\n' +
+        'You can find more info in meson-logs/meson-logs.txt.'
+      )
+      libbacktrace = no_dep
+    endif
+
+  endif
+else
+  libbacktrace = no_dep
+endif
+conf.set('HAVE_LIBBACKTRACE', libbacktrace.found())
+
+## Check for libunwind
+# In most platforms, unw_*() functions are in the libunwind library.
+# In macOS, it is on libSystem (there we only need the SDK header).
+libunwind = no_dep
+if get_option('libunwind') and not platform_windows
+  libunwind = dependency('libunwind', version: '>=1.1.0', required: false)
+  libunwind_h = platform_osx ? cc.has_header('libunwind.h', required: false) : false
+  have_unwind = libunwind.found() or libunwind_h
+else
+  have_unwind = false
+endif
+conf.set('HAVE_LIBUNWIND', have_unwind ? 1 : false)
+
+## Check for backtrace() API
+# In musl, backtrace() is in the libexecinfo library.
+# In glibc, it is internal (there we only need the header).
+# So we look for both cases, so that we are able to link to libexecinfo
+# if it exists. Cf. !455.
+opt_execinfo = cc.find_library('execinfo', has_headers: ['execinfo.h'], required: false)
+have_execinfo_h = opt_execinfo.found() or cc.has_header('execinfo.h')
+conf.set('HAVE_EXECINFO_H', have_execinfo_h ? 1 : false)
+
+# See app/core/gimpbacktrace-backend.h for supported platforms.
+dashboard_backtrace='no (unsupported platform)'
+if platform_osx
+  dashboard_backtrace='yes'
+elif platform_windows
+  dashboard_backtrace='yes'
+elif platform_linux
+  if not have_execinfo_h
+    dashboard_backtrace='no (missing: execinfo.h)'
+  elif not libbacktrace.found() and not have_unwind
+    dashboard_backtrace='rough (missing: libbacktrace and libunwind)'
+  elif not libbacktrace.found()
+    dashboard_backtrace='partially detailed (missing: libbacktrace)'
+  elif not have_unwind
+    dashboard_backtrace='partially detailed (missing: libunwind)'
+  else
+    dashboard_backtrace='detailed'
+  endif
+endif
+
+## Check for Dr. Mingw
+drmingw = no_dep
+if platform_windows
+  exchndl = cc.find_library('exchndl', required: false)
+  exchndl_fn = cc.has_function('ExcHndlSetLogFileNameW', dependencies: exchndl)
+  if exchndl.found() and exchndl_fn
+    drmingw = declare_dependency(dependencies: exchndl)
+  endif
+endif
+conf.set('HAVE_EXCHNDL', drmingw.found())
+
+
+################################################################################
+# Check for x11 support
+
+x11_target = gtk4.get_variable(pkgconfig: 'targets', default_value: 'x11 wayland').contains('x11')
+
+x11   = x11_target ? dependency('x11')    : no_dep
+xmu   = x11_target ? dependency('xmu')    : no_dep
+xext  = x11_target ? dependency('xext')   : no_dep
+xfixes= x11_target ? dependency('xfixes') : no_dep
+x11_deps = [ x11, xmu, xext, xfixes ]
+conf.set('HAVE_XFIXES', xfixes.found())
+
+if x11_target
+  foreach header : [ 'X11/Xmu/WinUtil.h', 'X11/extensions/shape.h', ]
+    if not cc.has_header(header, dependencies: [ xext, xmu ])
+      error('x11 install does not provide required header ' + header)
+    endif
+  endforeach
+
+  foreach function : [ 'XmuClientWindow', 'XShapeGetRectangles', ]
+    if not cc.has_function(function, dependencies: [ xext, xmu ])
+      error('x11 install does not provide required function ' + function)
+    endif
+  endforeach
+endif
+conf.set('HAVE_X11_EXTENSIONS_SHAPE_H',
+  x11_target and cc.has_header('X11/extensions/shape.h'))
+conf.set('HAVE_X11_XMU_WINUTIL_H',
+  x11_target and cc.has_header('X11/Xmu/WinUtil.h'))
+
+
+################################################################################
+# Plugins (optional dependencies)
+
+have_print = get_option('print')
+
+libtiff_minver = '4.0.0'
+libtiff = dependency('libtiff-4', version: '>=' + libtiff_minver)
+
+libjpeg = dependency(['libjpeg', 'libjpeg-turbo'])
+
+zlib = dependency('zlib')
+
+bz2 = cc.find_library('bz2', required: false)
+if not bz2.found()
+  bz2 = dependency('bzip2')
+endif
+
+liblzma_minver = '5.0.0'
+liblzma = dependency('liblzma', version: '>='+liblzma_minver)
+
+
+ghostscript = cc.find_library('gs', required: get_option('ghostscript'))
+if not ghostscript.found()
+  ghostscript = disabler()
+endif
+
+libpng_minver = '1.6.25'
+libpng = dependency('libpng', version: '>='+libpng_minver)
+
+libmng = dependency('libmng', required: get_option('mng'))
+
+if not libmng.found()
+  libmng = cc.find_library('mng', required: get_option('mng'),)
+
+  mng_test_prefix = ''
+  if platform_windows
+    mng_test_prefix = '#define MNG_USE_DLL\n#include <libmng.h>'
+  endif
+  if libmng.found() and not cc.has_function('mng_create', dependencies: libmng,
+                                            prefix: mng_test_prefix)
+    libmng = no_dep
+  endif
+endif
+
+libaa = cc.find_library('aa', required: get_option('aa'))
+
+libxpm = dependency('xpm', required: get_option('xpm'))
+
+have_qoi = cc.has_header('qoi.h')
+
+libiff = dependency('libiff', required: get_option('ilbm'))
+libilbm = dependency('libilbm', required: get_option('ilbm'))
+if libiff.found() and libilbm.found()
+  have_ilbm = true
+else
+  have_ilbm = cc.has_header('libilbm/ilbm.h', required: get_option('ilbm'))
+endif
+
+openexr_minver = '1.6.1'
+openexr = dependency('OpenEXR', version: '>='+openexr_minver,
+  required: get_option('openexr')
+)
+
+webp_minver = '0.6.0'
+webp_libs = [
+  dependency('libwebp',     version: '>='+webp_minver, required: get_option('webp')),
+  dependency('libwebpmux',  version: '>='+webp_minver, required: get_option('webp')),
+  dependency('libwebpdemux',version: '>='+webp_minver, required: get_option('webp')),
+]
+webp_found = true
+foreach lib : webp_libs
+  webp_found = webp_found and  lib.found()
+endforeach
+
+libheif_minver = '1.15.1'
+libheif = dependency('libheif', version: '>='+libheif_minver,
+  required: get_option('heif')
+)
+
+can_import_heic = false
+can_export_heic = false
+can_import_avif = false
+can_export_avif = false
+can_import_hej2 = false
+can_export_hej2 = false
+
+have_heif = libheif.found()
+if have_heif
+  have_heif = true
+
+  if meson.can_run_host_binaries()
+    can_import_heic = cc.run('''
+    #include <libheif/heif.h>
+    int main() {
+      int success;
+      heif_init (NULL);
+      success = heif_have_decoder_for_format (heif_compression_HEVC);
+      heif_deinit ();
+
+      if (success)
+        return 0;
+      else
+        return 1;
+    }
+    ''',
+    dependencies: [ libheif ],
+    name: 'import HEIC').returncode() == 0
+
+    can_export_heic = cc.run('''
+    #include <libheif/heif.h>
+    int main() {
+      int success;
+      heif_init (NULL);
+      success = heif_have_encoder_for_format (heif_compression_HEVC);
+      heif_deinit ();
+
+      if (success)
+        return 0;
+      else
+        return 1;
+    }
+    ''',
+    dependencies: [ libheif ],
+    name: 'export HEIC').returncode() == 0
+
+    can_import_avif = cc.run('''
+    #include <libheif/heif.h>
+    int main() {
+      int success;
+      heif_init (NULL);
+      success = heif_have_decoder_for_format (heif_compression_AV1);
+      heif_deinit ();
+
+      if (success)
+        return 0;
+      else
+        return 1;
+    }
+    ''',
+    dependencies: [ libheif ],
+    name: 'import AVIF').returncode() == 0
+
+    can_export_avif = cc.run('''
+    #include <libheif/heif.h>
+    int main() {
+      int success;
+      heif_init (NULL);
+      success = heif_have_encoder_for_format (heif_compression_AV1);
+      heif_deinit ();
+
+      if (success)
+        return 0;
+      else
+        return 1;
+    }
+    ''',
+    dependencies: [ libheif ],
+    name: 'export AVIF').returncode() == 0
+
+    can_import_hej2 = cc.run('''
+    #include <libheif/heif.h>
+    int main() {
+      int success;
+      heif_init (NULL);
+      success = heif_have_decoder_for_format (heif_compression_JPEG2000);
+      heif_deinit ();
+
+      if (success)
+        return 0;
+      else
+        return 1;
+    }
+    ''',
+    dependencies: [ libheif ],
+    name: 'import HEJ2').returncode() == 0
+
+    can_export_hej2 = cc.run('''
+    #include <libheif/heif.h>
+    int main() {
+      int success;
+      heif_init (NULL);
+      success = heif_have_encoder_for_format (heif_compression_JPEG2000);
+      heif_deinit ();
+
+      if (success)
+        return 0;
+      else
+        return 1;
+    }
+    ''',
+    dependencies: [ libheif ],
+    name: 'export HEJ2').returncode() == 0
+  else
+    # When cross-compiling and we can't run our test binaries.
+    can_import_heic = true
+    can_export_heic = true
+    can_import_avif = true
+    can_export_avif = true
+    can_import_hej2 = true
+    can_export_hej2 = true
+  endif
+
+  if not can_import_heic and not can_import_avif
+    have_heif = false
+  endif
+endif
+
+have_vala = add_languages('vala', required: get_option('vala'), native: false)
+if have_vala
+  babl = declare_dependency(
+    dependencies: [
+      babl,
+      meson.get_compiler('vala').find_library('babl-0.1'),
+    ]
+  )
+
+  valac = meson.get_compiler('vala')
+  if valac.version().version_compare('>= 0.31.1')
+    add_project_arguments('--disable-since-check', language: 'vala')
+  endif
+endif
+
+poppler_minver = '0.69.0'
+poppler_data_minver = '0.4.9'
+poppler = [
+  dependency('poppler-glib', version: '>='+poppler_minver),
+  dependency('poppler-data', version: '>='+poppler_data_minver),
+]
+
+cairopdf_minver = '1.12.2'
+cairopdf = dependency('cairo-pdf', version: '>='+cairopdf_minver,
+  required: get_option('cairo-pdf')
+)
+
+wmf_minver = '0.2.8'
+wmf = dependency('libwmf', version: '>='+wmf_minver,
+  required: get_option('wmf')
+)
+
+openjpeg_minver = '2.1.0'
+openjpeg = dependency(['libopenjp2', 'OpenJPEG'], version: '>='+openjpeg_minver,
+  required: get_option('jpeg2000')
+)
+
+jpegxl_minver  = '0.7.0'
+libjxl         = dependency('libjxl',
+                            version: '>='+jpegxl_minver,
+                            required: get_option('jpeg-xl')
+)
+libjxl_threads = dependency('libjxl_threads',
+                            version: '>='+jpegxl_minver,
+                            required: get_option('jpeg-xl')
+)
+
+xmc = dependency('xcursor', required: get_option('xcursor'))
+
+
+alsa = dependency('alsa', version: '>=1.0.0', required: get_option('alsa'))
+conf.set('HAVE_ALSA', alsa.found())
+
+# Linux Input
+
+if get_option('linux-input').disabled()
+  have_linuxinput = false
+else
+  have_linuxinput = cc.has_header('linux/input.h',
+                                  required: get_option('linux-input'))
+endif
+
+if have_linuxinput
+  gudev = dependency('gudev-1.0', version: '>=167', required: get_option('gudev'))
+else
+  gudev = no_dep
+endif
+conf.set('HAVE_LIBGUDEV', gudev.found())
+
+
+# DirectX DirectInput
+directx = platform_windows ? cc.find_library('dxguid') : no_dep
+conf.set('HAVE_DX_DINPUT', directx.found())
+
+# Windows Image Acquistion (WIA)
+wia = platform_windows ? cc.find_library('wiaguid') : no_dep
+
+cfitsio_dep = dependency('cfitsio', required: get_option('fits'))
+
+
+################################################################################
+# Email sending
+email_message = false
+
+sendmail_choice = get_option('with-sendmail')
+if not [ '', 'false', 'no', ].contains(sendmail_choice)
+  if [ 'true', 'yes' ].contains(sendmail_choice)
+    sendmail_path = 'sendmail'
+  else
+    sendmail_path = sendmail_choice
+  endif
+
+  sendmail = find_program(sendmail_path, required: false)
+  if sendmail.found()
+    sendmail_path = sendmail.full_path()
+  else
+    mail_warning = 'Sendmail specified but not found. It should be installed at runtime!'
+    warning(mail_warning)
+    warnings += mail_warning
+  endif
+
+  email_message = '@0@ (@1@)'.format(true, sendmail_path)
+  conf.set_quoted('SENDMAIL', sendmail_path)
+else
+  xdg_email_path = 'xdg-email'
+  xdg_email = find_program(xdg_email_path, required: false)
+  if xdg_email.found()
+    xdg_email_path = xdg_email.full_path()
+    email_message = '@0@ (@1@)'.format(true, xdg_email_path)
+  elif not xdg_email.found() and not platform_windows and not platform_osx
+    mail_warning = 'Xdg-email not found, but required at runtime for email sending.'
+    warning(mail_warning)
+    warnings += mail_warning
+  endif
+endif
+scriptingbridge = platform_osx ? dependency('appleframeworks', modules: 'ScriptingBridge', required: true) : no_dep
+
+
+################################################################################
+# ISO codes
+
+isocodes = dependency('iso-codes', required: false)
+if isocodes.found()
+  isocodes_prefix = isocodes.get_variable(pkgconfig: 'prefix')
+  isocodes_location = isocodes_prefix / 'share' / 'xml' / 'iso-codes'
+  isocodes_localedir= isocodes_prefix / 'share' / 'locale'
+  conf.set_quoted('ISO_CODES_LOCATION',  isocodes_location)
+  conf.set_quoted('ISO_CODES_LOCALEDIR', isocodes_localedir)
+endif
+conf.set('HAVE_ISO_CODES', isocodes.found())
+
+
+################################################################################
+# Program tools
+
+perl = find_program('perl5', 'perl', 'perl5.005', 'perl5.004', 'perl')
+
+## Python
+
+python3_minver = '>=3.6'
+
+pygobject_minver = '>=3.0'
+
+#Non-versioned python (e.g. on Windows)
+py_candidates = ['python']
+#Major versioned python (e.g. on Linux)
+py_candidates += ['python3']
+#Minor versioned python (e.g. on MacPorts)
+foreach i : range(python3_minver.substring(2).split('.')[-1].to_int(), 40)
+  py_candidates += ['python3.' + i.to_string()]
+endforeach
+
+python = disabler()
+pygobject_found = ''
+pygobject_gexiv2_found = false
+foreach py : py_candidates
+  #Check if PyGobject installation have pycairo (#13105)
+  python_tmp = pythonmod.find_installation(py, modules: ['gi', 'cairo'], required: false)
+  if python_tmp.found() and python_tmp.language_version().version_compare(python3_minver)
+    python = python_tmp
+    #Check if PyGObject installation have minimum version
+    pygobject_found = run_command(python_tmp, '-c',
+                                  '\n'.join([
+                                  '''import gi''',
+                                  '''print(".".join(map(str, gi.version_info)))''']),
+                                  check: false)
+    #Check if PyGObject installation have gexiv2 (#15179)
+    #(This is specially important on MacPorts where gexiv2 have many python variants)
+    pygobject_gexiv2_found = run_command(python_tmp, '-c',
+                                        '\n'.join([
+                                        '''import sys, gi''',
+                                        '''try:''',
+                                        '''    import gi.repository.GExiv2''',
+                                        '''except (ImportError):''',
+                                        '''    sys.exit(1)''']),
+                                        check: false).returncode() == 0
+    if pygobject_found.returncode() == 0 and pygobject_found.stdout().strip().version_compare(pygobject_minver) and pygobject_gexiv2_found
+      break
+    endif
+  endif
+endforeach
+
+if not python.found() or not python.language_version().version_compare(python3_minver)
+  error('No suitable Python installation (with cairo and gi modules) found. Minimum supported version: @0@'.format(python3_minver))
+endif
+message('Found Python @0@'.format(python.language_version()))
+
+if pygobject_found.returncode() != 0 or not pygobject_found.stdout().strip().version_compare(pygobject_minver) or not pygobject_gexiv2_found
+  error('No suitable PyGObject (with GExiv2 submodule) found. Minimum supported version: @0@'.format(pygobject_minver))
+endif
+message('Found PyGObject: @0@'.format(pygobject_found.stdout().strip()))
+
+## Javascript
+
+gjs = find_program('gjs', required: false)
+have_javascript = get_option('javascript').enabled() or (gjs.found() and get_option('javascript').auto())
+if not gjs.found() and have_javascript
+  js_warning = '''
+  GJS was not found.
+  JavaScript plug-ins will be installed anyway but you should make sure that
+  the JavaScript interpreter GJS is available at installation, otherwise
+  installed plug-ins won't be usable.
+  '''
+  warning(js_warning)
+  warnings += js_warning
+endif
+
+## Lua
+
+have_lua = get_option('lua')
+have_lua_output = have_lua
+# At time of writing, lua-lgi works with Lua 5.1, 5.2, 5.3 and LuaJIT2, but we
+# support only Lua 5.1 API. See: https://gitlab.gnome.org/GNOME/gimp/-/issues/11876
+if have_lua
+  have_lua_lgi = false
+
+  foreach lua_bin : [ 'luajit', 'lua5.1', 'lua-5.1', 'lua' ]
+    lua = find_program(lua_bin, required: false)
+
+    if lua.found() and meson.can_run_host_binaries()
+      if lua_bin == 'lua'
+        is_supported_lua = false
+        lua_cmd = run_command(lua, '-v', check: false)
+        if lua_cmd.returncode() == 0
+          message('Found Lua: @0@'.format(lua_cmd.stdout().strip()))
+          lua_stdout = lua_cmd.stdout().split()
+          if lua_stdout.length() < 2 or lua_stdout[0].to_lower() != lua_bin
+            # The output function used to be configurable, and we had a
+            # report where it was on stderr instead of stdout. This is
+            # why we fall back to stdout.
+            # See #11950.
+            lua_stdout = lua_cmd.stderr().split()
+          endif
+
+          if lua_stdout.length() > 1 and lua_stdout[0].to_lower() == lua_bin
+            message('Parsed Lua version: @0@'.format(lua_stdout[1]))
+            # We only want any lua version 5.1.x
+            if lua_stdout[1].version_compare('>=5.1.0') and lua_stdout[1].version_compare('<5.2.0')
+              is_supported_lua = true
+            else
+              warning('Unsupported Lua version (!= 5.1): @0@'.format(lua_stdout[1]))
+            endif
+          else
+            warning('Failed to parse Lua version.')
+          endif
+        else
+          warning('Failed to run `lua -v`')
+        endif
+      else
+        is_supported_lua = true
+      endif
+
+      if is_supported_lua
+        have_lua_lgi = run_command(lua, '-e',
+                                   '''
+                                   local lgi = require 'lgi'
+                                   ''',
+                                   check: false).returncode() == 0
+      endif
+
+      if have_lua_lgi
+        break
+      endif
+    endif
+  endforeach
+
+  if not have_lua_lgi
+    lua_warning = '''
+      Neither Luajit nor Lua 5.1, with lua-lgi support, was found.
+      Or you are cross-compiling so we couldn't test lua-lgi support.
+      Lua example plug-in (EXPERIMENTAL) will be installed anyway but you
+      should make sure that luajit or lua and that LGI are available at
+      installation, otherwise Lua plug-ins won't be usable.
+      '''
+    warning(lua_warning)
+    warnings += lua_warning
+  endif
+
+  have_lua_output = '@0@ (@1@)'.format(have_lua, have_lua_lgi ? lua.full_path() : 'no working lua-lgi found!')
+endif
+
+# Check for XML tools
+xmllint             = find_program('xmllint', required: false)
+xsltproc            = find_program('xsltproc')
+desktop_validate    = find_program('desktop-file-validate', required: false)
+
+appstreamcli = find_program('appstreamcli', version: '>=0.15.3', required: get_option('appdata-test'))
+
+# Check for .typelib generation tools
+
+g_ir_compiler = find_program('g-ir-compiler')
+if platform_osx
+  make_typelib = find_program('tools'/'make-mac-typelib.py')
+endif
+
+# Check for doc generation tools
+
+gi_docgen = find_program('gi-docgen', required: get_option('gi-docgen'))
+
+# Check for vector icons
+have_vector_icons = get_option('vector-icons')
+if have_vector_icons
+  # shared-mime-info is needed to correctly detect SVG files
+  # (except on Windows, apparently).
+  if platform_windows
+    if meson.is_cross_build()
+      vec_warning = '''
+        You enabled vector icons on Win32. Make sure to run:
+        $ gdk-pixbuf-query-loaders.exe --update-cache
+        on the target machine (this command generates loaders.cache)
+        so that GdkPixbuf knows where to find the SVG loader.
+      '''
+      warning(vec_warning)
+      warnings += vec_warning
+    endif
+  else
+    shared_mime_info = dependency('shared-mime-info')
+  endif
+else
+  # The trick when disabling vector icons is that librsvg is still
+  # needed at compile time (on build machine) to generate PNG, even
+  # though it won't be needed at runtime for icon display.
+  #
+  # The tool gtk-encode-symbolic-svg also requires a SVG GdkPixbuf
+  # loader, which usually uses librsvg as well anyway.
+  vec_warning = '''
+    Vector icons are disabled. Be aware that librsvg is still
+    needed to create the PNG icons on the build machine, yet it
+    won't be needed for runtime icon display of distributed themes.
+  '''
+  warning(vec_warning)
+  warnings += vec_warning
+endif
+
+# Running tests headless
+xvfb_run = find_program('xvfb-run', required: get_option('headless-tests'))
+dbus_run_session = find_program('dbus-run-session', required: get_option('headless-tests'))
+if xvfb_run.found() and dbus_run_session.found()
+  conf.set('HAVE_XVFB_RUN', true)
+  add_test_setup('headless',
+    exe_wrapper: find_program('tools' / 'run_test_env.sh'),
+    is_default: true,
+  )
+endif
+
+# Build identifiers #
+
+conf.set_quoted('GIMP_BUILD_ID', get_option('build-id'))
+conf.set_quoted('GIMP_BUILD_PLATFORM', host_os)
+if platform_linux
+  conf.set_quoted('GIMP_BUILD_PLATFORM_FAMILY', 'linux')
+elif platform_windows
+  conf.set_quoted('GIMP_BUILD_PLATFORM_FAMILY', 'windows')
+elif platform_osx
+  conf.set_quoted('GIMP_BUILD_PLATFORM_FAMILY', 'macos')
+else
+  conf.set_quoted('GIMP_BUILD_PLATFORM_FAMILY', 'other')
+endif
+
+if get_option('check-update') == 'yes'
+  check_update = true
+elif get_option('check-update') == 'no'
+  check_update = false
+else # == 'platform-default'
+  if platform_windows or platform_osx
+    check_update = true
+  else
+    # Other packages usually have their own update system (software
+    # repositories on Linux and other *BSDs for instance) so we
+    # shouldn't notify about new versions, at least not as a default.
+    check_update = false
+  endif
+endif
+conf.set('CHECK_UPDATE', check_update)
+
+# Default ICC directory #
+
+# This is necessary because some Unix systems may have a different
+# standard path for color profiles. And in particular, sandbox builds
+# might mount the host system at a different root. This is for
+# instance the case of flatpak which mount the host root at /run/host/.
+
+# if not (platform_osx or platform_windows)
+
+icc_directory = get_option('icc-directory')
+if icc_directory == ''
+  icc_directory = '/usr/share/color/icc'
+endif
+conf.set_quoted('COLOR_PROFILE_DIRECTORY', icc_directory)
+
+# endif
+
+if get_option('enable-default-bin').auto()
+  enable_default_bin = stable
+elif get_option('enable-default-bin').enabled()
+  enable_default_bin = true
+else
+  enable_default_bin = false
+endif
+
+enable_console_bin = get_option('enable-console-bin')
+
+
+# Check for internal tools
+extract_vector_icon = find_program('tools'/'extract-vector-icon.sh')
+generate_news       = find_program('tools'/'generate-news')
+gimppath2svg        = find_program('tools'/'gimppath2svg.py')
+module_dependencies = find_program('tools'/'module-dependencies.py')
+meson_install_subdir= find_program('tools'/'meson_install_subdir.py')
+
+gimp_mkenums = find_program('tools' / 'gimp-mkenums')
+mkenums_wrap = find_program(meson.current_source_dir() / 'tools' / 'meson-mkenums.py')
+
+libgimp_mkenums_dtails = \
+    '    { 0, NULL, NULL }\n'                                                      + \
+    '  };\n'                                                                       + \
+    '\n'                                                                           + \
+    '  static GType type = 0;\n'                                                   + \
+    '\n'                                                                           + \
+    '  if (G_UNLIKELY (! type))\n'                                                 + \
+    '    {\n'                                                                      + \
+    '      type = g_@type@_register_static ("@EnumName@", values);\n'              + \
+    '      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE "-libgimp");\n' + \
+    '      gimp_type_set_translation_context (type, "@enumnick@");\n'              + \
+    '      gimp_@type@_set_value_descriptions (type, descs);\n'                    + \
+    '    }\n'                                                                      + \
+    '\n'                                                                           + \
+    '  return type;\n'                                                             + \
+    '}\n'
+
+conf.set('ENABLE_NLS',   true)
+conf.set('HAVE_GETTEXT', true)
+
+
+################################################################################
+# Miscellaneous configuration
+
+#     #
+##   ## #  ####   ####
+# # # # # #      #    #
+#  #  # #  ####  #
+#     # #      # #
+#     # # #    # #    #
+#     # #  ####   ####
+
+
+
+# Enable support for multiprocessing
+conf.set10('ENABLE_MP', get_option('enable-multiproc'))
+
+# Enable support for OpenMP
+openmp = dependency('openmp', required : get_option('openmp'))
+if openmp.found() and cc.get_id() != 'clang-cl' #libomp140*.dll is flaky
+  have_openmp = true
+else
+  have_openmp = false
+endif
+conf.set('HAVE_OPENMP', have_openmp)
+
+# Check for available functions
+foreach fn : [
+    { 'm': 'HAVE_ALLOCA',                   'v': 'alloca', },
+    { 'm': 'HAVE_DCGETTEXT',                'v': 'dcgettext', },
+    { 'm': 'HAVE_DIFFTIME',                 'v': 'difftime', },
+    { 'm': 'HAVE_FSYNC',                    'v': 'fsync', },
+    { 'm': 'HAVE_GETADDRINFO',              'v': 'getaddrinfo', },
+    { 'm': 'HAVE_GETNAMEINFO',              'v': 'getnameinfo', },
+    { 'm': 'HAVE_GETTEXT',                  'v': 'gettext', },
+    { 'm': 'HAVE_MMAP',                     'v': 'mmap', },
+    { 'm': 'HAVE_RINT',                     'v': 'rint', },
+    { 'm': 'HAVE_THR_SELF',                 'v': 'thr_self', },
+    { 'm': 'HAVE_VFORK',                    'v': 'vfork', },
+  ]
+  conf.set(fn['m'],
+    cc.has_function(fn['v']) ? 1 : false
+  )
+endforeach
+
+conf.set('HAVE_BIND_TEXTDOMAIN_CODESET',
+  cc.has_header_symbol('libintl.h', 'bind_textdomain_codeset') ? 1 : false
+)
+conf.set('HAVE_VPRINTF',
+  cc.has_header_symbol('libintl.h', 'vprintf') ? 1 : false
+)
+
+
+# Check for available headers
+foreach header : [
+    { 'm': 'HAVE_ALLOCA_H',       'v': 'alloca.h' },
+    { 'm': 'HAVE_DLFCN_H',        'v': 'dlfcn.h' },
+    { 'm': 'HAVE_FCNTL_H',        'v': 'fcntl.h' },
+    { 'm': 'HAVE_IEEEFP_H',       'v': 'ieeefp.h' },
+    { 'm': 'HAVE_INTTYPES_H',     'v': 'inttypes.h' },
+    { 'm': 'HAVE_LOCALE_H',       'v': 'locale.h' },
+    { 'm': 'HAVE_MATH_H',         'v': 'math.h' },
+    { 'm': 'HAVE_MEMORY_H',       'v': 'memory.h' },
+    { 'm': 'HAVE_STDINT_H',       'v': 'stdint.h' },
+    { 'm': 'HAVE_STDLIB_H',       'v': 'stdlib.h' },
+    { 'm': 'HAVE_STRING_H',       'v': 'string.h' },
+    { 'm': 'HAVE_STRINGS_H',      'v': 'strings.h' },
+    { 'm': 'HAVE_SYS_PARAM_H',    'v': 'sys/param.h' },
+    { 'm': 'HAVE_SYS_PRCTL_H',    'v': 'sys/prctl.h' },
+    { 'm': 'HAVE_SYS_SELECT_H',   'v': 'sys/select.h' },
+    { 'm': 'HAVE_SYS_STAT_H',     'v': 'sys/stat.h' },
+    { 'm': 'HAVE_SYS_THR_H',      'v': 'sys/thr.h' },
+    { 'm': 'HAVE_SYS_TIME_H',     'v': 'sys/time.h' },
+    { 'm': 'HAVE_SYS_TIMES_H',    'v': 'sys/times.h' },
+    { 'm': 'HAVE_SYS_TYPES_H',    'v': 'sys/types.h' },
+    { 'm': 'HAVE_SYS_WAIT_H',     'v': 'sys/wait.h' },
+    { 'm': 'HAVE_UNISTD_H',       'v': 'unistd.h' },
+    { 'm': 'HAVE_MMAN_H',         'v': 'sys/mman.h' },
+    { 'm': 'HAVE_IPC_H',          'v': 'sys/ipc.h' },
+    { 'm': 'HAVE_SHM_H',          'v': 'sys/shm.h' },
+  ]
+  conf.set(header['m'], cc.has_header(header['v']) ? 1 : false)
+endforeach
+
+
+################################################################################
+# Check for shared memory handling
+
+shmem_choice = get_option('shmem-type')
+if shmem_choice == 'auto'
+  shmem_choice = 'sysv'
+
+  # MacOS X has broken SysV shm
+  if platform_osx
+    shmem_choice = 'posix'
+  endif
+  if platform_windows
+    shmem_choice = 'win32'
+  endif
+endif
+
+if shmem_choice == 'sysv'
+  check_ip_rmid_deferred_release = cc.run('''
+  #include <sys/types.h>
+  #include <sys/ipc.h>
+  #include <sys/shm.h>
+  int main() {
+    int id = shmget(IPC_PRIVATE, 4, IPC_CREAT | 0600);
+    if (id == -1)
+      return 2;
+
+    char *shmaddr = shmat(id, 0, 0);
+    shmctl(id, IPC_RMID, 0);
+    if ((char*) shmat(id, 0, 0) == (char*) -1) {
+      shmdt(shmaddr);
+      return 1;
+    }
+    shmdt(shmaddr);
+    shmdt(shmaddr);
+    return 0;
+  }
+  ''',
+  name: 'shmctl IPC_RMID allows subsequent attaches').returncode() == 0
+  conf.set('IPC_RMID_DEFERRED_RELEASE', check_ip_rmid_deferred_release)
+  conf.set('USE_SYSV_SHM', true)
+elif shmem_choice == 'posix'
+  conf.set('USE_POSIX_SHM', true)
+endif
+
+
+conf.set('NO_FD_SET',
+  not platform_windows
+  and not cc.compiles('''
+    #include <sys/types.h>
+    int main() { fd_set readMask, writeMask; return 0; }
+  ''')
+)
+
+# GCC attributes
+conf.set('HAVE_FUNC_ATTRIBUTE_DESTRUCTOR',
+  cc.compiles('''__attribute__ ((destructor)) void destructor_fn(void) { }''')
+)
+
+
+
+
+################################################################################
+# Set/regroup common CFlags for subdirs
+
+######
+#     # ###### ###### # #    # ######  ####
+#     # #      #      # ##   # #      #
+#     # #####  #####  # # #  # #####   ####
+#     # #      #      # #  # # #           #
+#     # #      #      # #   ## #      #    #
+######  ###### #      # #    # ######  ####
+
+# Compiler
+conf.set_quoted('CC',             cc.get_id())
+
+cc_version=''
+if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+  cc_cmd = run_command(cc, '-v', check: false)
+  # Note: the call might actually fail when using ccache.
+  # See: https://github.com/mesonbuild/meson/issues/6174
+  if cc_cmd.returncode() == 0
+    cc_version = cc_cmd.stdout() + cc_cmd.stderr()
+  endif
+else
+  # Various compilers have various options. Try most common ones. This
+  # list of options comes from autotools checks.
+  foreach arg : [ '--version', '-v', '-V', '-qversion' ]
+    cc_cmd = run_command(cc, arg, check: false)
+    if cc_cmd.returncode() == 0
+      cc_version = cc_cmd.stdout()
+    endif
+  endforeach
+endif
+if cc_version == ''
+  # We didn't manage to get a meaningful verbose version from the
+  # compiler. Just save its name and version.
+  cc_version = cc.get_id() + ' ' + cc.version()
+else
+  if platform_windows
+    # On Windows the CC_VERSION string can contain backslashes in paths,
+    # specifically in COLLECT_GCC. Replace by slashes.
+    cc_version = '/'.join(cc_version.split('\\'))
+  endif
+  # See also: https://github.com/mesonbuild/meson/pull/6179
+  cc_version = '\\n'.join(cc_version.split('\n'))
+endif
+conf.set_quoted('CC_VERSION',     cc_version.strip())
+
+# Python version
+conf.set_quoted('PYTHON_VERSION', python.language_version())
+
+# Names
+conf.set_quoted('GIMP_PACKAGE',   meson.project_name())
+conf.set_quoted('PACKAGE_NAME',   meson.project_name())
+conf.set_quoted('PACKAGE_STRING', package_string)
+conf.set_quoted('GIMP_COMMAND',   gimp_command)
+conf.set_quoted('GIMP_DESKTOP_NAME', gimp_desktop_name)
+
+# Versions
+conf.set_quoted('GIMP_APP_VERSION_STRING',gimp_app_version)
+conf.set_quoted('GIMP_APP_VERSION',       gimp_app_version)
+conf.set_quoted('GIMP_USER_VERSION',      gimp_app_version)
+
+conf.set_quoted('GIMP_DATA_VERSION',      gimp_api_version)
+conf.set_quoted('GIMP_PLUGIN_VERSION',    gimp_api_version)
+conf.set_quoted('GIMP_SYSCONF_VERSION',   gimp_api_version)
+conf.set_quoted('GIMP_TOOL_VERSION',      gimp_app_version)
+conf.set_quoted('GIMP_PKGCONFIG_VERSION', gimp_api_version)
+
+# Directories
+
+# Possibly change default gimpdir from $XDG_CONFIG_HOME/GIMP/gimp_user_version
+gimpdir = get_option('gimpdir')
+if gimpdir == ''
+  # Default value
+  gimpdir = meson.project_name().to_upper()
+endif
+
+project_subdir = meson.project_name() / gimp_api_version
+gimpdatadir    = get_option('datadir')    / project_subdir
+gimpplugindir  = get_option('libdir')     / project_subdir
+gimpsysconfdir = get_option('sysconfdir') / project_subdir
+gimpmanpagedir = gimpdir
+localedir      = get_option('datadir') / 'locale'
+
+conf.set_quoted('PREFIX',          prefix)
+conf.set_quoted('EXEC_PREFIX',     prefix)
+conf.set_quoted('GIMPDIR',         gimpdir)
+conf.set_quoted('GIMPSYSCONFDIR',  prefix / gimpsysconfdir)
+conf.set_quoted('GIMPDATADIR',     prefix / gimpdatadir)
+conf.set_quoted('GIMPPLUGINDIR',   prefix / gimpplugindir)
+conf.set_quoted('PLUGINDIR',       prefix / gimpplugindir)
+conf.set_quoted('LOCALEDIR',       prefix / localedir)
+conf.set_quoted('DESKTOP_DATADIR', prefix / get_option('datadir'))
+
+conf.set_quoted('LOCALSTATEDIR',   prefix / get_option('localstatedir'))
+# /usr/com?
+conf.set_quoted('SHAREDSTATEDIR',  prefix / get_option('sharedstatedir'))
+conf.set_quoted('SYSCONFDIR',      prefix / get_option('sysconfdir'))
+conf.set_quoted('BINDIR',          prefix / get_option('bindir'))
+conf.set_quoted('DATAROOTDIR',     prefix / get_option('datadir'))
+conf.set_quoted('INFODIR',         prefix / get_option('infodir'))
+conf.set_quoted('LIBDIR',          prefix / get_option('libdir'))
+conf.set_quoted('LIBEXECDIR',      prefix / get_option('libexecdir'))
+conf.set_quoted('MANDIR',          prefix / get_option('mandir'))
+conf.set_quoted('SBINDIR',         prefix / get_option('sbindir'))
+conf.set_quoted('SYSDATADIR',      prefix / get_option('datadir'))
+conf.set_quoted('RELOC_LIBDIR',    get_option('libdir'))
+
+
+################################################################################
+# Generate files
+
+  #####                                   #######
+ #     #  ####  #    # ###### #  ####     #       # #      ######  ####
+ #       #    # ##   # #      # #    #    #       # #      #      #
+ #       #    # # #  # #####  # #         #####   # #      #####   ####
+ #       #    # #  # # #      # #  ###    #       # #      #           #
+ #     # #    # #   ## #      # #    #    #       # #      #      #    #
+  #####   ####  #    # #      #  ####     #       # ###### ######  ####
+
+
+# git-version.h is already present and not generated if dist tarball
+is_git_repository = run_command(python, '-c',
+  'import sys,os; sys.exit(0 if os.path.exists(".git") else 1)',
+  check: false
+).returncode() == 0
+
+has_version_h = run_command(python, '-c',
+  'import sys,os; sys.exit(0 if os.path.exists("git-version.h") else 1)',
+  check: false
+).returncode() == 0
+
+generate_version_h = is_git_repository or not has_version_h
+if generate_version_h
+  gitversion_h1 = vcs_tag(
+    input : 'app/git-version.h.in',
+    output: 'git-version.h.in.1',
+    command: [ 'git', 'describe', '--always', ],
+    replace_string: '@GIMP_GIT_VERSION@',
+    fallback: 'unknown (unsupported)',
+  )
+  gitversion_h2 = vcs_tag(
+    input : gitversion_h1,
+    output: 'git-version.h.in.2',
+    command: [ 'git', 'rev-parse', '--short', 'HEAD', ],
+    replace_string: '@GIMP_GIT_VERSION_ABBREV@',
+    fallback: 'unknown (unsupported)',
+  )
+  gitversion_h = vcs_tag(
+    input : gitversion_h2,
+    output: 'git-version.h',
+    command: [ 'git', 'log', '-n1', '--date=format:%Y', '--pretty=%cd', ],
+    replace_string: '@GIMP_GIT_LAST_COMMIT_YEAR@',
+    fallback: 'unknown (unsupported)',
+  )
+
+  git = find_program('git', required: false)
+  if not is_git_repository or not git.found()
+  # We create git-version.h but know it will be useless because we are
+  # not in a git repository. Output a warning.
+  git_warning = '''
+
+        UNSUPPORTED BUILD!
+
+        This is not a distribution tarball (git-version.h missing) and
+        we could not establish the corresponding commit (either this is
+        not a git repository or git command is missing). Therefore
+        we have no reference for debugging.
+        Please either use release tarballs or build from the repository.
+  '''
+  warning(git_warning)
+  warnings += git_warning
+  endif
+else
+  gitversion_h = files('git-version.h')
+endif
+
+install_conf = configuration_data()
+install_conf.set('GIMP_APP_VERSION', gimp_app_version)
+install_conf.set('GIMP_PKGCONFIG_VERSION', gimp_version)
+install_conf.set('GIMP_VERSION', gimp_version)
+install_conf.set('APPSTREAM_REQUIRED_VERSION',    appstream_minver)
+install_conf.set('ATK_REQUIRED_VERSION',          atk_minver)
+install_conf.set('BABL_REQUIRED_VERSION',         babl_minver)
+install_conf.set('CAIRO_PDF_REQUIRED_VERSION',    cairopdf_minver)
+install_conf.set('CAIRO_REQUIRED_VERSION',        cairo_minver)
+install_conf.set('FONTCONFIG_REQUIRED_VERSION',   fontconfig_minver)
+install_conf.set('FREETYPE2_REQUIRED_VERSION',    freetype2_minver)
+install_conf.set('GDK_PIXBUF_REQUIRED_VERSION',   gdk_pixbuf_minver)
+install_conf.set('GEGL_REQUIRED_VERSION',         gegl_minver)
+install_conf.set('EXIV2_REQUIRED_VERSION',        exiv2_minver)
+install_conf.set('GEXIV2_REQUIRED_VERSION',       gexiv2_minver)
+install_conf.set('GEXIV2_MAX_VERSION',            gexiv2_maxver)
+install_conf.set('GLIB_REQUIRED_VERSION',         glib_minver)
+install_conf.set('GTK_REQUIRED_VERSION',          gtk4_minver)
+install_conf.set('HARFBUZZ_REQUIRED_VERSION',     harfbuzz_minver)
+install_conf.set('JSON_GLIB_REQUIRED_VERSION',    json_glib_minver)
+install_conf.set('LCMS_REQUIRED_VERSION',         lcms_minver)
+install_conf.set('LIBHEIF_REQUIRED_VERSION',      libheif_minver)
+install_conf.set('LIBJXL_REQUIRED_VERSION',       jpegxl_minver)
+install_conf.set('LIBLZMA_REQUIRED_VERSION',      liblzma_minver)
+install_conf.set('LIBTIFF_REQUIRED_VERSION',      libtiff_minver)
+install_conf.set('LIBMYPAINT_REQUIRED_VERSION',   libmypaint_minver)
+install_conf.set('LIBPNG_REQUIRED_VERSION',       libpng_minver)
+install_conf.set('OPENEXR_REQUIRED_VERSION',      openexr_minver)
+install_conf.set('OPENJPEG_REQUIRED_VERSION',     openjpeg_minver)
+install_conf.set('PANGO_REQUIRED_VERSION',        pango_minver)
+install_conf.set('POPPLER_DATA_REQUIRED_VERSION', poppler_data_minver)
+install_conf.set('POPPLER_REQUIRED_VERSION',      poppler_minver)
+install_conf.set('PYGOBJECT_REQUIRED_VERSION',    pygobject_minver)
+install_conf.set('PYTHON3_REQUIRED_VERSION',      python3_minver)
+install_conf.set('RSVG_REQUIRED_VERSION',         rsvg_minver)
+install_conf.set('WEBP_REQUIRED_VERSION',         webp_minver)
+install_conf.set('WMF_REQUIRED_VERSION',          wmf_minver)
+install_conf.set('XGETTEXT_REQUIRED_VERSION',     '0.19')
+
+if is_git_repository
+  # Tarballs won't have INSTALL.in, only the generated INSTALL.
+  INSTALL = configure_file(
+    input : 'INSTALL.in',
+    output: 'INSTALL',
+    configuration: install_conf
+  )
+endif
+
+if is_git_repository
+  has_gimp_data = run_command(python, '-c',
+    'import sys,os; sys.exit(0 if os.path.exists("gimp-data/meson.build") else 1)',
+    check: false
+  ).returncode() == 0
+
+  if not has_gimp_data
+    error('gimp-data submodule not present. Run: git submodule update --init')
+  endif
+
+  if git.found()
+    git_submodule_check = run_command(meson.project_source_root() / 'tools/check-gimp-data.py',
+                                      check: false)
+    if git_submodule_check.returncode() != 0
+      submodule_warning = 'gimp-data submodule seems outdated. Possibly run from the source repository: git submodule update'
+      warning(submodule_warning)
+      warnings += submodule_warning
+    endif
+  endif
+endif
+
+
+# Set bug report URL
+
+# Allowing third-party packagers to set their own bugtracker URL, in
+# order to filter first packaging bugs from core bugs.
+bug_report_url = get_option('bug-report-url')
+
+if bug_report_url == ''
+  bug_report_url = project_url_issues
+endif
+conf.set_quoted('PACKAGE_BUGREPORT', project_url_issues)
+conf.set_quoted('BUG_REPORT_URL', bug_report_url)
+
+configure_file(
+  output: 'config.h',
+  configuration: conf
+)
+compiler_args +='-DHAVE_CONFIG_H'
+
+
+add_project_arguments(compiler_args, language: [ 'c', 'cpp' ])
+add_project_link_arguments(linker_args, language: [ 'c', 'cpp' ])
+
+################################################################################
+# Miscellaneous targets
+
+
+ #     #                    #######
+ ##   ## #  ####   ####        #      ##   #####   ####  ###### #####  ####
+ # # # # # #      #    #       #     #  #  #    # #    # #        #   #
+ #  #  # #  ####  #            #    #    # #    # #      #####    #    ####
+ #     # #      # #            #    ###### #####  #  ### #        #        #
+ #     # # #    # #    #       #    #    # #   #  #    # #        #   #    #
+ #     # #  ####   ####        #    #    # #    #  ####  ######   #    ####
+
+
+
+custom_target('AUTHORS',
+  input : [ 'authors.xsl', 'authors.xml', ],
+  output: 'AUTHORS',
+  command: [
+    xsltproc,
+    '-o', '@OUTPUT@',
+    '@INPUT@',
+  ],
+  build_by_default: false,
+)
+date = run_command(python, '-c', 'import datetime; print(datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))', check: true)
+custom_target('authors.md',
+  input : [ 'authors4gimp-web.xsl', 'authors.xml', ],
+  output: 'authors.md',
+  command: [
+    xsltproc,
+    '--stringparam', 'today', date.stdout().strip(),
+    '-o', '@OUTPUT@',
+    '@INPUT@',
+  ],
+  build_by_default: false,
+)
+
+if xmllint.found()
+  custom_target('validate-authors',
+    command: [
+      xmllint,
+      '--output', '@OUTPUT@',
+      '--valid', '@INPUT@',
+    ],
+    input : [ 'authors.xml', ],
+    output: [ 'validate-authors-output.xml' ],
+    build_by_default: true,
+    install: false
+  )
+endif
+
+meson.add_dist_script('tools/meson_dist_script.py',
+                      generate_version_h ?  gitversion_h.full_path() : gitversion_h,
+                      meson.project_source_root(), meson.project_build_root())
+
+################################################################################
+# Subdirs: part 1
+
+rootInclude = include_directories('.')
+appInclude  = include_directories('app')
+
+if platform_windows
+  subdir('build/windows')
+endif
+
+# Tools
+subdir('libgimpbase')
+subdir('tools')
+subdir('pdb')
+
+# Translations
+subdir('po')
+subdir('po-libgimp')
+subdir('po-plug-ins')
+subdir('po-python')
+subdir('po-script-fu')
+subdir('po-tags')
+subdir('po-tips')
+# Data / xml files
+subdir('data')
+subdir('etc')
+subdir('menus')
+subdir('themes')
+
+# gimp-data submodule part 1
+subdir('gimp-data')
+
+# Libraries (order here is important!)
+subdir('libgimpcolor')
+subdir('libgimpmath')
+subdir('libgimpconfig')
+subdir('libgimpmodule')
+subdir('libgimpthumb')
+subdir('libgimpwidgets')
+subdir('libgimp')
+
+# Executables, plugins
+subdir('extensions')
+subdir('modules')
+subdir('plug-ins')
+subdir('app')
+subdir('app-tools')
+
+# Desktop files
+subdir('desktop')
+
+################################################################################
+# Make GIMP runnable without being installed for unit-testing or as a build
+# tool.
+
+gimp_run_env=environment()
+gimp_run_env.set('GIMP_GLOBAL_BUILD_ROOT',  meson.global_build_root())
+gimp_run_env.set('GIMP_GLOBAL_SOURCE_ROOT', meson.global_source_root())
+if get_option('debug-self-in-build')
+  if not platform_windows and not platform_osx
+    db = find_program(['gdb', 'lldb'], required: true)
+  elif platform_windows
+    #GDB does not support native CodeView symbols
+    if debugging_format == 'native'
+      db = find_program('lldb', required: false)
+      if not db.found()
+        error('GDB does not support native CodeView symbols on Windows. Please install LLDB or set -Dwin-debugging=dwarf')
+      endif
+    elif debugging_format == 'DWARF'
+      db = find_program(['lldb', 'gdb'], required: true)
+    endif
+  elif platform_osx
+    #GDB does not support native Mach-O binaries without codesigning; and,
+    #even if signed, it is flaky: https://sourceware.org/bugzilla/show_bug.cgi?id=32235
+    db = find_program('lldb', required: false)
+    if not db.found()
+      error('GDB does not support newer DWARF symbols on macOS. Please install LLDB')
+    endif
+  endif
+  gimp_run_env.set('GIMP_DEBUG_SELF_WRAPPER', db.full_path())
+endif
+gimp_run_env.set('GIMP_PYTHON_WITH_GI', python.full_path())
+
+if meson.can_run_host_binaries() and have_gobject_introspection
+  if enable_console_bin
+    gimp_real_exe = gimpconsole_exe
+  else
+    gimp_real_exe = gimpmain_exe
+  endif
+  gimp_exe_depends = [gimp_real_exe, libgimp_gir, libgimpui_gir] + plugin_custom_targets
+  gimp_run_env.set('GIMP_SELF_IN_BUILD', gimp_real_exe.full_path())
+
+  menu_paths=meson.global_build_root() / 'menus:' + meson.global_source_root() / 'menus'
+  gimp_run_env.set('GIMP_TESTING_MENUS_PATH', menu_paths)
+
+  gimp_run_env.set('GIMP3_SYSCONFDIR', meson.global_source_root() / 'etc')
+
+  gimp_run_env.set('GIMP_TESTING_PLUG_INS', 'python/python-eval/')
+
+  gimp_run_env.set('GIMP_TESTING_INTERPRETER_DIRS', meson.global_build_root() / 'plug-ins/python/')
+  gimp_run_env.append('GIMP_TESTING_INTERPRETER_DIRS', meson.global_build_root() / 'extensions/')
+  gimp_run_env.set('GIMP_TESTING_ENVIRON_DIRS', meson.global_build_root() / 'data/environ/')
+
+  # Makes build errors output way less polluted, making easier to debug
+  gimp_run_env.set('GIMP3_LOCALEDIR', meson.global_build_root() / 'po-plug-ins')
+
+  gimp_run_env.prepend('GI_TYPELIB_PATH', prefix / 'lib/girepository-1.0/')
+  if platform_osx
+    gimp_run_env.prepend('GI_TYPELIB_PATH', meson.global_build_root() / 'libgimp/tmp')
+  else
+    gimp_run_env.prepend('GI_TYPELIB_PATH', meson.global_build_root() / 'libgimp')
+  endif
+
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimp')
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimpbase')
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimpcolor')
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimpconfig')
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimpmath')
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimpmodule')
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimpthumb')
+  gimp_run_env.prepend('LD_LIBRARY_PATH', meson.global_build_root() / 'libgimpwidgets')
+
+  if platform_windows
+    # On Windows, DLL are found through PATH rather than LD_LIBRARY_PATH.
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimp')
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimpbase')
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimpcolor')
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimpconfig')
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimpmath')
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimpmodule')
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimpthumb')
+    gimp_run_env.prepend('PATH', meson.global_build_root() / 'libgimpwidgets')
+  elif platform_osx
+    gimp_exe_depends += [patched_libgimp_gir, patched_libgimpui_gir]
+
+    gimp_run_env.set('GIMP_GI_DIR', gi.get_variable('libdir'))
+
+    gimp_run_env.set('GIMP_TEMP_UPDATE_RPATH', gimp_real_exe.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimp.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimpbase.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimpcolor.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimpconfig.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimpmath.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimpmodule.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimpthumb.full_path())
+    gimp_run_env.prepend('GIMP_TEMP_UPDATE_RPATH', libgimpwidgets.full_path())
+  endif
+else
+  # Cross-builds require an existing native GIMP installed, unless we
+  # can run target binaries.
+  native_gimp_exe = find_program([gimpconsole_exe_name, gimpmain_exe_name],
+                                 native: true, required: false)
+
+  if not native_gimp_exe.found()
+    error('When cross-compiling, the build requires either an exe_wrapper or a native GIMP installed (@0@ or @1@).'.format(gimpconsole_exe_name, gimpmain_exe_name))
+  endif
+
+  gimp_run_env.set('GIMP_SELF_IN_BUILD', native_gimp_exe.full_path())
+  gimp_exe_depends = []
+endif
+
+gimp_exe = find_program('tools'/'in-build-gimp.py')
+
+################################################################################
+# Subdirs: part 2
+
+# gimp-data submodule part 2
+subdir('gimp-data/images/')
+
+# Unit testing
+subdir('app/tests')
+subdir('libgimp/tests')
+
+# Docs
+subdir('docs')
+subdir('devel-docs')
+
+# Inno Windows installer
+if get_option('windows-installer')
+  subdir('po-windows-installer')
+  subdir('build/windows/installer/lang')
+endif
+
+pkgconfig.generate(libgimp,
+  filebase: 'gimp-' + gimp_api_version,
+  name: prettyname,
+  description: 'GIMP Library',
+  version: gimp_version,
+  requires: [
+    cairo,
+    gdk_pixbuf,
+    gegl,
+    gexiv2,
+    pango,
+  ],
+  libraries: [
+    libgimpbase,
+    libgimpcolor,
+    libgimpconfig,
+    libgimpmath,
+  ],
+  subdirs: [
+    gimp_api_name,
+  ],
+  variables: [
+    'datarootdir='    +'${prefix}/'+ get_option('datadir'),
+    'gimpdatadir='    +'${prefix}/'+ gimpdatadir,
+    'gimplibdir='     +'${prefix}/'+ gimpplugindir,
+    'gimpsysconfdir=' + gimpsysconfdir,
+    'gimplocaledir='  +'${prefix}/'+ localedir,
+  ],
+)
+
+pkgconfig.generate(libgimpthumb,
+  filebase: 'gimpthumb-' + gimp_api_version,
+  name: 'GIMP Thumb',
+  description: 'GIMP Thumbnail Library',
+  version: gimp_version,
+  requires: [
+    libgimp,
+    gdk_pixbuf,
+  ],
+  subdirs: [
+    gimp_api_name,
+  ],
+)
+
+pkgconfig.generate(libgimpui,
+  filebase: 'gimpui-' + gimp_api_version,
+  name: 'GIMP UI',
+  description: 'GIMP User Interface Library',
+  version: gimp_version,
+  requires: [
+    libgimp,
+    gtk4,
+  ],
+  libraries: [
+    libgimpwidgets,
+    libgimpmodule,
+  ],
+  subdirs: [
+    gimp_api_name,
+  ],
+)
+
+################################################################################
+# Install native debug data (.pdb) on Windows
+# Ideally meson should take care of it automatically.
+# See: https://github.com/mesonbuild/meson/issues/12977
+if platform_windows and debugging_format == 'native' and cc.get_argument_syntax() != 'msvc'
+  install_win_debug_script = find_program('tools/meson_install_win_debug.py')
+  meson.add_install_script(install_win_debug_script)
+endif
+
+# On Windows, install deps in a bundle before distributing
+if get_option('windows-installer') or get_option('ms-store')
+  install_win_bundling_script = find_program('build/windows/2_bundle-gimp-uni_base.py')
+  meson.add_install_script(install_win_bundling_script)
+endif
+
+# On macOS, install deps in an .app bundle before distributing
+if get_option('dmg')
+  install_macos_debug_script = find_program('build/macos/2_bundle-gimp-uni_base.py')
+  meson.add_install_script(install_macos_debug_script)
+endif
+
+################################################################################
+# Subdir installations
+
+foreach dir : [
+    { 'dir': 'libgimp',        'deps': libgimp},
+    { 'dir': 'libgimpbase',    'deps': libgimpbase},
+    { 'dir': 'libgimpcolor',   'deps': libgimpcolor},
+    { 'dir': 'libgimpconfig',  'deps': libgimpconfig},
+    { 'dir': 'libgimpmath',    'deps': libgimpmath},
+    { 'dir': 'libgimpmodule',  'deps': libgimpmodule},
+    { 'dir': 'libgimpthumb',   'deps': libgimpthumb},
+    { 'dir': 'libgimpwidgets', 'deps': libgimpwidgets},
+    { 'dir': 'icons' },
+    { 'dir': 'plug-ins', },
+    { 'dir': 'extensions', },
+  ]
+  run_target('install-' + dir.get('dir'),
+    command: [
+      meson_install_subdir, '-v', dir.get('dir')
+    ],
+    depends: dir.get('deps', [])
+  )
+endforeach
+
+################################################################################
+
+final_message = [
+'''Extra Binaries:''',
+'''  gimp-console:        @0@'''.format(enable_console_bin),
+'',
+'''Optional Features:''',
+'''  Check updates at startup:      @0@'''.format(check_update),
+'''  Language selection:            @0@'''.format(isocodes.found()),
+'''  Vector icons:                  @0@'''.format(have_vector_icons),
+'''  Dr. Mingw (Win32):             @0@'''.format(drmingw.found()),
+'''  Relocatable Bundle:            @0@'''.format(relocatable_bundle),
+'''  Default ICC directory (Linux): @0@'''.format(icc_directory),
+'''  Dashboard backtraces:          @0@'''.format(dashboard_backtrace),
+'''  Debug symbols format:          @0@'''.format(debugging_format),
+'''  Binary symlinks:               @0@'''.format(enable_default_bin),
+'''  OpenMP:                        @0@'''.format(have_openmp),
+'''  Bash Completion:               @0@'''.format(have_bash_completion),
+'',
+'''Optional Plug-Ins:''',
+'''  Ascii Art:           @0@'''.format(libaa.found()),
+'''  Ghostscript:         @0@'''.format(ghostscript.found()),
+'''  JPEG 2000:           @0@'''.format(openjpeg.found()),
+'''  JPEG XL:             @0@'''.format(libjxl.found()),
+'''  MNG:                 @0@'''.format(libmng.found()),
+'''  OpenEXR:             @0@'''.format(openexr.found()),
+'''  WebP:                @0@'''.format(webp_found),
+'''  HEIC:                import: @0@ - export: @1@'''
+                                .format(can_import_heic, can_export_heic),
+'''  AVIF:                import: @0@ - export: @1@'''
+                                .format(can_import_avif, can_export_avif),
+'''  HEJ2:                import: @0@ - export: @1@'''
+                                .format(can_import_hej2, can_export_hej2),
+'''  PDF (export):        @0@'''.format(cairopdf.found()),
+'''  Print:               @0@'''.format(have_print),
+'''  Javascript plug-ins: @0@'''.format(have_javascript),
+'''  Vala plug-ins:       @0@'''.format(have_vala),
+'''  WMF:                 @0@'''.format(wmf.found()),
+'''  X11 Mouse Cursor:    @0@'''.format(xmc.found()),
+'''  XPM:                 @0@'''.format(libxpm.found()),
+'''  Quite-OK Image:      @0@'''.format(have_qoi),
+'''  Amiga IFF/ILBM:      @0@'''.format(have_ilbm),
+'''  Email:               @0@'''.format(email_message),
+'''  FITS:                @0@'''.format(cfitsio_dep.found()),
+'',
+'''Experimental Plug-Ins (discouraged except for developers):''',
+'''  Lua plug-ins:        @0@'''.format(have_lua_output),
+'',
+'''Unmaintained Plug-Ins (discouraged except for developers):''',
+'''  TWAIN (Win32):       @0@'''.format(get_option('twain-unmaintained')),
+'',
+'''Optional Modules:''',
+'''  ALSA (MIDI Input):   @0@'''.format(alsa.found()),
+'''  Linux Input:         @0@ (GUdev support: @1@)'''
+                                .format(have_linuxinput, gudev.found()),
+'''  DirectInput (Win32): @0@'''.format(directx.found()),
+'',
+'''Tests:''',
+'''  Use xvfb-run         @0@'''.format(xvfb_run.found()),
+'''  Test appdata         @0@'''.format(appstreamcli.found()),
+'',
+'''Documentation:''',
+'''  libgimp API Reference: @0@'''.format(gi_docgen.found() and have_gobject_introspection),
+'',
+'''Bug report URL: @0@'''.format(bug_report_url),
+]
+
+message('\n'.join(final_message))
+
+if bug_report_url == project_url_issues
+  message('''
+    NOTE: if you plan on packaging GIMP for distribution, it is recommended
+    to override the bug report URL with option:
+      -Dbug-report-url=https://example.com/
+    so that you can filter packaging bugs from core bugs before reporting upstream.
+  ''')
+endif
+
+if warnings.length() > 0
+  warning('Warnings occurred during configuration')
+  foreach warning : warnings
+    warning(warning)
+  endforeach
+endif

@@ -1,0 +1,9 @@
+
+============================================================
+  Status dos Repositórios e Instalações
+============================================================
+Workspace: /home/yuri/Documentos/gimp
+- PhotoGIMP repo: [OK]
+- GIMP Source repo: [OK]
+- Flatpak (org.gimp.GIMP): [DETECTADO] -> /home/yuri/.var/app/org.gimp.GIMP/config/GIMP/3.0
+- Nativo (~/.config/GIMP/3.0): [DETECTADO] -> /home/yuri/.config/GIMP/3.0

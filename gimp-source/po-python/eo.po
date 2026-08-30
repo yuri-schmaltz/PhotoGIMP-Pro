@@ -1,0 +1,1248 @@
+# Esperanto translation for GIMP python.
+# Copyright (C) 2006-2011 Free Software Foundation, Inc.
+# This file is distributed under the same license as the GIMP package.
+# Antonio C. CODAZZI "la Filozofo" < >, 2006.
+# Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>, 2011-2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gimp 2.0\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gimp/issues\n"
+"POT-Creation-Date: 2026-02-21 11:22+0000\n"
+"PO-Revision-Date: 2026-02-27 13:50+0100\n"
+"Last-Translator: Kristjan SCHMIDT <kristjan.schmidt@googlemail.com>\n"
+"Language-Team: Esperanto <gnome-eo-list@gnome.org>\n"
+"Language: eo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 49.0\n"
+
+#: plug-ins/python/colorxhtml.py:77
+#| msgid "Save as colored XHTML"
+msgid "Save as colored HTML text..."
+msgstr "Konservi kiel kolorita XHTML"
+
+#: plug-ins/python/colorxhtml.py:136
+msgid "Saving as colored XHTML"
+msgstr "Konservante kiel kolorita XHTML"
+
+#: plug-ins/python/colorxhtml.py:210
+#| msgid "Save as colored XHTML"
+msgid "Save as colored HTML text"
+msgstr "Konservi kiel kolorita XHTML"
+
+#: plug-ins/python/colorxhtml.py:213
+#| msgid "Colored XHTML"
+msgid "Colored HTML text"
+msgstr "Kolorita XHTML"
+
+#: plug-ins/python/colorxhtml.py:221
+#| msgid "_File to read or characters to use"
+msgid "Rea_d characters from file"
+msgstr "_Legenda dosiero aŭ uzendaj signoj"
+
+#: plug-ins/python/colorxhtml.py:222
+msgid "Read characters from file, if true, or use text entry"
+msgstr "Legi signojn el dosiero, se vera, aŭ uzi tekst-en-linion"
+
+#: plug-ins/python/colorxhtml.py:224
+#| msgid "Character _source"
+msgid "Charac_ters"
+msgstr "Signo_fonto"
+
+#: plug-ins/python/colorxhtml.py:225
+msgid "Characters that will be used as colored pixels."
+msgstr "Signoj kiuj estos uzataj kiel koloraj bildpunktoj."
+
+#: plug-ins/python/colorxhtml.py:227
+msgid "Fo_nt size in pixels"
+msgstr "_Tipargrando per bilderoj"
+
+#: plug-ins/python/colorxhtml.py:228
+#| msgid "Fo_nt size in pixels"
+msgid "Font size in pixels"
+msgstr "_Tipargrando per bilderoj"
+
+#: plug-ins/python/colorxhtml.py:230
+msgid "_Write a separate CSS file"
+msgstr "_Skribi apartan CSS-dosieron"
+
+#: plug-ins/python/colorxhtml.py:231
+#| msgid "_Write a separate CSS file"
+msgid "Write a separate CSS file"
+msgstr "_Skribi apartan CSS-dosieron"
+
+#. GUI only, used to create a widget to open a file if source-file is enabled
+#: plug-ins/python/colorxhtml.py:234
+msgid "Choose File"
+msgstr "Elekti dosieron"
+
+#: plug-ins/python/file-openraster.py:504
+#: plug-ins/python/file-openraster.py:505
+msgid "export an OpenRaster (.ora) file"
+msgstr "eksporti OpenRaster (.ora)-dosieron"
+
+#: plug-ins/python/file-openraster.py:507
+#: plug-ins/python/file-openraster.py:513
+msgid "OpenRaster"
+msgstr "OpenRaster"
+
+#: plug-ins/python/file-openraster.py:514
+#: plug-ins/python/file-openraster.py:515
+msgid "load an OpenRaster (.ora) file"
+msgstr "ŝargi OpenRaster (.ora)-dosieron"
+
+#: plug-ins/python/file-openraster.py:524
+#: plug-ins/python/file-openraster.py:525
+msgid "loads a thumbnail from an OpenRaster (.ora) file"
+msgstr "ŝargi ekranbildeton el OpenRaster (.ora)-dosiero"
+
+#: plug-ins/python/foggify.py:120
+msgid "Add a layer of fog"
+msgstr "Aldoni nebultavolon"
+
+#: plug-ins/python/foggify.py:121
+#| msgid "Add a layer of fog"
+msgid "Adds a layer of fog to the image."
+msgstr "Aldoni nebultavolon"
+
+#: plug-ins/python/foggify.py:123
+msgid "_Fog..."
+msgstr "_Nebulo"
+
+#: plug-ins/python/foggify.py:129
+#| msgid "_Layer name"
+msgid "Layer _name"
+msgstr "_Tavolnomo"
+
+#: plug-ins/python/foggify.py:129
+#| msgid "_Layer name"
+msgid "Layer name"
+msgstr "_Tavolnomo"
+
+#: plug-ins/python/foggify.py:130
+msgid "Clouds"
+msgstr "Nuboj"
+
+#: plug-ins/python/foggify.py:131
+msgid "_Fog color"
+msgstr "_Nebula koloro"
+
+#: plug-ins/python/foggify.py:131
+#| msgid "_Fog color"
+msgid "Fog color"
+msgstr "_Nebula koloro"
+
+#: plug-ins/python/foggify.py:133
+msgid "_Turbulence"
+msgstr "_Turbulento"
+
+#: plug-ins/python/foggify.py:133
+#| msgid "_Turbulence"
+msgid "Turbulence"
+msgstr "_Turbulento"
+
+#: plug-ins/python/foggify.py:135
+#| msgid "Op_acity"
+msgid "O_pacity"
+msgstr "Op_akeco"
+
+#: plug-ins/python/foggify.py:135
+#| msgid "Op_acity"
+msgid "Opacity"
+msgstr "Op_akeco"
+
+#: plug-ins/python/gradients-save-as-css.py:132
+#: plug-ins/python/gradients-save-as-css.py:133
+msgid "Creates a new palette from a given gradient"
+msgstr "Krei novan paletron el donita gradiento"
+
+#: plug-ins/python/gradients-save-as-css.py:135
+msgid "Save Gradient as CSS..."
+msgstr "Konservi gradienton kiel CSS..."
+
+#: plug-ins/python/gradients-save-as-css.py:141
+#: plug-ins/python/palette-export-as-kpl.py:177
+#: plug-ins/python/palette-offset.py:53 plug-ins/python/palette-sort.py:350
+#: plug-ins/python/palette-to-gradient.py:146
+#: plug-ins/python/python-console/python-console.py:323
+msgid "Run mode"
+msgstr "Ekzekuta reĝimo"
+
+#: plug-ins/python/gradients-save-as-css.py:142
+#: plug-ins/python/palette-export-as-kpl.py:178
+#: plug-ins/python/palette-offset.py:54 plug-ins/python/palette-sort.py:351
+#: plug-ins/python/palette-to-gradient.py:147
+#: plug-ins/python/python-console/python-console.py:324
+msgid "The run mode"
+msgstr "La ekzekuta reĝimo"
+
+#: plug-ins/python/gradients-save-as-css.py:145
+#| msgid "Gradient to use"
+msgid "_Gradient to use"
+msgstr "Uzenda gradiento"
+
+#: plug-ins/python/gradients-save-as-css.py:149
+msgid "_File"
+msgstr "_Dosiero"
+
+#: plug-ins/python/histogram-export.py:151
+msgid "File is either a directory or file name is empty."
+msgstr "La dosiero estas dosierujo aŭ la dosiernomo estas malplena."
+
+#: plug-ins/python/histogram-export.py:154
+msgid "Directory not found."
+msgstr "Dosierujo ne trovita."
+
+#: plug-ins/python/histogram-export.py:171
+msgid "Histogram Export..."
+msgstr "Histograma eksportado..."
+
+#: plug-ins/python/histogram-export.py:214
+msgid "Exports the image histogram to a text file (CSV)"
+msgstr "Eksporti bildan histogramon al tekst-dosiero (CSV)"
+
+#: plug-ins/python/histogram-export.py:217
+msgid "_Export Histogram..."
+msgstr "_Eksporti histogramon..."
+
+#. TODO: GFile props still don't have labels + only load existing files
+#. (here we likely want to create a new file).
+#: plug-ins/python/histogram-export.py:225
+msgid "Histogram file"
+msgstr "Histograma dosiero"
+
+#: plug-ins/python/histogram-export.py:226
+msgid "Histogram export file"
+msgstr "Histograma eksportdosiero"
+
+#: plug-ins/python/histogram-export.py:228
+msgid "_Bucket size"
+msgstr "_Sitela grandeco"
+
+#: plug-ins/python/histogram-export.py:228
+msgid "Bucket size"
+msgstr "Sitela grandeco"
+
+#: plug-ins/python/histogram-export.py:230
+msgid "Sample _average"
+msgstr "Specimena _averaĝo"
+
+#: plug-ins/python/histogram-export.py:230
+msgid "Sample average"
+msgstr "Specimena averaĝo"
+
+#: plug-ins/python/histogram-export.py:233
+msgid "Pixel count"
+msgstr "Bildpunkta nombro"
+
+#: plug-ins/python/histogram-export.py:234
+msgid "Normalized"
+msgstr "Normigita"
+
+#: plug-ins/python/histogram-export.py:235
+msgid "Percent"
+msgstr "Procento"
+
+#: plug-ins/python/histogram-export.py:236
+msgid "Output _Format"
+msgstr "Elign-_formato"
+
+#: plug-ins/python/histogram-export.py:236
+msgid "Output format"
+msgstr "Eligformato"
+
+#: plug-ins/python/palette-export-as-kpl.py:56
+msgid "Options"
+msgstr "Agordoj"
+
+#: plug-ins/python/palette-export-as-kpl.py:61
+msgid "_Export"
+msgstr "_Eksporti"
+
+#: plug-ins/python/palette-export-as-kpl.py:168
+#: plug-ins/python/palette-export-as-kpl.py:169
+msgid "Export palette as Krita .kpl"
+msgstr "Eksporti paletron kiel Krita .kpl"
+
+#: plug-ins/python/palette-export-as-kpl.py:171
+#| msgid "_Sort Palette..."
+msgid "_Krita palette..."
+msgstr "Ordigi pa_letron..."
+
+#: plug-ins/python/palette-export-as-kpl.py:181
+#| msgid "Palette to _Gradient"
+msgid "_Palette to export"
+msgstr "Paletro laŭ _gradiento"
+
+#: plug-ins/python/palette-export-as-kpl.py:185
+msgid "_File (.kpl)"
+msgstr "_Dosiero (.kpl)"
+
+#: plug-ins/python/palette-export-as-kpl.py:188
+msgid "Commen_t"
+msgstr "Ko_mento"
+
+#: plug-ins/python/palette-export-as-kpl.py:189
+msgid "Optional comment"
+msgstr "Laŭvola komento"
+
+#: plug-ins/python/palette-export-as-kpl.py:192
+msgid "Re_ad only"
+msgstr "Nu_r-legado"
+
+#: plug-ins/python/palette-export-as-kpl.py:193
+msgid "The palette will be locked on import"
+msgstr "La paletro estos ŝlosita dum importado"
+
+#: plug-ins/python/palette-offset.py:46
+msgid "_Offset Palette..."
+msgstr "Del_okado de paletro..."
+
+#: plug-ins/python/palette-offset.py:47
+msgid "Offset the colors in a palette"
+msgstr "Delokado de koloroj en paletro"
+
+#: plug-ins/python/palette-offset.py:57 plug-ins/python/palette-sort.py:354
+#: plug-ins/python/palette-to-gradient.py:150
+#| msgid "Palette"
+msgid "_Palette"
+msgstr "Paletro"
+
+#: plug-ins/python/palette-offset.py:58 plug-ins/python/palette-sort.py:355
+#: plug-ins/python/palette-sort.py:396 plug-ins/python/palette-sort.py:397
+#: plug-ins/python/palette-to-gradient.py:151
+msgid "Palette"
+msgstr "Paletro"
+
+#: plug-ins/python/palette-offset.py:61
+msgid "O_ffset"
+msgstr "Del_okado"
+
+#: plug-ins/python/palette-offset.py:61
+msgid "Offset"
+msgstr "Delokado"
+
+#: plug-ins/python/palette-offset.py:63
+msgid "The edited palette"
+msgstr "La redaktita paletro"
+
+#: plug-ins/python/palette-offset.py:64
+msgid "The newly created palette when read-only, otherwise the input palette"
+msgstr "La nove kreita paletro kiam nur-legada, alie la eniga paletro"
+
+#. TODO: Re-incorporate LAB and LCHab options with GeglColor
+#: plug-ins/python/palette-sort.py:41 plug-ins/python/palette-sort.py:466
+msgid "Red"
+msgstr "Ruĝo"
+
+#: plug-ins/python/palette-sort.py:41 plug-ins/python/palette-sort.py:467
+msgid "Green"
+msgstr "Verdo"
+
+#: plug-ins/python/palette-sort.py:41 plug-ins/python/palette-sort.py:468
+msgid "Blue"
+msgstr "Bluo"
+
+#: plug-ins/python/palette-sort.py:42 plug-ins/python/palette-sort.py:469
+msgid "Luma (Y)"
+msgstr "Lumo (Y)"
+
+#: plug-ins/python/palette-sort.py:43 plug-ins/python/palette-sort.py:470
+msgid "Hue"
+msgstr "Nuanco"
+
+#: plug-ins/python/palette-sort.py:43 plug-ins/python/palette-sort.py:471
+#| msgid "Green or Saturation"
+msgid "Saturation"
+msgstr "Verdo aŭ satureco"
+
+#: plug-ins/python/palette-sort.py:43 plug-ins/python/palette-sort.py:472
+msgid "Value"
+msgstr "Valoro"
+
+#: plug-ins/python/palette-sort.py:44 plug-ins/python/palette-sort.py:473
+msgid "Saturation (HSL)"
+msgstr "Satureco (HSL)"
+
+#: plug-ins/python/palette-sort.py:44 plug-ins/python/palette-sort.py:474
+msgid "Lightness (HSL)"
+msgstr "Heleco (HSL)"
+
+#: plug-ins/python/palette-sort.py:45 plug-ins/python/palette-sort.py:475
+msgid "Index"
+msgstr "Indekso"
+
+#: plug-ins/python/palette-sort.py:46 plug-ins/python/palette-sort.py:476
+msgid "Random"
+msgstr "Hazarda"
+
+#: plug-ins/python/palette-sort.py:90
+msgid ""
+"\n"
+"    Format is 'start:nrows,length' . All items are optional.\n"
+"\n"
+"    The empty string selects all items, as does ':'\n"
+"    ':4,' makes a 4-row selection out of all colors (length auto-"
+"determined)\n"
+"    ':4' also.\n"
+"    ':1,4' selects the first 4 colors\n"
+"    ':,4' selects rows of 4 colors (nrows auto-determined)\n"
+"    ':3,4' selects 3 rows of 4 colors\n"
+"    '4:' selects a single row of all colors after 4, inclusive.\n"
+"    '3:,4' selects rows of 4 colors, starting at 3 (nrows auto-determined)\n"
+"    '2:3,4' selects 3 rows of 4 colors (12 colors total), beginning at index "
+"2.\n"
+"    '4' is illegal (ambiguous)\n"
+msgstr ""
+"\n"
+"    La formato estas 'komenco:nvicoj,longo' . Ĉiuj eroj estas laŭvolaj.\n"
+"\n"
+"    La malplena ĉeno elektas ĉiujn erojn, same kiel ':'\n"
+"    ':4,' faras 4-vican elekton el ĉiuj koloroj (longo aŭtomate "
+"determinata)\n"
+"    ':4' same.\n"
+"    ':1,4' elektas la unuajn 4 kolorojn\n"
+"    ':,4' elektas vicojn de 4 koloroj (nvicoj aŭtomate determinata)\n"
+"    ':3,4' elektas 3 vicojn de 4 koloroj\n"
+"    '4:' elektas ununuran vicon de ĉiuj koloroj post 4, inklude.\n"
+"    '3:,4' elektas vicojn de 4 koloroj, ekde 3 (nvicoj aŭtomate "
+"determinata)\n"
+"    '2:3,4' elektas 3 vicojn de 4 koloroj (12 koloroj entute), ekde indekso "
+"2.\n"
+"    '4' estas nevalida (neklara)\n"
+
+#: plug-ins/python/palette-sort.py:339
+msgid "_Sort Palette..."
+msgstr "Ordigi pa_letron..."
+
+#: plug-ins/python/palette-sort.py:341
+msgid "Sort the colors in a palette"
+msgstr "Ordigi kolorojn en paletro"
+
+#: plug-ins/python/palette-sort.py:360
+msgid "All"
+msgstr "Ĉio"
+
+#: plug-ins/python/palette-sort.py:361
+msgid "Slice / Array"
+msgstr "Tranĉo / Tabelo"
+
+#: plug-ins/python/palette-sort.py:362
+msgid "Autoslice (fg->bg)"
+msgstr "Aŭtotranĉo (antaŭ→fono)"
+
+#: plug-ins/python/palette-sort.py:363
+msgid "Partitioned"
+msgstr "Dividita"
+
+#: plug-ins/python/palette-sort.py:364
+msgid "Select_ions"
+msgstr "Elek_toj"
+
+#: plug-ins/python/palette-sort.py:364
+msgid "Selections"
+msgstr "Elektoj"
+
+#. TODO: It would be much simpler to replace the slice expression with three
+#. separate parameters: start-index, number-of-rows, row_length
+#: plug-ins/python/palette-sort.py:368
+msgid "Slice _expression"
+msgstr "Tranĉa _esprimo"
+
+#: plug-ins/python/palette-sort.py:373
+#| msgid "Channel to _sort"
+msgid "Channel _to sort"
+msgstr "_Ordigenda kanalo"
+
+#: plug-ins/python/palette-sort.py:373
+#| msgid "Channel to _sort"
+msgid "Channel to sort"
+msgstr "_Ordigenda kanalo"
+
+#: plug-ins/python/palette-sort.py:375
+msgid "_Ascending"
+msgstr "_Kreskante"
+
+#: plug-ins/python/palette-sort.py:375 plug-ins/python/palette-sort.py:382
+#| msgid "_Ascending"
+msgid "Ascending"
+msgstr "_Kreskante"
+
+#: plug-ins/python/palette-sort.py:379
+#| msgid "Channel to _sort"
+msgid "Secondary C_hannel to sort"
+msgstr "_Ordigenda kanalo"
+
+#: plug-ins/python/palette-sort.py:380
+#| msgid "Channel to _sort"
+msgid "Secondary Channel to sort"
+msgstr "_Ordigenda kanalo"
+
+#: plug-ins/python/palette-sort.py:382
+#| msgid "_Ascending"
+msgid "Ascen_ding"
+msgstr "_Kreskante"
+
+#: plug-ins/python/palette-sort.py:384
+msgid "_Quantization"
+msgstr "_Kvantiĝo"
+
+#: plug-ins/python/palette-sort.py:385
+msgid "Quantization"
+msgstr "Kvantiĝo"
+
+#: plug-ins/python/palette-sort.py:389
+msgid "Partitionin_g channel"
+msgstr "Divid-_kanalo"
+
+#: plug-ins/python/palette-sort.py:390
+msgid "Partitioning channel"
+msgstr "Dividkanalo"
+
+#: plug-ins/python/palette-sort.py:392
+msgid "Partition q_uantization"
+msgstr "Divida k_vantiĝo"
+
+#: plug-ins/python/palette-sort.py:393
+msgid "Partition quantization"
+msgstr "Divida kvantiĝo"
+
+#: plug-ins/python/palette-sort.py:477
+msgid "Lightness (LAB)"
+msgstr "Heleco (LAB)"
+
+#: plug-ins/python/palette-sort.py:478
+msgid "A-color"
+msgstr "A-koloro"
+
+#: plug-ins/python/palette-sort.py:479
+msgid "B-color"
+msgstr "B-koloro"
+
+#: plug-ins/python/palette-sort.py:480
+msgid "Chroma (LCHab)"
+msgstr "Kromo (LCHab)"
+
+#: plug-ins/python/palette-sort.py:481
+msgid "Hue (LCHab)"
+msgstr "Nuanco (LCHab)"
+
+#: plug-ins/python/palette-to-gradient.py:130
+msgid "Palette to _Gradient"
+msgstr "Paletro laŭ _gradiento"
+
+#: plug-ins/python/palette-to-gradient.py:131
+msgid "Create a gradient using colors from the palette"
+msgstr "Krei gradienton per paletraj koloroj"
+
+#: plug-ins/python/palette-to-gradient.py:132
+#| msgid "Create a gradient using colors from the palette"
+msgid "Create a new gradient using colors from the palette."
+msgstr "Krei gradienton per paletraj koloroj"
+
+#: plug-ins/python/palette-to-gradient.py:135
+msgid "Palette to _Repeating Gradient"
+msgstr "Paletro laŭ _ripeta gradiento"
+
+#: plug-ins/python/palette-to-gradient.py:136
+msgid "Create a repeating gradient using colors from the palette"
+msgstr "Krei ripetan gradienton per paletraj koloroj"
+
+#: plug-ins/python/palette-to-gradient.py:137
+#| msgid "Create a repeating gradient using colors from the palette"
+msgid "Create a new repeating gradient using colors from the palette."
+msgstr "Krei ripetan gradienton per paletraj koloroj"
+
+#: plug-ins/python/palette-to-gradient.py:154
+#: plug-ins/python/palette-to-gradient.py:155
+msgid "The newly created gradient"
+msgstr "La nove kreita gradiento"
+
+#: plug-ins/python/python-console/python-console.py:79
+msgid "Python Console"
+msgstr "Python-konzolo"
+
+#: plug-ins/python/python-console/python-console.py:81
+#: plug-ins/python/python-console/python-console.py:279
+msgid "_Save"
+msgstr "_Konservi"
+
+#: plug-ins/python/python-console/python-console.py:82
+msgid "Cl_ear"
+msgstr "Vi_ŝi"
+
+#: plug-ins/python/python-console/python-console.py:83
+msgid "_Browse..."
+msgstr "_Foliumi..."
+
+#: plug-ins/python/python-console/python-console.py:84
+#: plug-ins/python/python-console/python-console.py:227
+msgid "_Close"
+msgstr "_Fermi"
+
+#: plug-ins/python/python-console/python-console.py:224
+msgid "Python Procedure Browser"
+msgstr "Navigilo por Python-proceduroj"
+
+#: plug-ins/python/python-console/python-console.py:226
+msgid "_Apply"
+msgstr "_Apliki"
+
+#: plug-ins/python/python-console/python-console.py:252
+#, python-format
+msgid "Could not open '%s' for writing: %s"
+msgstr "Estas neeble malfermi '%s' por skribi: %s"
+
+#: plug-ins/python/python-console/python-console.py:267
+#, python-format
+msgid "Could not write to '%s': %s"
+msgstr "Estas neeble skribi en '%s': %s"
+
+#: plug-ins/python/python-console/python-console.py:276
+msgid "Save Python-Fu Console Output"
+msgstr "Konservi eligon de Python-Fu-konzolo"
+
+#: plug-ins/python/python-console/python-console.py:278
+#: plug-ins/python/spyro-plus.py:1748
+msgid "_Cancel"
+msgstr "_Nuligi"
+
+#: plug-ins/python/python-console/python-console.py:316
+#| msgid "Python Console"
+msgid "Python _Console"
+msgstr "Python-konzolo"
+
+#: plug-ins/python/python-console/python-console.py:317
+msgid "Interactive GIMP Python interpreter"
+msgstr "Interaktiva interpretilo \"GIMP-Python\""
+
+#: plug-ins/python/python-console/python-console.py:318
+msgid "Type in commands and see results"
+msgstr "Tajpu komandojn kaj vidu rezultojn"
+
+#: plug-ins/python/spyro-plus.py:49
+msgid "Spyro Layer"
+msgstr "Spyro-tavolo"
+
+#: plug-ins/python/spyro-plus.py:50
+msgid "Spyro Path"
+msgstr "Spyro-pado"
+
+#: plug-ins/python/spyro-plus.py:60
+msgid "As New Layer"
+msgstr "Kiel nova tavolo"
+
+#: plug-ins/python/spyro-plus.py:61
+msgid "Redraw on last active layer"
+msgstr "Redesegni sur lasta aktiva tavolo"
+
+#: plug-ins/python/spyro-plus.py:62
+msgid "As Path"
+msgstr "Kiel pado"
+
+#: plug-ins/python/spyro-plus.py:110 plug-ins/python/spyro-plus.py:2268
+msgid "Circle"
+msgstr "Cirklo"
+
+#: plug-ins/python/spyro-plus.py:146 plug-ins/python/spyro-plus.py:2272
+msgid "Polygon-Star"
+msgstr "Plurlatero-stelo"
+
+#. Sine wave on a circle ring.
+#: plug-ins/python/spyro-plus.py:162 plug-ins/python/spyro-plus.py:1009
+#: plug-ins/python/spyro-plus.py:2263 plug-ins/python/spyro-plus.py:2273
+msgid "Sine"
+msgstr "Sinusoa"
+
+#. Semi-circles, based on a polygon
+#: plug-ins/python/spyro-plus.py:172 plug-ins/python/spyro-plus.py:2274
+msgid "Bumps"
+msgstr "Ĝiboj"
+
+#: plug-ins/python/spyro-plus.py:277
+msgid "Rack"
+msgstr "Kremajera formo"
+
+#: plug-ins/python/spyro-plus.py:321
+msgid "Frame"
+msgstr "Kadro"
+
+#: plug-ins/python/spyro-plus.py:434 plug-ins/python/spyro-plus.py:2271
+msgid "Selection"
+msgstr "Elekto"
+
+#: plug-ins/python/spyro-plus.py:539 plug-ins/python/spyro-plus.py:2308
+msgid "Pencil"
+msgstr "Krajono"
+
+#: plug-ins/python/spyro-plus.py:555 plug-ins/python/spyro-plus.py:2309
+msgid "AirBrush"
+msgstr "Aerpeniko"
+
+#: plug-ins/python/spyro-plus.py:622 plug-ins/python/spyro-plus.py:2306
+msgid "Preview"
+msgstr "Antaŭvido"
+
+#: plug-ins/python/spyro-plus.py:627 plug-ins/python/spyro-plus.py:2310
+msgid "Stroke"
+msgstr "Trako"
+
+#: plug-ins/python/spyro-plus.py:674 plug-ins/python/spyro-plus.py:2307
+msgid "PaintBrush"
+msgstr "Peniko"
+
+#: plug-ins/python/spyro-plus.py:678 plug-ins/python/spyro-plus.py:2311
+msgid "Ink"
+msgstr "Inko"
+
+#: plug-ins/python/spyro-plus.py:679 plug-ins/python/spyro-plus.py:2312
+msgid "MyPaintBrush"
+msgstr "MyPaint-peniko"
+
+#: plug-ins/python/spyro-plus.py:995 plug-ins/python/spyro-plus.py:2261
+msgid "Spyrograph"
+msgstr "Spyrografaĵo"
+
+#: plug-ins/python/spyro-plus.py:1002 plug-ins/python/spyro-plus.py:2262
+msgid "Epitrochoid"
+msgstr "Epitrokoido"
+
+#: plug-ins/python/spyro-plus.py:1029 plug-ins/python/spyro-plus.py:2264
+msgid "Lissajous"
+msgstr "Lisaĵuo"
+
+#: plug-ins/python/spyro-plus.py:1485
+msgid "Curve type"
+msgstr "Kurva tipo"
+
+#: plug-ins/python/spyro-plus.py:1486
+msgid ""
+"An Epitrochoid pattern is when the moving gear is on the outside of the "
+"fixed gear."
+msgstr ""
+"Epitrokoida ŝablono estas kiam la movebla pinto estas ekster la fiksa pinto."
+
+#. TODO: Add Clone option once it's fixed
+#: plug-ins/python/spyro-plus.py:1491 plug-ins/python/spyro-plus.py:2314
+msgid "Tool"
+msgstr "Ilo"
+
+#: plug-ins/python/spyro-plus.py:1492
+msgid ""
+"The tool with which to draw the pattern. The Preview tool just draws quickly."
+msgstr ""
+"La ilo per kiu desegni la ŝablonon. La ilo Antaŭvido nur desegnas rapide."
+
+#: plug-ins/python/spyro-plus.py:1497
+#| msgid "Palette to _Gradient"
+msgid "Long Gradient"
+msgstr "Paletro laŭ _gradiento"
+
+#: plug-ins/python/spyro-plus.py:1499
+msgid ""
+"When unchecked, the current tool settings will be used. When checked, will "
+"use a long gradient to match the length of the pattern, based on current "
+"gradient and repeat mode from the gradient tool settings."
+msgstr ""
+"Se malmarkita, la aktualaj il-agordoj estos uzataj. Se markita, estos uzata "
+"longa gradiento por kongrui kun la longeco de la ŝablono, bazita sur la "
+"aktuala gradiento kaj ripeta reĝimo el la gradientaj il-agordoj."
+
+#: plug-ins/python/spyro-plus.py:1519
+msgid "Specify pattern using one of the following tabs:"
+msgstr "Specifu ŝablonon uzante unu el la jenaj langetoj:"
+
+#: plug-ins/python/spyro-plus.py:1521
+msgid ""
+"The pattern is specified only by the active tab. Toy Kit is similar to "
+"Gears, but it uses gears and hole numbers which are found in toy kits. If "
+"you follow the instructions from the toy kit manuals, results should be "
+"similar."
+msgstr ""
+"La ŝablono estas specifata nur per la aktiva langeto. Ludilo-aro similas al "
+"Pintoj, sed ĝi uzas pintojn kaj truo-numerojn kiuj troveblas en ludilaraj "
+"aroj. Se vi sekvas la instrukciojn el la ludilaraj manlibroj, la rezultoj "
+"devus esti similaj."
+
+#: plug-ins/python/spyro-plus.py:1545
+msgid ""
+"Number of teeth of fixed gear. The size of the fixed gear is proportional to "
+"the number of teeth."
+msgstr ""
+"Nombro de dentoj de la fiksa pinto. La grandeco de la fiksa pinto estas "
+"proporcia al la nombro de dentoj."
+
+#: plug-ins/python/spyro-plus.py:1548 plug-ins/python/spyro-plus.py:1576
+msgid "Fixed gear teeth"
+msgstr "Dentoj de fiksa pinto"
+
+#: plug-ins/python/spyro-plus.py:1556
+msgid ""
+"Number of teeth of moving gear. The size of the moving gear is proportional "
+"to the number of teeth."
+msgstr ""
+"Nombro de dentoj de la movebla pinto. La grandeco de la movebla pinto estas "
+"proporcia al la nombro de dentoj."
+
+#: plug-ins/python/spyro-plus.py:1559 plug-ins/python/spyro-plus.py:1581
+msgid "Moving gear teeth"
+msgstr "Dentoj de movebla pinto"
+
+#: plug-ins/python/spyro-plus.py:1564
+msgid "Hole percent"
+msgstr "Truo-procento"
+
+#: plug-ins/python/spyro-plus.py:1565
+msgid ""
+"How far is the hole from the center of the moving gear. 100% means that the "
+"hole is at the gear's edge."
+msgstr ""
+"Kiom malproksime estas la truo el la centro de la movebla pinto. 100% "
+"signifas ke la truo estas ĉe la rando de la pinto."
+
+#: plug-ins/python/spyro-plus.py:1586
+msgid "Hole number"
+msgstr "Truo-numero"
+
+#: plug-ins/python/spyro-plus.py:1587
+msgid ""
+"Hole #1 is at the edge of the gear. The maximum hole number is near the "
+"center. The maximum hole number is different for each gear."
+msgstr ""
+"Truo #1 estas ĉe la rando de la pinto. La maksimuma truo-numero estas "
+"proksime al la centro. La maksimuma truo-numero estas malsama por ĉiu pinto."
+
+#: plug-ins/python/spyro-plus.py:1598
+msgid "Flower petals"
+msgstr "Floraj petaloj"
+
+#: plug-ins/python/spyro-plus.py:1599
+msgid "The number of petals in the pattern."
+msgstr "La nombro de petaloj en la ŝablono."
+
+#: plug-ins/python/spyro-plus.py:1604
+msgid "Petal skip"
+msgstr "Petala preter-salto"
+
+#: plug-ins/python/spyro-plus.py:1605
+msgid "The number of petals to advance for drawing the next petal."
+msgstr "La nombro de petaloj por antaŭiri dum desegnado de la sekva petalo."
+
+#: plug-ins/python/spyro-plus.py:1610
+msgid "Hole radius(%)"
+msgstr "Trua radio (%)"
+
+#: plug-ins/python/spyro-plus.py:1611
+msgid ""
+"The radius of the hole in the center of the pattern where nothing will be "
+"drawn. Given as a percentage of the size of the pattern. A value of 0 will "
+"produce no hole. A Value of 99 will produce a thin line on the edge."
+msgstr ""
+"La radio de la truo en la centro de la ŝablono kie nenio estos desegnata. "
+"Donata kiel procento de la grandeco de la ŝablono. Valoro 0 produktos neniun "
+"truon. Valoro 99 produktos maldikan linion ĉe la rando."
+
+#: plug-ins/python/spyro-plus.py:1632
+msgid "Width(%)"
+msgstr "Larĝo (%)"
+
+#: plug-ins/python/spyro-plus.py:1633
+msgid ""
+"The width of the pattern as a percentage of the size of the pattern. A Value "
+"of 1 will just draw a thin pattern. A Value of 100 will fill the entire "
+"fixed gear."
+msgstr ""
+"La larĝo de la ŝablono kiel procento de la grandeco de la ŝablono. Valoro 1 "
+"nur desegnos maldikan ŝablonon. Valoro 100 plenos la tutan fiksan pinton."
+
+#: plug-ins/python/spyro-plus.py:1644
+msgid "Visual"
+msgstr "Vida"
+
+#: plug-ins/python/spyro-plus.py:1650
+msgid "Toy Kit"
+msgstr "Ludilo-aro"
+
+#: plug-ins/python/spyro-plus.py:1656
+msgid "Gears"
+msgstr "Pintoj"
+
+#: plug-ins/python/spyro-plus.py:1669 plug-ins/python/spyro-plus.py:1713
+msgid "Rotation"
+msgstr "Rotacio"
+
+#: plug-ins/python/spyro-plus.py:1670
+msgid ""
+"Rotation of the pattern, in degrees. The starting position of the moving "
+"gear in the fixed gear."
+msgstr ""
+"Rotacio de la ŝablono, en gradoj. La komenco-pozicio de la movebla pinto en "
+"la fiksa pinto."
+
+#: plug-ins/python/spyro-plus.py:1693 plug-ins/python/spyro-plus.py:2275
+msgid "Shape"
+msgstr "Formo"
+
+#: plug-ins/python/spyro-plus.py:1694
+msgid ""
+"The shape of the fixed gear to be used inside current selection. Rack is a "
+"long round-edged shape provided in the toy kits. Frame hugs the boundaries "
+"of the rectangular selection, use hole=100 in Gear notation to touch "
+"boundary. Selection will hug boundaries of current selection - try something "
+"non-rectangular."
+msgstr ""
+"La formo de la fiksa pinto por uzi en la aktuala elekto. Kremajera formo "
+"estas longa rondrand-forma formo provizita en ludilaraj aroj. Kadro "
+"ampleksas la limojn de la ortangula elekto, uzu truo=100 en Pinto-notacio "
+"por tuŝi la limon. Elekto ampleksas la limojn de la aktuala elekto — provu "
+"ion ne-ortangulan."
+
+#: plug-ins/python/spyro-plus.py:1703
+msgid "Sides"
+msgstr "Flankoj"
+
+#: plug-ins/python/spyro-plus.py:1703
+msgid "Number of sides of the shape."
+msgstr "La nombro de flankoj de la formo."
+
+#: plug-ins/python/spyro-plus.py:1708
+msgid "Morph"
+msgstr "Morfo"
+
+#: plug-ins/python/spyro-plus.py:1708
+msgid "Morph fixed gear shape. Only affects some of the shapes."
+msgstr "Morfo de la fiksa pinto-formo. Nur influas iujn formojn."
+
+#: plug-ins/python/spyro-plus.py:1713
+msgid "Rotation of the fixed gear, in degrees"
+msgstr "Rotacio de la fiksa pinto, en gradoj"
+
+#: plug-ins/python/spyro-plus.py:1728
+msgid "Margin (px)"
+msgstr "Marĝeno (pk)"
+
+#: plug-ins/python/spyro-plus.py:1728
+msgid "Margin from edge of selection."
+msgstr "Marĝeno el la rando de elekto."
+
+#: plug-ins/python/spyro-plus.py:1733 plug-ins/python/spyro-plus.py:2296
+#: plug-ins/python/spyro-plus.py:2297
+msgid "Make width and height equal"
+msgstr "Egaligi larĝon kaj alton"
+
+#: plug-ins/python/spyro-plus.py:1735
+msgid ""
+"When unchecked, the pattern will fill the current image or selection. When "
+"checked, the pattern will have same width and height, and will be centered."
+msgstr ""
+"Se malmarkita, la ŝablono plenos la aktualan bildon aŭ elekton. Se markita, "
+"la ŝablono havos saman larĝon kaj alton, kaj estos centrigita."
+
+#: plug-ins/python/spyro-plus.py:1749
+msgid "_OK"
+msgstr "_Bone"
+
+#: plug-ins/python/spyro-plus.py:1750
+msgid "Re_draw"
+msgstr "Re_desegni"
+
+#: plug-ins/python/spyro-plus.py:1752
+msgid ""
+"If you change the settings of a tool, change color, or change the selection, "
+"press this to preview how the pattern looks."
+msgstr ""
+"Se vi ŝanĝas la agordojn de ilo, ŝanĝas koloron, aŭ ŝanĝas elekton, premu ĉi "
+"tion por antaŭvidi kiel la ŝablono aspektas."
+
+#: plug-ins/python/spyro-plus.py:1755
+msgid "_Reset"
+msgstr "_Restarigi"
+
+#: plug-ins/python/spyro-plus.py:1763
+msgid "Save"
+msgstr "Konservi"
+
+#: plug-ins/python/spyro-plus.py:1764
+msgid ""
+"Choose whether to save as new layer, redraw on last active layer, or save to "
+"path"
+msgstr ""
+"Elektu ĉu konservi kiel nova tavolo, redesegni sur lasta aktiva tavolo, aŭ "
+"konservi al pado"
+
+#: plug-ins/python/spyro-plus.py:1778
+msgid "Spyrogimp"
+msgstr "Spyrogimp"
+
+#: plug-ins/python/spyro-plus.py:1787 plug-ins/python/spyro-plus.py:2250
+msgid "Draw spyrographs using current tool settings and selection."
+msgstr "Desegni spyrografaĵojn uzante nunan ilajn agordojn kaj elekton."
+
+#: plug-ins/python/spyro-plus.py:1800
+msgid "Curve Pattern"
+msgstr "Kurva ŝablono"
+
+#: plug-ins/python/spyro-plus.py:1803
+msgid "Fixed Gear"
+msgstr "Fiksa pinto"
+
+#: plug-ins/python/spyro-plus.py:1806
+msgid "Size"
+msgstr "Grandeco"
+
+#: plug-ins/python/spyro-plus.py:2162
+msgid "Rendering Pattern"
+msgstr "Renderante ŝablonon"
+
+#: plug-ins/python/spyro-plus.py:2174
+msgid "Please wait : Rendering Pattern"
+msgstr "Bonvolu atendi : Renderante ŝablonon"
+
+#: plug-ins/python/spyro-plus.py:2251
+msgid ""
+"Uses current tool settings to draw Spyrograph patterns. The size and "
+"location of the pattern is based on the current selection."
+msgstr ""
+"Uzas nunan il-agordojn por desegni Spyrograph-ŝablonojn. La grandeco kaj "
+"loko de la ŝablono baziĝas sur la aktuala elekto."
+
+#: plug-ins/python/spyro-plus.py:2254
+msgid "Spyrogimp..."
+msgstr "Spyrogimp..."
+
+#: plug-ins/python/spyro-plus.py:2265
+msgid "Curve Type"
+msgstr "Kurva tipo"
+
+#: plug-ins/python/spyro-plus.py:2269
+msgid "rack"
+msgstr "kremajero"
+
+#: plug-ins/python/spyro-plus.py:2270
+msgid "frame"
+msgstr "kadro"
+
+#: plug-ins/python/spyro-plus.py:2277
+msgid "Si_des"
+msgstr "Flan_koj"
+
+#: plug-ins/python/spyro-plus.py:2278
+msgid "Number of sides of fixed gear (3 or greater). Only used by some shapes."
+msgstr ""
+"Nombro de flankoj de la fiksa pinto (3 aŭ pli). Nur uzata de iuj formoj."
+
+#: plug-ins/python/spyro-plus.py:2280
+msgid "_Morph"
+msgstr "_Morfo"
+
+#: plug-ins/python/spyro-plus.py:2281
+msgid "Morph shape of fixed gear, between 0 and 1. Only used by some shapes."
+msgstr ""
+"Morfo de la formo de la fiksa pinto, inter 0 kaj 1. Nur uzata de iuj formoj."
+
+#: plug-ins/python/spyro-plus.py:2283
+msgid "Fi_xed gear teeth"
+msgstr "Fik_sa pinto dentoj"
+
+#: plug-ins/python/spyro-plus.py:2284 plug-ins/python/spyro-plus.py:2287
+msgid "Number of teeth for fixed gear."
+msgstr "Nombro de dentoj de la fiksa pinto."
+
+#: plug-ins/python/spyro-plus.py:2286
+msgid "Mo_ving gear teeth"
+msgstr "Move_bla pinto dentoj"
+
+#: plug-ins/python/spyro-plus.py:2289
+msgid "_Hole radius (%)"
+msgstr "Trua _radio (%)"
+
+#: plug-ins/python/spyro-plus.py:2290
+msgid ""
+"Location of hole in moving gear in percent, where 100 means that the hole is "
+"at the edge of the gear, and 0 means the hole is at the center"
+msgstr ""
+"Loko de truo en la movebla pinto en procentoj, kie 100 signifas ke la truo "
+"estas ĉe la rando de la pinto, kaj 0 signifas ke la truo estas en la centro"
+
+#: plug-ins/python/spyro-plus.py:2293
+msgid "Margin (_px)"
+msgstr "Marĝeno (_pk)"
+
+#: plug-ins/python/spyro-plus.py:2294
+msgid "Margin from selection, in pixels"
+msgstr "Marĝeno el la elekto, en bildpunktoj"
+
+#: plug-ins/python/spyro-plus.py:2299 plug-ins/python/spyro-plus.py:2302
+msgid "_Rotation"
+msgstr "_Rotacio"
+
+#: plug-ins/python/spyro-plus.py:2300
+msgid "Pattern rotation, in degrees"
+msgstr "Ŝablona rotacio, en gradoj"
+
+#: plug-ins/python/spyro-plus.py:2303
+msgid "Shape rotation of fixed gear, in degrees"
+msgstr "Forma rotacio de la fiksa pinto, en gradoj"
+
+#: plug-ins/python/spyro-plus.py:2317
+#| msgid "Palette to _Gradient"
+msgid "Long _Gradient"
+msgstr "Paletro laŭ _gradiento"
+
+#: plug-ins/python/spyro-plus.py:2318
+msgid ""
+"Whether to apply a long gradient to match the length of the pattern. Only "
+"applicable to some of the tools."
+msgstr ""
+"Ĉu apliki longan gradienton por kongrui kun la longeco de la ŝablono. Nur "
+"aplikebla al iuj iloj."
+
+#~ msgid "Missing exception information"
+#~ msgstr "Mankas informoj pri esceptoj"
+
+#, python-format
+#~| msgid "An error occured running %s"
+#~ msgid "An error occurred running %s"
+#~ msgstr "Eraro dum rulo de %s"
+
+#~ msgid "_More Information"
+#~ msgstr "Pl_uaj Informoj"
+
+#~ msgid "No"
+#~ msgstr "Ne"
+
+#~ msgid "Yes"
+#~ msgstr "Jes"
+
+#~ msgid "Python-Fu File Selection"
+#~ msgstr "Elekto de Python-Fu-dosiero"
+
+#~ msgid "Python-Fu Folder Selection"
+#~ msgstr "Elekto de Python-Fu-dosierujo"
+
+#, python-format
+#~ msgid "Invalid input for '%s'"
+#~ msgstr "Nevalida enigo por \"%s\""
+
+#~ msgid "Python-Fu Color Selection"
+#~ msgstr "Elekto de Python-Fu-koloro"
+
+#~ msgid "Source code"
+#~ msgstr "Fontkodo"
+
+#~ msgid "Text file"
+#~ msgstr "Textdosiero"
+
+#~ msgid "Entry box"
+#~ msgstr "Texteniga fako"
+
+#~ msgid "File Name"
+#~ msgstr "Dosiernomo"
+
+#~| msgid "Offset"
+#~ msgid "Off_set"
+#~ msgstr "_Delokado"
+
+#~| msgid "Color model"
+#~ msgid "Color _model"
+#~ msgstr "Kolor-modelo"
+
+#~ msgid "RGB"
+#~ msgstr "RVB"
+
+#~ msgid "HSV"
+#~ msgstr "NSV"
+
+#~ msgid "Red or Hue"
+#~ msgstr "Ruĝo aŭ nuanco"
+
+#~ msgid "Blue or Value"
+#~ msgstr "Bluo aŭ valoro"
+
+#~ msgid "Slice"
+#~ msgstr "Tranĉo"
+
+#~ msgid ""
+#~ "Cuts an image along its guides, creates images and a HTML table snippet"
+#~ msgstr ""
+#~ "Eltondi bildon laŭ siaj gvidreloj, kreu bildojn kaj pecon de HTML-tabelo"
+
+#~ msgid "_Slice..."
+#~ msgstr "_Tranĉo..."
+
+#~ msgid "Path for HTML export"
+#~ msgstr "Raŭto de HTML-elporto"
+
+#~ msgid "Filename for export"
+#~ msgstr "Elportenda dosiernomo"
+
+#~ msgid "Image name prefix"
+#~ msgstr "Bildnoma prefikso"
+
+#~ msgid "Image format"
+#~ msgstr "Bildformato"
+
+#~ msgid "Separate image folder"
+#~ msgstr "Aparta bildodosierujo"
+
+#~ msgid "Folder for image export"
+#~ msgstr "Dosierujo por bildelporto"
+
+#~ msgid "Space between table elements"
+#~ msgstr "Spaco inter elementoj de tabelo"
+
+#~ msgid "Javascript for onmouseover and clicked"
+#~ msgstr "Javaskripto por \"onmouseover\" kaj \"clicked\""
+
+#~ msgid "Skip animation for table caps"
+#~ msgstr "Preterlasi animacion de tabeloj"
+
+#~ msgid "_Console"
+#~ msgstr "_Konzolo"
+
+#~ msgid "Add a drop shadow to a layer, and optionally bevel it"
+#~ msgstr "Aldoni ombron al tavolo kaj, laŭvole, bevelu ĝin"
+
+#~ msgid "_Drop Shadow and Bevel..."
+#~ msgstr "_Krei ombron kaj bevelon..."
+
+#, fuzzy
+#~| msgid "Shadow blur"
+#~ msgid "_Shadow blur"
+#~ msgstr "Malfoku_so de Ombro"
+
+#~| msgid "Bevel"
+#~ msgid "_Bevel"
+#~ msgstr "_Bevelo"
+
+#, fuzzy
+#~| msgid "Drop shadow"
+#~ msgid "_Drop shadow"
+#~ msgstr "Estigo de Ombro"
+
+#~| msgid "Drop shadow X displacement"
+#~ msgid "Drop shadow _X displacement"
+#~ msgstr "_X-dislokado de estigita ombro"
+
+#~| msgid "Drop shadow Y displacement"
+#~ msgid "Drop shadow _Y displacement"
+#~ msgstr "_Y-dislokado de estigita ombro"
+
+#~ msgid "Create a new brush with characters from a text sequence"
+#~ msgstr "Krei novan penikon kun signoj de tekst-sinsekvo"
+
+#~ msgid "New Brush from _Text..."
+#~ msgstr "Nova peniko de _teksto..."
+
+#~ msgid "Font"
+#~ msgstr "Tiparo"
+
+#~ msgid "Pixel Size"
+#~ msgstr "Bilder-grando"
+
+#~| msgid "Text file"
+#~ msgid "Text"
+#~ msgstr "Teksto"

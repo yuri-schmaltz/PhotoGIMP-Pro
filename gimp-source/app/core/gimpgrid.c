@@ -1,0 +1,606 @@
+/* GIMP - The GNU Image Manipulation Program
+ * Copyright (C) 1995 Spencer Kimball and Peter Mattis
+ *
+ * GimpGrid
+ * Copyright (C) 2003  Henrik Brix Andersen <brix@gimp.org>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "config.h"
+
+#include <string.h>
+
+#include <cairo.h>
+#include <gegl.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
+#include "libgimpmath/gimpmath.h"
+#include "libgimpbase/gimpbase.h"
+#include "libgimpconfig/gimpconfig.h"
+
+#include "libgimpcolor/gimpcolor.h"
+
+#include "core-types.h"
+
+#include "gimp-utils.h"
+#include "gimpgrid.h"
+#include "gimpsavable.h"
+#include "gimpsavable-load.h"
+
+#include "gimp-intl.h"
+
+
+enum
+{
+  PROP_0,
+  PROP_STYLE,
+  PROP_FGCOLOR,
+  PROP_BGCOLOR,
+  PROP_XSPACING,
+  PROP_YSPACING,
+  PROP_SPACING_UNIT,
+  PROP_XOFFSET,
+  PROP_YOFFSET,
+  PROP_OFFSET_UNIT
+};
+
+
+static void     gimp_grid_savable_iface_init (GimpSavableInterface *iface);
+
+static void     gimp_grid_finalize           (GObject              *object);
+static void     gimp_grid_get_property       (GObject              *object,
+                                              guint                 property_id,
+                                              GValue               *value,
+                                              GParamSpec           *pspec);
+static void     gimp_grid_set_property       (GObject              *object,
+                                              guint                 property_id,
+                                              const GValue         *value,
+                                              GParamSpec           *pspec);
+
+static void     gimp_grid_save               (GimpSavable           *savable,
+                                              GimpSaveState         *state);
+static gboolean gimp_grid_load_enter         (GimpLoadState         *state,
+                                              const gchar          **attribute_names,
+                                              const gchar          **attribute_values,
+                                              gpointer               user_data,
+                                              GError               **error);
+static gboolean gimp_grid_load_exit          (GimpLoadState         *state,
+                                              const gchar           *text,
+                                              gsize                  len,
+                                              gpointer               user_data,
+                                              GError               **error);
+static gboolean gimp_grid_enter_fg_bg        (GimpLoadState         *state,
+                                              const gchar          **attribute_names,
+                                              const gchar          **attribute_values,
+                                              gpointer               user_data,
+                                              GError               **error);
+static gboolean gimp_grid_exit_fg_bg         (GimpLoadState         *state,
+                                              const gchar           *text,
+                                              gsize                  len,
+                                              gpointer               user_data,
+                                              GError               **error);
+static gboolean gimp_grid_enter_unit         (GimpLoadState         *state,
+                                              const gchar          **attribute_names,
+                                              const gchar          **attribute_values,
+                                              gpointer               user_data,
+                                              GError               **error);
+static gboolean gimp_grid_exit_unit          (GimpLoadState         *state,
+                                              const gchar           *text,
+                                              gsize                  len,
+                                              gpointer               user_data,
+                                              GError               **error);
+
+
+G_DEFINE_TYPE_WITH_CODE (GimpGrid, gimp_grid, GIMP_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG, NULL)
+                         G_IMPLEMENT_INTERFACE (GIMP_TYPE_SAVABLE,
+                                                gimp_grid_savable_iface_init))
+
+#define parent_class gimp_grid_parent_class
+
+
+static void
+gimp_grid_class_init (GimpGridClass *klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GeglColor    *black        = gegl_color_new ("black");
+  GeglColor    *white        = gegl_color_new ("white");
+
+  object_class->finalize     = gimp_grid_finalize;
+  object_class->get_property = gimp_grid_get_property;
+  object_class->set_property = gimp_grid_set_property;
+
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_STYLE,
+                         "style",
+                         _("Line style"),
+                         _("Line style used for the grid."),
+                         GIMP_TYPE_GRID_STYLE,
+                         GIMP_GRID_SOLID,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_COLOR (object_class, PROP_FGCOLOR,
+                          "fgcolor",
+                          _("Foreground color"),
+                          _("The foreground color of the grid."),
+                          TRUE, black,
+                          GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_COLOR (object_class, PROP_BGCOLOR,
+                          "bgcolor",
+                          _("Background color"),
+                          _("The background color of the grid; "
+                            "only used in double dashed line style."),
+                          TRUE, white,
+                          GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_XSPACING,
+                           "xspacing",
+                           _("Spacing X"),
+                           _("Horizontal spacing of grid lines."),
+                           0.0, GIMP_MAX_IMAGE_SIZE, 10.0,
+                           GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_YSPACING,
+                           "yspacing",
+                           _("Spacing Y"),
+                           _("Vertical spacing of grid lines."),
+                           0.0, GIMP_MAX_IMAGE_SIZE, 10.0,
+                           GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_UNIT (object_class, PROP_SPACING_UNIT,
+                         "spacing-unit",
+                         _("Spacing unit"),
+                         NULL,
+                         FALSE, FALSE, gimp_unit_inch (),
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_XOFFSET,
+                           "xoffset",
+                           _("Offset X"),
+                           _("Horizontal offset of the first grid "
+                             "line; this may be a negative number."),
+                           - GIMP_MAX_IMAGE_SIZE,
+                           GIMP_MAX_IMAGE_SIZE, 0.0,
+                           GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_YOFFSET,
+                           "yoffset",
+                           _("Offset Y"),
+                           _("Vertical offset of the first grid "
+                             "line; this may be a negative number."),
+                           - GIMP_MAX_IMAGE_SIZE,
+                           GIMP_MAX_IMAGE_SIZE, 0.0,
+                           GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_UNIT (object_class, PROP_OFFSET_UNIT,
+                         "offset-unit",
+                         _("Offset unit"),
+                         NULL,
+                         FALSE, FALSE, gimp_unit_inch (),
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  g_object_unref (black);
+  g_object_unref (white);
+}
+
+static void
+gimp_grid_savable_iface_init (GimpSavableInterface *iface)
+{
+  iface->tag        = "grid";
+  iface->save       = gimp_grid_save;
+  iface->load_enter = gimp_grid_load_enter;
+  iface->load_exit  = gimp_grid_load_exit;
+}
+
+static void
+gimp_grid_init (GimpGrid *grid)
+{
+  grid->fgcolor = gegl_color_new ("black");
+  grid->bgcolor = gegl_color_new ("white");
+}
+
+static void
+gimp_grid_finalize (GObject *object)
+{
+  GimpGrid *grid = GIMP_GRID (object);
+
+  g_object_unref (grid->fgcolor);
+  g_object_unref (grid->bgcolor);
+
+  G_OBJECT_CLASS (parent_class)->finalize (object);
+}
+
+static void
+gimp_grid_get_property (GObject      *object,
+                        guint         property_id,
+                        GValue       *value,
+                        GParamSpec   *pspec)
+{
+  GimpGrid *grid = GIMP_GRID (object);
+
+  switch (property_id)
+    {
+    case PROP_STYLE:
+      g_value_set_enum (value, grid->style);
+      break;
+    case PROP_FGCOLOR:
+      g_value_set_object (value, grid->fgcolor);
+      break;
+    case PROP_BGCOLOR:
+      g_value_set_object (value, grid->bgcolor);
+      break;
+    case PROP_XSPACING:
+      g_value_set_double (value, grid->xspacing);
+      break;
+    case PROP_YSPACING:
+      g_value_set_double (value, grid->yspacing);
+      break;
+    case PROP_SPACING_UNIT:
+      g_value_set_object (value, grid->spacing_unit);
+      break;
+    case PROP_XOFFSET:
+      g_value_set_double (value, grid->xoffset);
+      break;
+    case PROP_YOFFSET:
+      g_value_set_double (value, grid->yoffset);
+      break;
+    case PROP_OFFSET_UNIT:
+      g_value_set_object (value, grid->offset_unit);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
+}
+
+static void
+gimp_grid_set_property (GObject      *object,
+                        guint         property_id,
+                        const GValue *value,
+                        GParamSpec   *pspec)
+{
+  GimpGrid *grid = GIMP_GRID (object);
+
+  switch (property_id)
+    {
+    case PROP_STYLE:
+      grid->style = g_value_get_enum (value);
+      break;
+    case PROP_FGCOLOR:
+      g_clear_object (&grid->fgcolor);
+      grid->fgcolor = gegl_color_duplicate (g_value_get_object (value));
+      break;
+    case PROP_BGCOLOR:
+      g_clear_object (&grid->bgcolor);
+      grid->bgcolor = gegl_color_duplicate (g_value_get_object (value));
+      break;
+    case PROP_XSPACING:
+      grid->xspacing = g_value_get_double (value);
+      break;
+    case PROP_YSPACING:
+      grid->yspacing = g_value_get_double (value);
+      break;
+    case PROP_SPACING_UNIT:
+      grid->spacing_unit = g_value_get_object (value);
+      break;
+    case PROP_XOFFSET:
+      grid->xoffset = g_value_get_double (value);
+      break;
+    case PROP_YOFFSET:
+      grid->yoffset = g_value_get_double (value);
+      break;
+    case PROP_OFFSET_UNIT:
+      grid->offset_unit = g_value_get_object (value);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
+}
+
+static void
+gimp_grid_save (GimpSavable   *savable,
+                GimpSaveState *state)
+{
+  GimpGrid *grid = GIMP_GRID (savable);
+
+  gimp_savable_print_element_start (state, "grid", NULL);
+
+  gimp_savable_print_element (state, "style",
+                              "%s", gimp_get_enum_value_nick (GIMP_TYPE_GRID_STYLE, grid->style),
+                              NULL);
+
+  gimp_savable_print_element_start (state, "foreground", NULL);
+  gimp_savable_color_save (grid->fgcolor, NULL, NULL, state);
+  gimp_savable_print_element_end (state, "foreground");
+
+  gimp_savable_print_element_start (state, "background", NULL);
+  gimp_savable_color_save (grid->bgcolor, NULL, NULL, state);
+  gimp_savable_print_element_end (state, "background");
+
+  gimp_savable_print_element (state, "spacing", NULL, NULL,
+                              "x", "%f", grid->xspacing,
+                              "y", "%f", grid->yspacing,
+                              NULL);
+
+  gimp_savable_print_element_start (state, "spacing-unit", NULL);
+  gimp_savable_unit_save (grid->spacing_unit, state);
+  gimp_savable_print_element_end (state, "spacing-unit");
+
+  gimp_savable_print_element (state, "offset", NULL, NULL,
+                              "x", "%f", grid->xoffset,
+                              "y", "%f", grid->yoffset,
+                              NULL);
+  gimp_savable_print_element_start (state, "offset-unit", NULL);
+  gimp_savable_unit_save (grid->offset_unit, state);
+  gimp_savable_print_element_end (state, "offset-unit");
+
+  gimp_savable_print_element_end (state, "grid");
+}
+
+static gboolean
+gimp_grid_load_enter (GimpLoadState  *state,
+                      const gchar   **attribute_names,
+                      const gchar   **attribute_values,
+                      gpointer        user_data,
+                      GError        **error)
+{
+  gimp_savable_load_add_simple_handler (state, "style", GIMP_TYPE_GRID_STYLE,
+                                        NULL, NULL, NULL, FALSE, FALSE, NULL);
+  gimp_savable_load_add_handlers (state, "foreground",
+                                  gimp_grid_enter_fg_bg,
+                                  gimp_grid_exit_fg_bg,
+                                  "foreground", NULL);
+  gimp_savable_load_add_handlers (state, "background",
+                                  gimp_grid_enter_fg_bg,
+                                  gimp_grid_exit_fg_bg,
+                                  "background", NULL);
+  gimp_savable_load_add_simple_handler (state, "spacing", G_TYPE_NONE,
+                                        NULL, NULL, NULL,
+                                        TRUE, FALSE,
+                                        "x", G_TYPE_DOUBLE,
+                                        "y", G_TYPE_DOUBLE,
+                                        NULL);
+  gimp_savable_load_add_handlers (state, "spacing-unit",
+                                  gimp_grid_enter_unit,
+                                  gimp_grid_exit_unit,
+                                  "spacing-unit", NULL);
+  gimp_savable_load_add_simple_handler (state, "offset", G_TYPE_NONE,
+                                        NULL, NULL, NULL,
+                                        TRUE, FALSE,
+                                        "x", G_TYPE_DOUBLE,
+                                        "y", G_TYPE_DOUBLE,
+                                        NULL);
+  gimp_savable_load_add_handlers (state, "offset-unit",
+                                  gimp_grid_enter_unit,
+                                  gimp_grid_exit_unit,
+                                  "offset-unit", NULL);
+
+  return TRUE;
+}
+
+static gboolean
+gimp_grid_load_exit (GimpLoadState  *state,
+                     const gchar    *text,
+                     gsize           len,
+                     gpointer        user_data,
+                     GError        **error)
+{
+  GeglColor     *fg;
+  GeglColor     *bg;
+  GimpGridStyle  style;
+  GimpUnit      *spacing_unit;
+  GimpUnit      *offset_unit;
+  gdouble        x_spacing;
+  gdouble        y_spacing;
+  gdouble        x_offset;
+  gdouble        y_offset;
+
+  if (gimp_savable_load_get_values (state,
+                                "style",        &style,
+                                "foreground",   &fg,
+                                "background",   &bg,
+                                "spacing:x",    &x_spacing,
+                                "spacing:y",    &y_spacing,
+                                "offset:x",     &x_offset,
+                                "offset:y",     &y_offset,
+                                "spacing-unit", &spacing_unit,
+                                "offset-unit",  &offset_unit,
+                                NULL))
+    {
+      GimpGrid *grid;
+
+      grid = g_object_new (GIMP_TYPE_GRID,
+                           "style",        style,
+                           "fgcolor",      fg,
+                           "bgcolor",      bg,
+                           "xspacing",     x_spacing,
+                           "yspacing",     y_spacing,
+                           "spacing-unit", spacing_unit,
+                           "xoffset",      x_offset,
+                           "yoffset",      y_offset,
+                           "offset-unit",  offset_unit,
+                           NULL);
+
+      gimp_savable_load_store_value (state, "grid", grid, g_object_unref);
+      gimp_savable_load_bubble_up (state, "grid");
+    }
+
+  return TRUE;
+}
+
+
+/*  public functions  */
+
+GimpGridStyle
+gimp_grid_get_style (GimpGrid *grid)
+{
+  g_return_val_if_fail (GIMP_IS_GRID (grid), GIMP_GRID_SOLID);
+
+  return grid->style;
+}
+
+GeglColor *
+gimp_grid_get_fgcolor (GimpGrid *grid)
+{
+  g_return_val_if_fail (GIMP_IS_GRID (grid), NULL);
+
+  return grid->fgcolor;
+}
+
+GeglColor *
+gimp_grid_get_bgcolor (GimpGrid *grid)
+{
+  g_return_val_if_fail (GIMP_IS_GRID (grid), NULL);
+
+  return grid->bgcolor;
+}
+
+void
+gimp_grid_get_spacing (GimpGrid *grid,
+                       gdouble  *xspacing,
+                       gdouble  *yspacing)
+{
+  g_return_if_fail (GIMP_IS_GRID (grid));
+
+  if (xspacing) *xspacing = grid->xspacing;
+  if (yspacing) *yspacing = grid->yspacing;
+}
+
+void
+gimp_grid_get_offset (GimpGrid *grid,
+                      gdouble  *xoffset,
+                      gdouble  *yoffset)
+{
+  g_return_if_fail (GIMP_IS_GRID (grid));
+
+  if (xoffset) *xoffset = grid->xoffset;
+  if (yoffset) *yoffset = grid->yoffset;
+}
+
+const gchar *
+gimp_grid_parasite_name (void)
+{
+  return "gimp-image-grid";
+}
+
+GimpParasite *
+gimp_grid_to_parasite (GimpGrid *grid)
+{
+  g_return_val_if_fail (GIMP_IS_GRID (grid), NULL);
+
+  return gimp_config_serialize_to_parasite (GIMP_CONFIG (grid),
+                                            gimp_grid_parasite_name (),
+                                            GIMP_PARASITE_PERSISTENT,
+                                            NULL);
+}
+
+GimpGrid *
+gimp_grid_from_parasite (const GimpParasite *parasite)
+{
+  GimpGrid *grid;
+  GError   *error = NULL;
+
+  g_return_val_if_fail (parasite != NULL, NULL);
+  g_return_val_if_fail (strcmp (gimp_parasite_get_name (parasite),
+                                gimp_grid_parasite_name ()) == 0, NULL);
+
+  if (! gimp_parasite_get_data (parasite, NULL))
+    {
+      g_warning ("Empty grid parasite");
+
+      return NULL;
+    }
+
+  grid = g_object_new (GIMP_TYPE_GRID, NULL);
+
+  if (! gimp_config_deserialize_parasite (GIMP_CONFIG (grid),
+                                          parasite,
+                                          NULL,
+                                          &error))
+    {
+      g_warning ("Failed to deserialize grid parasite: %s", error->message);
+      g_error_free (error);
+    }
+
+  return grid;
+}
+
+
+/* Private Functions */
+
+static gboolean
+gimp_grid_enter_fg_bg (GimpLoadState  *state,
+                       const gchar   **attribute_names,
+                       const gchar   **attribute_values,
+                       gpointer        user_data,
+                       GError        **error)
+{
+  gimp_savable_load_add_handlers (state, "color",
+                                  gimp_savable_enter_color,
+                                  gimp_savable_exit_color,
+                                  NULL, NULL);
+  return TRUE;
+}
+
+static gboolean
+gimp_grid_exit_fg_bg (GimpLoadState  *state,
+                      const gchar    *text,
+                      gsize           len,
+                      gpointer        user_data,
+                      GError        **error)
+{
+  GeglColor   *color;
+  const gchar *varname = (const gchar *) user_data;
+
+  if (gimp_savable_load_get_values (state, "color", &color, NULL))
+    gimp_savable_load_store_value (state, varname, g_object_ref (color),
+                                   g_object_unref);
+  gimp_savable_load_bubble_up (state, varname);
+
+  return TRUE;
+}
+
+
+static gboolean
+gimp_grid_enter_unit (GimpLoadState  *state,
+                      const gchar   **attribute_names,
+                      const gchar   **attribute_values,
+                      gpointer        user_data,
+                      GError        **error)
+{
+  gimp_savable_load_add_handlers (state, "unit",
+                                  gimp_savable_enter_unit,
+                                  gimp_savable_exit_unit,
+                                  NULL, NULL);
+  return TRUE;
+}
+
+static gboolean
+gimp_grid_exit_unit (GimpLoadState  *state,
+                     const gchar    *text,
+                     gsize           len,
+                     gpointer        user_data,
+                     GError        **error)
+{
+  GimpUnit    *unit;
+  const gchar *varname = (const gchar *) user_data;
+
+  if (gimp_savable_load_get_values (state, "unit", &unit, NULL))
+    gimp_savable_load_store_value (state, varname, unit, NULL);
+  gimp_savable_load_bubble_up (state, varname);
+
+  return TRUE;
+}
